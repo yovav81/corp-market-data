@@ -1,0 +1,55 @@
+name: market-data
+
+on:
+  schedule:
+    # שעות UTC. 16:17 UTC = 19:17 בשעון קיץ / 18:17 בשעון חורף — אחרי סגירת המסחר בבורסה
+    - cron: "17 16 * * 0-5"
+    # ריצת גיבוי — מדלגת אם הנתונים של היום כבר נשמרו
+    - cron: "47 19 * * 0-5"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: market-data
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Fetch market data
+        run: python fetch_market.py --out data --skip-if-exists
+
+      - name: Commit data
+        if: always()
+        run: |
+          git config user.name "market-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if ! git diff --cached --quiet; then
+            git commit -m "market data $(TZ=Asia/Jerusalem date +%F)"
+            git push
+          fi
+
+      - name: Upload debug files
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug
+          path: debug
+          if-no-files-found: ignore
