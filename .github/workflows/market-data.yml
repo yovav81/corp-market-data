@@ -33,7 +33,13 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Fetch market data
-        run: python fetch_market.py --out data --skip-if-exists
+        # הרצה ידנית תמיד מושכת מחדש; הרצה מתוזמנת מדלגת אם היום כבר נשמר במלואו
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            python fetch_market.py --out data
+          else
+            python fetch_market.py --out data --skip-if-exists
+          fi
 
       - name: Commit data
         if: always()
@@ -43,6 +49,7 @@ jobs:
           git add data
           if ! git diff --cached --quiet; then
             git commit -m "market data $(TZ=Asia/Jerusalem date +%F)"
+            git pull --rebase --quiet || true
             git push
           fi
 
