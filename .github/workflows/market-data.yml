@@ -42,6 +42,10 @@ jobs:
             python fetch_market.py --out data --skip-if-exists
           fi
 
+      - name: Compute spreads
+        if: always()
+        run: python spreads.py data
+
       - name: Commit data
         if: always()
         run: |
