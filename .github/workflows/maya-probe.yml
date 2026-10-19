@@ -1,7 +1,11 @@
 name: maya-probe
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      script:
+        description: probe script in maya/
+        default: probe.py
 
 permissions:
   contents: write
@@ -21,7 +25,7 @@ jobs:
           pip install -r requirements.txt requests
           python -m playwright install --with-deps chromium
       - name: Probe Maya
-        run: python maya/probe.py probe_out
+        run: python maya/${{ inputs.script }} probe_out
         continue-on-error: true
       - name: Publish results to a throwaway branch
         if: always()
