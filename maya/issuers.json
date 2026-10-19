@@ -1,7 +1,40 @@
 [
- {"key": "big", "name": "ביג", "maya_name": "ביג מרכזי קניות", "maya_id": 1327, "corp_folder": "513623314_ביג"},
- {"key": "edgar", "name": "אדגר", "maya_name": "אדגר השקעות ופיתוח", "maya_id": 182, "corp_folder": "520035171_אדגר"},
- {"key": "gcity", "name": "ג'י סיטי", "maya_name": "ג'י סיטי", "maya_id": null, "corp_folder": "520033234_ג'י-סיטי"},
- {"key": "efi", "name": "אפי נכסים", "maya_name": "אפי נכסים", "maya_id": null, "corp_folder": "510560188_אפי-נכסים"},
- {"key": "lightstone", "name": "לייטסטון", "maya_name": "לייטסטון", "maya_id": null, "corp_folder": "1838682_לייטסטון"}
+ {
+  "key": "big",
+  "name": "ביג",
+  "maya_name": "ביג מרכזי קניות",
+  "maya_id": 1327,
+  "corp_folder": "513623314_ביג"
+ },
+ {
+  "key": "edgar",
+  "name": "אדגר",
+  "maya_name": "אדגר השקעות ופיתוח",
+  "maya_id": 182,
+  "corp_folder": "520035171_אדגר"
+ },
+ {
+  "key": "gcity",
+  "name": "ג'י סיטי",
+  "maya_name": "ג'י סיטי",
+  "maya_id": 126,
+  "corp_folder": "520033234_ג'י-סיטי",
+  "maya_long_name": "ג'י סיטי בע\"מ"
+ },
+ {
+  "key": "efi",
+  "name": "אפי נכסים",
+  "maya_name": "אפי נכסים",
+  "maya_id": 1172,
+  "corp_folder": "510560188_אפי-נכסים",
+  "maya_long_name": "אפי נכסים בע\"מ"
+ },
+ {
+  "key": "lightstone",
+  "name": "לייטסטון",
+  "maya_name": "לייטסטון",
+  "maya_id": 1630,
+  "corp_folder": "1838682_לייטסטון",
+  "maya_long_name": "לייטסטון אנטרפרייזס לימיטד"
+ }
 ]
