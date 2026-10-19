@@ -1,0 +1,76 @@
+name: maya-watch
+
+# Checks Maya for reports the CORP issuers published since the last check and downloads the
+# relevant ones. Dispatched by Claude's daily scheduled task (no cron here).
+# State (maya/state.json, maya/issuers.json) is committed to main; files go to maya-out/watch-<run id>.
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: "מתאריך (YYYY-MM-DD) — ריק = מאז הבדיקה הקודמת"
+        default: ""
+      ignore_seen:
+        description: "true = להתייחס לכל הדיווחים בחלון כחדשים (בדיקה)"
+        default: "false"
+      init:
+        description: "true = אתחול (זיהוי חברות וקו בסיס, בלי הורדה)"
+        default: "false"
+      only:
+        description: "מפתחות מנפיקים מופרדים בפסיק (ריק = כולם)"
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: maya-watch
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Watch Maya
+        env:
+          SINCE: ${{ inputs.since }}
+          IGNORE: ${{ inputs.ignore_seen }}
+          INIT: ${{ inputs.init }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          ARGS=(--out maya_out)
+          [ -n "$SINCE" ] && ARGS+=(--since "$SINCE")
+          [ "$IGNORE" = "true" ] && ARGS+=(--ignore-seen)
+          [ "$INIT" = "true" ] && ARGS+=(--init)
+          [ -n "$ONLY" ] && ARGS+=(--only "$ONLY")
+          python maya/watch.py "${ARGS[@]}"
+      - name: Commit state
+        run: |
+          git config user.name "maya-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add maya/state.json maya/issuers.json
+          if ! git diff --cached --quiet; then
+            git commit -qm "maya watch state $(TZ=Asia/Jerusalem date +%F)"
+            for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          fi
+      - name: Publish results to a throwaway branch
+        if: always()
+        run: |
+          [ -d maya_out ] || exit 0
+          BR="maya-out/watch-${{ github.run_id }}"
+          cd maya_out
+          git init -q -b "$BR"
+          git config user.name "maya-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "maya watch ${{ github.run_id }}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "HEAD:refs/heads/$BR"
+          echo "branch: $BR"

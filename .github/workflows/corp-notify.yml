@@ -1,0 +1,42 @@
+name: corp-notify
+
+# Sends a Hebrew Telegram message for the CORP bond system (same bot/chat as invest-automation).
+on:
+  workflow_dispatch:
+    inputs:
+      text:
+        description: "טקסט ההודעה (HTML מותר: <b>, <i>, <a href>)"
+        required: true
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TEXT: ${{ inputs.text }}
+        run: |
+          python3 - <<'PY'
+          import json, os, sys, urllib.request
+          tok, chat, text = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID"), os.environ["TEXT"]
+          if not tok or not chat:
+              print("::error::TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID secrets are not set in this repository"); sys.exit(1)
+          parts, cur = [], ""
+          for line in text.split("\n"):
+              if len(cur) + len(line) + 1 > 3800:
+                  parts.append(cur); cur = ""
+              cur += line + "\n"
+          parts.append(cur)
+          for part in parts:
+              body = json.dumps({"chat_id": chat, "text": part, "parse_mode": "HTML",
+                                 "disable_web_page_preview": True}).encode()
+              req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/sendMessage", body,
+                                           {"Content-Type": "application/json"})
+              try:
+                  with urllib.request.urlopen(req, timeout=30) as r:
+                      print("sent", r.status)
+              except urllib.error.HTTPError as e:
+                  print("::error::telegram", e.code, e.read()[:300]); sys.exit(1)
+          PY

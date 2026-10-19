@@ -2,7 +2,11 @@ name: maya-cleanup
 
 # Deletes the throwaway maya-out/* result branches after Claude has collected them.
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      branches:
+        description: "ענפים למחיקה מופרדים ברווח (ריק = כל maya-out/*)"
+        default: ""
 
 permissions:
   contents: write
@@ -14,7 +18,10 @@ jobs:
       - name: Delete maya-out branches
         env:
           GH_TOKEN: ${{ github.token }}
+          ONLY: ${{ inputs.branches }}
         run: |
-          for b in $(gh api "repos/${{ github.repository }}/branches?per_page=100" --jq '.[].name' | grep '^maya-out/' || true); do
+          LIST="$ONLY"
+          [ -z "$LIST" ] && LIST=$(gh api "repos/${{ github.repository }}/branches?per_page=100" --jq '.[].name' | grep '^maya-out/' || true)
+          for b in $LIST; do
             gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$b" && echo "deleted $b"
           done
