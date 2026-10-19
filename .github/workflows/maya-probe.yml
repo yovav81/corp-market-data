@@ -4,7 +4,7 @@ on:
   workflow_dispatch: {}
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   probe:
@@ -23,8 +23,13 @@ jobs:
       - name: Probe Maya
         run: python maya/probe.py probe_out
         continue-on-error: true
-      - uses: actions/upload-artifact@v4
-        with:
-          name: maya-probe
-          path: probe_out
-          retention-days: 1
+      - name: Publish results to a throwaway branch
+        if: always()
+        run: |
+          BR="maya-out/probe-${{ github.run_id }}"
+          cd probe_out
+          git init -q -b "$BR"
+          git config user.name "maya-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -qm "probe ${{ github.run_id }}"
+          git push -q "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" "HEAD:refs/heads/$BR"
