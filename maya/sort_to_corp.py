@@ -20,6 +20,7 @@ def short(s, n=55):
     s = re.sub(r"\s*[-–]\s*", "-", s.strip())
     s = re.sub(r"[\s,]+", "-", s)
     s = re.sub(r"-{2,}", "-", s)
+    s = re.sub(r"\.{2,}", ".", s)
     return s[:n].strip("-.")
 
 def asof(title):
