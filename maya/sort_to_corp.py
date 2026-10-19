@@ -8,6 +8,8 @@ Naming follows the CORP convention: periodic reports are dated by period end (20
 everything else by publish date.
 """
 import csv, hashlib, pathlib, re, shutil, sys
+sys.path.insert(0, str(pathlib.Path(__file__).parent))
+from hash_existing import text_hash  # noqa: E402
 
 SUB = {"שנתי": "שנתי", "רבעוני": "רבעוני", "מיידי": "מיידי", "אחר": "אחר", "דירוג": "דירוג", "שווי": "שווי_והערכות"}
 QEND = {1: "03-31", 2: "06-30", 3: "09-30", 4: "12-31"}
@@ -50,11 +52,15 @@ def classify(row):
         return "אחר" if "נאמן" in title and "דו" in title else "מיידי", "אחר" if "נאמן" in title and "דו" in title else "מיידי", pub, short(title, 55)
     return "מיידי", "מיידי", pub, short(title, 55)
 
-def att_suffix(kind, ext, n_pdf, idx_pdf, fname):
+COVER_MAX = 100_000   # a Magna htm next to a PDF is just a cover page unless it is big (e.g. ת077/ת126 forms)
+
+def att_suffix(kind, ext, n_pdf, idx_pdf, fname, size=0):
     if ext == "xbrl":
         return ""
     if ext == "htm":
-        return "_שער-מגנא" if n_pdf else ""
+        if not n_pdf:
+            return ""
+        return "_שער-מגנא" if size < COVER_MAX else "_טופס"
     if ext == "txt":
         return "_טקסט"
     if ext == "pdf" and n_pdf > 1 and idx_pdf > 0:
@@ -84,19 +90,21 @@ def main():
             if sv.startswith(("FAILED", "TOO_BIG")):
                 man.append([r["report_id"], r["date"][:10], r["form"], r["title"], "", sv, r["maya_url"]]); continue
             p = src / sv; ext = p.suffix.lstrip(".").lower()
-            suf = att_suffix(kind, ext, n_pdf, i_pdf, fname)
+            suf = att_suffix(kind, ext, n_pdf, i_pdf, fname, p.stat().st_size)
             if ext == "pdf": i_pdf += 1
             name = f"{date}_{tag}_{desc}{suf}.{ext}"
             base = name; j = 2
             while (sub, name) in used:
                 name = base.replace(f".{ext}", f"_{j}.{ext}"); j += 1
-            h = hashlib.md5(p.read_bytes()).hexdigest()
-            if h in existing:
-                status = "כפול-קיים:" + existing[h]
-            elif h in seen_h:
-                status = "כפול-בריצה:" + seen_h[h]
+            raw = p.read_bytes(); h = hashlib.md5(raw).hexdigest()
+            th = "t:" + text_hash(raw) if ext in ("htm", "html") else None
+            if h in existing or (th and th in existing):
+                status = "כפול-קיים:" + existing.get(h, existing.get(th, ""))
+            elif h in seen_h or (th and th in seen_h):
+                status = "כפול-בריצה:" + seen_h.get(h, seen_h.get(th, ""))
             else:
                 used.add((sub, name)); seen_h[h] = name
+                if th: seen_h[th] = name
                 dst = stg / "דוחות" / SUB[sub] / name; dst.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(p, dst); status = f"דוחות\\{SUB[sub]}\\{name}"
             man.append([r["report_id"], r["date"][:10], r["form"], r["title"], kind, status, r["maya_url"]])
