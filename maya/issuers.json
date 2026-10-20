@@ -75,5 +75,13 @@
   "maya_id": 226,
   "corp_folder": "520024126_מבנה-נדלן",
   "maya_long_name": "מבנה נדל\"ן (כ.ד) בע\"מ"
+ },
+ {
+  "key": "melisron",
+  "name": "מליסרון",
+  "maya_name": "מליסרון בע\"מ",
+  "maya_id": 323,
+  "corp_folder": "520037789_מליסרון",
+  "maya_long_name": "מליסרון בע\"מ"
  }
 ]
