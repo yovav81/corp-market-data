@@ -17,6 +17,9 @@ on:
       all:
         description: "true = להוריד את כל הדיווחים, לא רק הרלוונטיים"
         default: "false"
+      ids:
+        description: "מספרי דיווח מופרדים בפסיק — להוריד רק אותם"
+        default: ""
 
 permissions:
   contents: write
@@ -45,10 +48,12 @@ jobs:
           FROM: ${{ inputs.from }}
           MODE: ${{ inputs.mode }}
           ALL: ${{ inputs.all }}
+          IDS: ${{ inputs.ids }}
         run: |
           ARGS=(--company "$COMPANY" --out maya_out --mode "$MODE")
           [ -n "$FROM" ] && ARGS+=(--from "$FROM")
           [ "$ALL" = "true" ] && ARGS+=(--all)
+          [ -n "$IDS" ] && ARGS+=(--ids "$IDS")
           python maya/fetch.py "${ARGS[@]}"
       - name: Publish to a throwaway branch
         if: always()

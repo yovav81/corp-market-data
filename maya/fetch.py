@@ -142,7 +142,9 @@ def main():
     ap.add_argument("--from", dest="frm", default="")
     ap.add_argument("--mode", default="download", choices=["download", "catalog"])
     ap.add_argument("--all", action="store_true", help="download every report, not only the relevant ones")
+    ap.add_argument("--ids", default="", help="comma-separated report ids: download only these")
     a = ap.parse_args()
+    ids = {int(x) for x in a.ids.split(",") if x.strip().isdigit()}
     today = dt.date.today()
     start = dt.date.fromisoformat(a.frm) if a.frm else today.replace(year=today.year - 3, day=1)
     out = pathlib.Path(a.out)
@@ -174,6 +176,8 @@ def main():
         for r in reps:
             keep, why = decide(r)
             keep = keep or a.all
+            if ids:
+                keep, why = r["id"] in ids, "ids"
             atts = [x for x in (r.get("attachments") or []) if x.get("url") and x.get("fileType") != "edit"]
             saved = []
             if keep and a.mode == "download":
