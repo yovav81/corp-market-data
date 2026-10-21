@@ -38,6 +38,18 @@ def classify(row):
         if q in QEND:
             return "רבעוני", "רבעוני", f"{y}-{QEND[q]}", f"Q{q}-{y}"
         return "רבעוני", "רבעוני", pub, short(title)
+    if form == "C001" and re.search(r"10-?K|10-?Q", title, re.I):   # dual-listed US filers (10-K / 10-Q)
+        if "תיקון" in title:
+            return "מיידי", "מיידי", pub, short(title, 55)
+        y = re.search(r"(20\d\d)", title); y = y.group(1) if y else pub[:4]
+        if re.search(r"10-?K", title, re.I):
+            return "שנתי", "שנתי", f"{y}-12-31", f"10-K-{y}"
+        q = re.search(r"רבעון\s*(\d)|לרבעון\s*(\d)", title)
+        q = int(q.group(1) or q.group(2)) if q else 0
+        m = re.search(r"(\d{1,2})\.(\d{1,2})\.(\d{2,4})", title)
+        if not q and m: q = {3: 1, 6: 2, 9: 3, 12: 4}.get(int(m.group(2)), 0); y = m.group(3) if len(m.group(3)) == 4 else "20" + m.group(3)
+        if q in QEND:
+            return "רבעוני", "רבעוני", f"{y}-{QEND[q]}", f"Q{q}-{y}-10Q"
     if form == "ת126":
         return "מיידי", "מיידי", pub, "מצבת-התחייבויות-" + (asof(title) or short(title, 30))
     if form == "ת077":
