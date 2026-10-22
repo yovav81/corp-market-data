@@ -24,7 +24,10 @@ def main():
     files = sorted(p for p in root.rglob("*") if p.is_file())
     if not files:
         print("nothing to deliver"); return 0
-    bad = [p for p in files if not (len(p.relative_to(root).parts) >= 4 and p.relative_to(root).parts[0] == "02_Issuers" and p.relative_to(root).parts[2] == "דוחות")]
+    def ok(rel):
+        pt = rel.parts
+        return len(pt) >= 3 and pt[0] == "02_Issuers" and ((len(pt) >= 4 and pt[2] == "דוחות") or pt[2:] == ("_log", "maya_manifest.csv"))
+    bad = [p for p in files if not ok(p.relative_to(root))]
     if bad:
         print(f"refusing: {len(bad)} files outside 02_Issuers/<issuer>/דוחות/ — e.g. {bad[0].relative_to(root)}", file=sys.stderr); return 2
     limit = a.max_mb * 1024 * 1024
