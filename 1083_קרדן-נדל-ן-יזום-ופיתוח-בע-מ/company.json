@@ -1,0 +1,405 @@
+{
+ "companyId": 1083,
+ "resolve": null,
+ "details": {
+  "companyId": 1083,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "קרדן נדל\"ן",
+  "longName": "קרדן נדל\"ן יזום ופיתוח בע\"מ",
+  "logo": null,
+  "corporateNo": "520041005",
+  "sector": "ריאלי",
+  "branch": "נדל\"ן ובנייה",
+  "subBranch": "בנייה",
+  "incorporationPlace": "ישראל",
+  "address": "אצל קרדן,דרך מנחם בגין154",
+  "city": "תל אביב",
+  "zipCode": "6492107",
+  "site": "www.kardan-nadlan.co.il",
+  "email": "ayelet@kardanre.co.il",
+  "phone": "03-6891200",
+  "fax": "03-6911661",
+  "marketValue": 908089,
+  "mainSecurityId": 1118447,
+  "companyActivites": "החברה עוסקת בתחום הבניה למגורים,נדל\"ן מניב וביצוע עבודות בניה",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-10-22",
+  "indices": [
+   "ת\"א SME60",
+   "ת\"א-90 ו-SME60",
+   "ת\"א נדל\"ן",
+   "ת\"א-בנייה",
+   "תל-דיב",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א-200",
+   "אריסטו",
+   "תא60רוח"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1118447,
+    "indexId": 147,
+    "name": "חברות במדד ת\"א SME60",
+    "shortName": "ת\"א SME60",
+    "weight": 0.46968,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.14597,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 149,
+    "name": "חברות במדד ת\"א נדל\"ן",
+    "shortName": "ת\"א נדל\"ן",
+    "weight": 0.12132,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 181,
+    "name": "חברות במדד ת\"א-בנייה",
+    "shortName": "ת\"א-בנייה",
+    "weight": 0.43388,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 166,
+    "name": "חברות במדד תל-דיב",
+    "shortName": "תל-דיב",
+    "weight": 0.95338,
+    "factor": 0.58534
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.12073,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 0.02849,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.11335,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.24688,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 0.91476,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 0.41999,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.11607,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.25281,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.10382,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.04766,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 0.33263,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 725,
+    "name": "תל בונד-שקלי 3-5",
+    "shortName": "תל בונד-שקלי 3-5",
+    "weight": 0.83792,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.57804,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.26539,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.25564,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.55679,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.1339,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.06148,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.02129,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.04638,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 0.03028,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 200,
+    "name": "תל דיב אריסטוקרט",
+    "shortName": "אריסטו",
+    "weight": 4.18471,
+    "factor": 0.27571
+   },
+   {
+    "securityId": 1118447,
+    "indexId": 203,
+    "name": "ת\"א SME60 חברות רווחיות משקל שווה",
+    "shortName": "תא60רוח",
+    "weight": 2.00871,
+    "factor": 0.3651
+   },
+   {
+    "securityId": 1217553,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.72022,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1172725,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.33067,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1118447,
+    "isin": "IL0011184475",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "קרנז",
+    "securityType": "מניה רגילה",
+    "securityName": "קרדן נדלן",
+    "issuedPaidUp": 187157625,
+    "tradableSecurities": 187157625.0,
+    "marketCap": 908.1,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1162353,
+    "isin": "IL0011623530",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "קרנז.ק4",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "קרדן נדלן אגח ד",
+    "issuedPaidUp": 38873250,
+    "tradableSecurities": 38873250.0,
+    "marketCap": 38.9,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1172725,
+    "isin": "IL0011727257",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "קרנז.ק5",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "קרדן נדלן אגח ה",
+    "issuedPaidUp": 179420663,
+    "tradableSecurities": 179420663.0,
+    "marketCap": 176.5,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1217553,
+    "isin": "IL0012175530",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "קרנד.ק6",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "קרדן נדלן אגח ו",
+    "issuedPaidUp": 376510000,
+    "tradableSecurities": 376510000.0,
+    "marketCap": 384.4,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1248665,
+    "isin": "IL0012486655",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "קרנד.ק7",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "קרדן נדלן אגח ז",
+    "issuedPaidUp": 171998000,
+    "tradableSecurities": 171998000.0,
+    "marketCap": 170.9,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1145556,
+    "isin": "IL0011455560",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "קרדז4/18",
+    "securityType": "אופציה עובדים",
+    "securityName": "קרדן נדלן 04/18",
+    "issuedPaidUp": 6454394,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
