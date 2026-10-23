@@ -1,27 +1,72 @@
 name: maya-cleanup
 
-# Deletes the throwaway maya-out/* result branches after Claude has collected them.
+# מוחק ענפי maya-out/* אחרי שהקבצים נאספו.
+# רץ אוטומטית כל יום ומוחק רק ענפים ישנים מ-age_days (ברירת מחדל 3),
+# כך שעבודה שוטפת על חברה לא נמחקת מתחת לידיים.
 on:
+  schedule:
+    - cron: "40 2 * * *"
   workflow_dispatch:
     inputs:
+      age_days:
+        description: "למחוק ענפים ישנים מ-N ימים (0 = למחוק הכל)"
+        default: "3"
       branches:
-        description: "ענפים למחיקה מופרדים ברווח (ריק = כל maya-out/*)"
+        description: "ענפים ספציפיים למחיקה מופרדים ברווח (גובר על age_days)"
+        default: ""
+      keep:
+        description: "ענפים לשמור תמיד, מופרדים ברווח"
         default: ""
 
 permissions:
   contents: write
 
+concurrency:
+  group: maya-cleanup
+  cancel-in-progress: false
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Delete maya-out branches
+      - name: Delete collected maya-out branches
         env:
           GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
           ONLY: ${{ inputs.branches }}
+          KEEP: ${{ inputs.keep }}
+          AGE: ${{ inputs.age_days }}
         run: |
-          LIST="$ONLY"
-          [ -z "$LIST" ] && LIST=$(gh api "repos/${{ github.repository }}/branches?per_page=100" --jq '.[].name' | grep '^maya-out/' || true)
+          set -u
+          AGE="${AGE:-3}"
+          [ -z "$AGE" ] && AGE=3
+          CUTOFF=$(date -u -d "$AGE days ago" +%s)
+          echo "cutoff: older than $AGE day(s)"
+
+          if [ -n "${ONLY:-}" ]; then
+            LIST="$ONLY"
+          else
+            LIST=$(gh api "repos/$REPO/branches?per_page=100" --paginate --jq '.[].name' \
+                   | grep '^maya-out/' || true)
+          fi
+          [ -z "$LIST" ] && { echo "nothing to do"; exit 0; }
+
+          deleted=0; kept=0
           for b in $LIST; do
-            gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$b" && echo "deleted $b"
+            case " ${KEEP:-} " in *" $b "*) echo "keep (pinned)   $b"; kept=$((kept+1)); continue;; esac
+            if [ -z "${ONLY:-}" ] && [ "$AGE" != "0" ]; then
+              d=$(gh api "repos/$REPO/commits/$b" --jq '.commit.committer.date' 2>/dev/null) || continue
+              ts=$(date -u -d "$d" +%s)
+              if [ "$ts" -gt "$CUTOFF" ]; then
+                echo "keep (recent)   $b  ($d)"; kept=$((kept+1)); continue
+              fi
+            fi
+            if gh api -X DELETE "repos/$REPO/git/refs/heads/$b" >/dev/null 2>&1; then
+              echo "deleted         $b"; deleted=$((deleted+1))
+            else
+              echo "::warning::failed to delete $b"
+            fi
           done
+          echo "---"
+          echo "deleted: $deleted   kept: $kept"
