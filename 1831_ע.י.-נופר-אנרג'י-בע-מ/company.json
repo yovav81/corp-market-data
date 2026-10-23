@@ -1,0 +1,581 @@
+{
+ "companyId": 1831,
+ "resolve": null,
+ "details": {
+  "companyId": 1831,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "נופר אנרג'י",
+  "longName": "ע.י. נופר אנרג'י בע\"מ",
+  "logo": null,
+  "corporateNo": "514599943",
+  "sector": "הייטק",
+  "branch": "טכנולוגיה",
+  "subBranch": "אנרגיה מתחדשת",
+  "incorporationPlace": "ישראל",
+  "address": "הטחנה 1",
+  "city": "כפר סבא",
+  "zipCode": "4453001",
+  "site": "www.nofar-energy.com",
+  "email": "ofer@nofar-energy.co.il",
+  "phone": "09-3750003",
+  "fax": "08-3750061",
+  "marketValue": 5726927,
+  "mainSecurityId": 1170877,
+  "companyActivites": "החברה עוסקת בייזום,הקמה והפעלה של מערכות לייצור חשמל מאנרגיה סולארית.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-10-22",
+  "indices": [
+   "ת\"א 90",
+   "ת\"א 125",
+   "ת\"א-90 ו-SME60",
+   "ת\"א תעשייה",
+   "ת\"א סקטור-באלאנס",
+   "ת\"א טק-עלית",
+   "גלובל-בלוטק",
+   "ת\"א-טכנולוגיה",
+   "ת\"א-תשתיות אנרגיה",
+   "ת\"א-קלינטק",
+   "ת\"א 125-אקלים נקי",
+   "ת\"א-EW125",
+   "ת\"א 90 ובנקים",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א תשתיות",
+   "טק35",
+   "ת\"א-אנרגיה ישראל",
+   "ת\"א אנרגיה מתחדשת",
+   "ת\"א-200"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1170877,
+    "indexId": 143,
+    "name": "חברות במדד ת\"א 90",
+    "shortName": "ת\"א 90",
+    "weight": 1.38371,
+    "factor": 0.68639
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 137,
+    "name": "חברות במדד ת\"א 125",
+    "shortName": "ת\"א 125",
+    "weight": 0.37604,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.56716,
+    "factor": 0.09532
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 178,
+    "name": "חברות במדד ת\"א תעשייה",
+    "shortName": "ת\"א תעשייה",
+    "weight": 2.35417,
+    "factor": 0.27897
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 177,
+    "name": "ת\"א סקטור-באלאנס",
+    "shortName": "ת\"א סקטור-באלאנס",
+    "weight": 0.77301,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 173,
+    "name": "חברות במדד ת\"א טק-עלית",
+    "shortName": "ת\"א טק-עלית",
+    "weight": 3.95868,
+    "factor": 0.93577
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 145,
+    "name": "חברות במדד גלובל-בלוטק",
+    "shortName": "גלובל-בלוטק",
+    "weight": 1.52898,
+    "factor": 0.06481
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 169,
+    "name": "חברות במדד ת\"א-טכנולוגיה",
+    "shortName": "ת\"א-טכנולוגיה",
+    "weight": 1.84805,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 180,
+    "name": "חברות במדד ת\"א תשתיות אנרגיה",
+    "shortName": "ת\"א-תשתיות אנרגיה",
+    "weight": 4.65015,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 184,
+    "name": "חברות במדד ת\"א-קלינטק",
+    "shortName": "ת\"א-קלינטק",
+    "weight": 8.35674,
+    "factor": 0.1334
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 185,
+    "name": "ת\"א-125 אקלים ללא דלקים פוסיליים \r\n",
+    "shortName": "ת\"א 125-אקלים נקי",
+    "weight": 0.47987,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 189,
+    "name": "ת\"א-EW125",
+    "shortName": "ת\"א-EW125",
+    "weight": 0.54595,
+    "factor": 0.05955
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 196,
+    "name": "חברות במדד ת\"א 90 ובנקים",
+    "shortName": "ת\"א 90 ובנקים",
+    "weight": 1.15627,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.3564,
+    "factor": 0.07242
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 0.69253,
+    "factor": 0.59644
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.47691,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.72633,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 1.14482,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 1.74356,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 2.69125,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 1.76707,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.74377,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.48836,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.20055,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.30543,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 1.39951,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 726,
+    "name": "תל בונד-שקלי 5-15",
+    "shortName": "תל בונד-שקלי 5-15",
+    "weight": 2.36169,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 1.70061,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 1.11662,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 748,
+    "name": "תל בונד שקלי 5-10",
+    "shortName": "תל בונד שקלי 5-10",
+    "weight": 2.52436,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 1.08383,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 0.71165,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.07557,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.6381,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.39395,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.25867,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.08959,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.13644,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 206,
+    "name": "ת\"א תשתיות",
+    "shortName": "ת\"א תשתיות",
+    "weight": 2.48542,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 209,
+    "name": "ת\"א טכנולוגיה 35",
+    "shortName": "טק35",
+    "weight": 3.38059,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 210,
+    "name": "ת\"א-אנרגיה ישראל",
+    "shortName": "ת\"א-אנרגיה ישראל",
+    "weight": 5.08596,
+    "factor": 0.90985
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 213,
+    "name": "ת\"א אנרגיה מתחדשת",
+    "shortName": "ת\"א אנרגיה מתחדשת",
+    "weight": 8.6338,
+    "factor": 0.05876
+   },
+   {
+    "securityId": 1170877,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 0.68777,
+    "factor": 0.55715
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 765,
+    "name": "תל בונד שקלי 60",
+    "shortName": "תל בונד שקלי 60",
+    "weight": 1.96631,
+    "factor": 0.74932
+   },
+   {
+    "securityId": 1211416,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.91416,
+    "factor": 0.43143
+   },
+   {
+    "securityId": 1198043,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.60024,
+    "factor": 0.43143
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1170877,
+    "isin": "IL0011708778",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "נופר",
+    "securityType": "מניה רגילה",
+    "securityName": "נופר אנרג'י",
+    "issuedPaidUp": 39715167,
+    "tradableSecurities": 39715167.0,
+    "marketCap": 5726.9,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1198035,
+    "isin": "IL0011980351",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.ה2",
+    "securityType": "אג\"ח להמרה",
+    "securityName": "נופר אנרג  אג ב",
+    "issuedPaidUp": 8728245,
+    "tradableSecurities": 8728245.0,
+    "marketCap": 11.6,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1198043,
+    "isin": "IL0011980435",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.ק3",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "נופר אנרג אגח ג",
+    "issuedPaidUp": 718522850,
+    "tradableSecurities": 718522850.0,
+    "marketCap": 742.5,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1211416,
+    "isin": "IL0012114166",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.ק4",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "נופר אנרג אגח ד",
+    "issuedPaidUp": 1105973667,
+    "tradableSecurities": 1105973667.0,
+    "marketCap": 1130.9,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1247337,
+    "isin": "IL0012473372",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.ק6",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "נופר אנרג אגח ו",
+    "issuedPaidUp": 852479000,
+    "tradableSecurities": 852479000.0,
+    "marketCap": 824.8,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1190255,
+    "isin": "IL0011902553",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.עבד",
+    "securityType": "אופציה עובדים",
+    "securityName": "נופר  אפ עובדים",
+    "issuedPaidUp": 1171691,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1232891,
+    "isin": "IL0012328915",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.חסמ",
+    "securityType": "אופציה לאחרים",
+    "securityName": "נופר  RSU אחרים",
+    "issuedPaidUp": 1777191,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1247766,
+    "isin": "IL0012477662",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "נופר.אחר",
+    "securityType": "אופציה לאחרים",
+    "securityName": "נופר   אפ אחרים",
+    "issuedPaidUp": 5180,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
