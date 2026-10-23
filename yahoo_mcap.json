@@ -1,0 +1,106 @@
+{
+ "TDRN.TA": {
+  "last": [
+   [
+    "2026-10-16",
+    19980.0
+   ],
+   [
+    "2026-10-19",
+    19860.0
+   ],
+   [
+    "2026-10-20",
+    20170.0
+   ],
+   [
+    "2026-10-21",
+    20100.0
+   ],
+   [
+    "2026-10-23",
+    19690.0
+   ]
+  ],
+  "fast": {
+   "currency": "ILA",
+   "shares": 8586001,
+   "mcap": 169058359690.0,
+   "last_price": 19690.0
+  },
+  "info": {
+   "longName": "Tadiran Group Ltd",
+   "shortName": "TADIRAN GROUP LTD",
+   "marketCap": 1690583552,
+   "sharesOutstanding": 8586001,
+   "currency": "ILA",
+   "regularMarketPrice": 19690.0,
+   "previousClose": 19800.0
+  }
+ },
+ "TIDR.TA": {
+  "last": null,
+  "fast_err": "'currency'",
+  "info": {
+   "longName": null,
+   "shortName": null,
+   "marketCap": null,
+   "sharesOutstanding": null,
+   "currency": null,
+   "regularMarketPrice": null,
+   "previousClose": null
+  }
+ },
+ "TDHR.TA": {
+  "last": [
+   [
+    "2026-10-16",
+    15700.0
+   ],
+   [
+    "2026-10-19",
+    15670.0
+   ],
+   [
+    "2026-10-20",
+    15790.0
+   ],
+   [
+    "2026-10-21",
+    16990.0
+   ],
+   [
+    "2026-10-23",
+    17010.0
+   ]
+  ],
+  "fast": {
+   "currency": "ILA",
+   "shares": 50668429,
+   "mcap": 861869977290.0,
+   "last_price": 17010.0
+  },
+  "info": {
+   "longName": "Tidhar Group Ltd.",
+   "shortName": "TIDHAR GROUP LTD",
+   "marketCap": 8618699776,
+   "sharesOutstanding": 50668429,
+   "currency": "ILA",
+   "regularMarketPrice": 17010.0,
+   "previousClose": 16940.0
+  }
+ },
+ "TDR.TA": {
+  "last": null,
+  "fast_err": "'currency'",
+  "info": {
+   "longName": null,
+   "shortName": null,
+   "marketCap": null,
+   "sharesOutstanding": null,
+   "currency": null,
+   "regularMarketPrice": null,
+   "previousClose": null
+  }
+ }
+}
