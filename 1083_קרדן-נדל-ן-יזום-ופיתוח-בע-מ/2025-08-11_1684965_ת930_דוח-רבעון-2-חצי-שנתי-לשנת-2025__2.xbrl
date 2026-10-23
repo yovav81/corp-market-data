@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xbrl xsi:schemaLocation="http://xbrl.org/2006/xbrldi http://www.xbrl.org/2006/xbrldi-2006.xsd" xmlns="http://www.xbrl.org/2003/instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xbrldi="http://xbrl.org/2006/xbrldi" xmlns:link="http://www.xbrl.org/2003/linkbase" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:iso4217="http://www.xbrl.org/2003/iso4217" xmlns:ifrs-full="http://xbrl.ifrs.org/taxonomy/2015-03-11/ifrs-full" xmlns:ifrs-il="http://xbrl.isa.gov.il/taxonomy/2017-07-15/ifrs-il">
+  <link:schemaRef xlink:href="http://www.isa.gov.il/xbrl/taxonomy/2017-07-15/ifrs-il_entry_point_2017-07-15.xsd" xlink:type="simple" />
+  <context id="Current_AsOf">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-06-30</instant>
+    </period>
+  </context>
+  <context id="Current_ForPeriod">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <startDate>2025-04-01</startDate>
+      <endDate>2025-06-30</endDate>
+    </period>
+  </context>
+  <context id="AsOf_FilingDate">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+  </context>
+  <context id="AsOf_FilingDate_SAC_1">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:InformationOnSignificantAssociatedCompaniesWhoseFinancialStatementsareAttachedAxis">
+        <ifrs-il:SignificantAssociatedCompaniesLineID>1</ifrs-il:SignificantAssociatedCompaniesLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_FilingDate_GC_1">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:InformationOnGuaranteedCompaniesWhoseFinancialStatementsAreAttachedAxis">
+        <ifrs-il:GuaranteedCompaniesLineID>1</ifrs-il:GuaranteedCompaniesLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_PR_SignDate_1">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:PeriodicReportSignatoryInformationAxis">
+        <ifrs-il:PeriodicReportSignatoryInformationLineID>1</ifrs-il:PeriodicReportSignatoryInformationLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_FR_SignDate_1">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:FinancialStatementsSignatoryInformationAxis">
+        <ifrs-il:FinancialStatementsSignatoryInformationLineID>1</ifrs-il:FinancialStatementsSignatoryInformationLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_FR_SignDate_2">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:FinancialStatementsSignatoryInformationAxis">
+        <ifrs-il:FinancialStatementsSignatoryInformationLineID>2</ifrs-il:FinancialStatementsSignatoryInformationLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_FR_SignDate_3">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:FinancialStatementsSignatoryInformationAxis">
+        <ifrs-il:FinancialStatementsSignatoryInformationLineID>3</ifrs-il:FinancialStatementsSignatoryInformationLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_MR_SignDate_1">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:ManagementReportSignatoryInformationAxis">
+        <ifrs-il:ManagementReportSignatoryInformationLineID>1</ifrs-il:ManagementReportSignatoryInformationLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_MR_SignDate_2">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+    <scenario>
+      <xbrldi:typedMember dimension="ifrs-il:ManagementReportSignatoryInformationAxis">
+        <ifrs-il:ManagementReportSignatoryInformationLineID>2</ifrs-il:ManagementReportSignatoryInformationLineID>
+      </xbrldi:typedMember>
+    </scenario>
+  </context>
+  <context id="AsOf_Auditor_SignDate">
+    <entity>
+      <identifier scheme="http://www.isa.gov.il">520041005</identifier>
+    </entity>
+    <period>
+      <instant>2025-08-11</instant>
+    </period>
+  </context>
+  <unit id="U-Monetary">
+    <measure>iso4217:ILS</measure>
+  </unit>
+  <unit id="U-PerShare">
+    <divide>
+      <unitNumerator>
+        <measure>iso4217:ILS</measure>
+      </unitNumerator>
+      <unitDenominator>
+        <measure>shares</measure>
+      </unitDenominator>
+    </divide>
+  </unit>
+  <ifrs-full:NoncurrentAssets contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">1115280000</ifrs-full:NoncurrentAssets>
+  <ifrs-full:CurrentAssets contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">876289000</ifrs-full:CurrentAssets>
+  <ifrs-full:Assets contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">1991569000</ifrs-full:Assets>
+  <ifrs-full:EquityAttributableToOwnersOfParent contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">733313000</ifrs-full:EquityAttributableToOwnersOfParent>
+  <ifrs-full:NoncontrollingInterests contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">3121000</ifrs-full:NoncontrollingInterests>
+  <ifrs-full:Equity contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">736434000</ifrs-full:Equity>
+  <ifrs-full:NoncurrentLiabilities contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">750425000</ifrs-full:NoncurrentLiabilities>
+  <ifrs-full:CurrentLiabilities contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">504710000</ifrs-full:CurrentLiabilities>
+  <ifrs-full:Liabilities contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">1255135000</ifrs-full:Liabilities>
+  <ifrs-full:EquityAndLiabilities contextRef="Current_AsOf" unitRef="U-Monetary" decimals="-3">1991569000</ifrs-full:EquityAndLiabilities>
+  <ifrs-full:Revenue contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">117849000</ifrs-full:Revenue>
+  <ifrs-full:GrossProfit contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">21338000</ifrs-full:GrossProfit>
+  <ifrs-full:ProfitLossFromOperatingActivities contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">6988000</ifrs-full:ProfitLossFromOperatingActivities>
+  <ifrs-full:ProfitLossBeforeTax contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">2843000</ifrs-full:ProfitLossBeforeTax>
+  <ifrs-full:ProfitLoss contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">2782000</ifrs-full:ProfitLoss>
+  <ifrs-full:ProfitLossAttributableToOwnersOfParent contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">2782000</ifrs-full:ProfitLossAttributableToOwnersOfParent>
+  <ifrs-full:ProfitLossAttributableToNoncontrollingInterests contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">0</ifrs-full:ProfitLossAttributableToNoncontrollingInterests>
+  <ifrs-full:BasicEarningsLossPerShare contextRef="Current_ForPeriod" unitRef="U-PerShare" decimals="INF">0.01</ifrs-full:BasicEarningsLossPerShare>
+  <ifrs-full:DilutedEarningsLossPerShare contextRef="Current_ForPeriod" unitRef="U-PerShare" decimals="INF">0.01</ifrs-full:DilutedEarningsLossPerShare>
+  <ifrs-full:ComprehensiveIncome contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">2358000</ifrs-full:ComprehensiveIncome>
+  <ifrs-full:ComprehensiveIncomeAttributableToOwnersOfParent contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">2358000</ifrs-full:ComprehensiveIncomeAttributableToOwnersOfParent>
+  <ifrs-full:ComprehensiveIncomeAttributableToNoncontrollingInterests contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">0</ifrs-full:ComprehensiveIncomeAttributableToNoncontrollingInterests>
+  <ifrs-full:CashFlowsFromUsedInOperatingActivities contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">-10486000</ifrs-full:CashFlowsFromUsedInOperatingActivities>
+  <ifrs-full:CashFlowsFromUsedInInvestingActivities contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">40387000</ifrs-full:CashFlowsFromUsedInInvestingActivities>
+  <ifrs-full:CashFlowsFromUsedInFinancingActivities contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">-29436000</ifrs-full:CashFlowsFromUsedInFinancingActivities>
+  <ifrs-full:EffectOfExchangeRateChangesOnCashAndCashEquivalents contextRef="Current_ForPeriod" unitRef="U-Monetary" decimals="-3">-2510000</ifrs-full:EffectOfExchangeRateChangesOnCashAndCashEquivalents>
+  <ifrs-il:FormShortName contextRef="Current_ForPeriod">ת930</ifrs-il:FormShortName>
+  <ifrs-il:ReportSubjectMatter contextRef="Current_ForPeriod">דוח על המצב הכספי </ifrs-il:ReportSubjectMatter>
+  <ifrs-il:ReportReferenceNumber contextRef="Current_ForPeriod">2025-01-059540</ifrs-il:ReportReferenceNumber>
+  <ifrs-il:ReportReceiptTime contextRef="Current_ForPeriod">2025-08-11T21:31:00+02:00</ifrs-il:ReportReceiptTime>
+  <ifrs-il:ReportDistributionTime contextRef="Current_ForPeriod">2025-08-11T21:35:00+02:00</ifrs-il:ReportDistributionTime>
+  <ifrs-il:ReportFiledWithIsraelSecuritiesAuthority contextRef="Current_ForPeriod">true</ifrs-il:ReportFiledWithIsraelSecuritiesAuthority>
+  <ifrs-il:ReportFiledWithTelAvivStockExchange contextRef="Current_ForPeriod">true</ifrs-il:ReportFiledWithTelAvivStockExchange>
+  <ifrs-il:FreeText contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RelatedReport1ReferenceNumber contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RelatedReport2ReferenceNumber contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RelatedReport3ReferenceNumber contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:EnglishNameOfReportingEntity contextRef="AsOf_FilingDate">KARDAN REAL ESTATE ENTERPRISE AND DEVELOPMENT LTD</ifrs-il:EnglishNameOfReportingEntity>
+  <ifrs-il:HebrewNameOfReportingEntity contextRef="AsOf_FilingDate">קרדן נדל"ן יזום ופיתוח בע"מ</ifrs-il:HebrewNameOfReportingEntity>
+  <ifrs-il:CorporateRegistrationNumberOfReportingEntity contextRef="Current_ForPeriod">520041005</ifrs-il:CorporateRegistrationNumberOfReportingEntity>
+  <ifrs-il:ReportingEntitySecuritiesTradedOnTelAvivStockExchange contextRef="AsOf_FilingDate">true</ifrs-il:ReportingEntitySecuritiesTradedOnTelAvivStockExchange>
+  <ifrs-il:ShortNameAtTelAvivStockExchangeOfReportingEntity contextRef="AsOf_FilingDate">קרדן נדל"ן</ifrs-il:ShortNameAtTelAvivStockExchangeOfReportingEntity>
+  <ifrs-il:MainTelephoneNumberOfReportingEntity contextRef="AsOf_FilingDate">03-6891200</ifrs-il:MainTelephoneNumberOfReportingEntity>
+  <ifrs-il:AdditionalTelephoneNumberOfReportingEntity contextRef="AsOf_FilingDate" xsi:nil="true" />
+  <ifrs-il:MainFaxNumberOfReportingEntity contextRef="AsOf_FilingDate">03-6911661</ifrs-il:MainFaxNumberOfReportingEntity>
+  <ifrs-il:StreetNameOfReportingEntity contextRef="AsOf_FilingDate">דרך מנחם בגין</ifrs-il:StreetNameOfReportingEntity>
+  <ifrs-il:StreetNumberOfReportingEntity contextRef="AsOf_FilingDate">154</ifrs-il:StreetNumberOfReportingEntity>
+  <ifrs-il:CityOfReportingEntity contextRef="AsOf_FilingDate">תל אביב</ifrs-il:CityOfReportingEntity>
+  <ifrs-il:ZipCodeOfReportingEntity contextRef="AsOf_FilingDate">64921</ifrs-il:ZipCodeOfReportingEntity>
+  <ifrs-il:EmailAddressOfReportingEntity contextRef="AsOf_FilingDate">ayelet@kardanre.co.il</ifrs-il:EmailAddressOfReportingEntity>
+  <ifrs-il:WebsiteOfReportingEntity contextRef="AsOf_FilingDate">kardan-nadlan.co.il</ifrs-il:WebsiteOfReportingEntity>
+  <ifrs-il:PreviousHebrewNamesOfReportingEntity contextRef="AsOf_FilingDate" xsi:nil="true" />
+  <ifrs-il:DateSupplementaryReportSent contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:SupplementaryReportReferenceNumber contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:SupplementaryReportMainInformation contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:DateAmendedReportSent contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:AmendedReportReferenceNumber contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:IncorrectItemsInOriginalReport contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:CauseOfError contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:MainAmendmentsToOriginalReport contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:NatureOfRestatement contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:OriginalReportReferenceNumber contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RestatementBeginningOnDate contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RestatementEndingOnDate contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RestatementForYears contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:RestatementForDays contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:NameOfElectronicSignatory contextRef="AsOf_FilingDate">ורונר שיר</ifrs-il:NameOfElectronicSignatory>
+  <ifrs-il:PositionOfElectronicSignatoryInReportingEntity contextRef="AsOf_FilingDate">יועץ משפטי</ifrs-il:PositionOfElectronicSignatoryInReportingEntity>
+  <ifrs-il:TelephoneNumberOfElectronicSignatory contextRef="AsOf_FilingDate">054-7644411</ifrs-il:TelephoneNumberOfElectronicSignatory>
+  <ifrs-il:FaxNumberOfElectronicSignatory contextRef="AsOf_FilingDate" xsi:nil="true" />
+  <ifrs-il:EmailAddressOfElectronicSignatory contextRef="AsOf_FilingDate">shir@kardanre.co.il</ifrs-il:EmailAddressOfElectronicSignatory>
+  <ifrs-il:CompanyOfElectronicSignatoryIfDifferentFromReportingEntity contextRef="AsOf_FilingDate">קרדן נדל"ן יזום ופיתוח בע"מ</ifrs-il:CompanyOfElectronicSignatoryIfDifferentFromReportingEntity>
+  <ifrs-il:StreetNameOfElectronicSignatory contextRef="AsOf_FilingDate">דרך מנחם בגין</ifrs-il:StreetNameOfElectronicSignatory>
+  <ifrs-il:StreetNumberOfElectronicSignatory contextRef="AsOf_FilingDate">154</ifrs-il:StreetNumberOfElectronicSignatory>
+  <ifrs-il:CityOfElectronicSignatory contextRef="AsOf_FilingDate">תל אביב-יפו</ifrs-il:CityOfElectronicSignatory>
+  <ifrs-il:ZipCodeOfElectronicSignatory contextRef="AsOf_FilingDate">6492107</ifrs-il:ZipCodeOfElectronicSignatory>
+  <ifrs-il:PeriodicReportForYear contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:PeriodicReportSignatureDate contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:ShareholdersMeetingDateIfConvenedToPresentFinancialStatements contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:NameOfPeriodicReportSignatory contextRef="AsOf_PR_SignDate_1" xsi:nil="true" />
+  <ifrs-il:PositionOfPeriodicReportSignatory contextRef="AsOf_PR_SignDate_1" xsi:nil="true" />
+  <ifrs-il:PeriodicFinancialStatementsForYear contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:InterimFinancialStatementsForPeriod contextRef="Current_ForPeriod">2025-04-01 - 2025-06-30</ifrs-il:InterimFinancialStatementsForPeriod>
+  <ifrs-il:InterimFinancialStatementsForPeriodEndingOn contextRef="Current_ForPeriod">2025-06-30</ifrs-il:InterimFinancialStatementsForPeriodEndingOn>
+  <ifrs-il:FinancialStatementsSigningDate contextRef="Current_ForPeriod">2025-08-11</ifrs-il:FinancialStatementsSigningDate>
+  <ifrs-il:AttachedAuditorOpinionOrAuditorReview contextRef="Current_ForPeriod">דוח סקירת רואה החשבון המבקר</ifrs-il:AttachedAuditorOpinionOrAuditorReview>
+  <ifrs-il:ReviewOrOpinionSigningDateByAuditor contextRef="Current_ForPeriod">2025-08-11</ifrs-il:ReviewOrOpinionSigningDateByAuditor>
+  <ifrs-il:NameOfAuditingFirm contextRef="AsOf_Auditor_SignDate">קוסט, פורר, גבאי את קסירר, רואי חשבון</ifrs-il:NameOfAuditingFirm>
+  <ifrs-il:UnqualifiedOpinion contextRef="Current_ForPeriod" xsi:nil="true" />
+  <ifrs-il:UnqualifiedReview contextRef="Current_ForPeriod">true</ifrs-il:UnqualifiedReview>
+  <ifrs-il:DateOfAuthorizationOfFinancialStatements contextRef="Current_ForPeriod">2025-08-11</ifrs-il:DateOfAuthorizationOfFinancialStatements>
+  <ifrs-il:NameOfFinancialStatementsSignatory contextRef="AsOf_FR_SignDate_1">איילת שקד</ifrs-il:NameOfFinancialStatementsSignatory>
+  <ifrs-il:PositionOfFinancialStatementsSignatory contextRef="AsOf_FR_SignDate_1">יו"ר דירקטוריון</ifrs-il:PositionOfFinancialStatementsSignatory>
+  <ifrs-il:NameOfFinancialStatementsSignatory contextRef="AsOf_FR_SignDate_2">עמוס דאבוש</ifrs-il:NameOfFinancialStatementsSignatory>
+  <ifrs-il:PositionOfFinancialStatementsSignatory contextRef="AsOf_FR_SignDate_2">מנכ"ל</ifrs-il:PositionOfFinancialStatementsSignatory>
+  <ifrs-il:NameOfFinancialStatementsSignatory contextRef="AsOf_FR_SignDate_3">איילת נעים לבנון</ifrs-il:NameOfFinancialStatementsSignatory>
+  <ifrs-il:PositionOfFinancialStatementsSignatory contextRef="AsOf_FR_SignDate_3">משנה למנכ"ל</ifrs-il:PositionOfFinancialStatementsSignatory>
+  <ifrs-il:NameOfSignificantAssociatedCompany contextRef="AsOf_FilingDate_SAC_1" xsi:nil="true" />
+  <ifrs-il:NameOfGuaranteedCompany contextRef="AsOf_FilingDate_GC_1" xsi:nil="true" />
+  <ifrs-il:ManagementReportSignatureDate contextRef="Current_ForPeriod">2025-08-11</ifrs-il:ManagementReportSignatureDate>
+  <ifrs-il:NameOfManagementReportSignatory contextRef="AsOf_MR_SignDate_1">איילת שקד</ifrs-il:NameOfManagementReportSignatory>
+  <ifrs-il:PositionOfManagementReportSignatory contextRef="AsOf_MR_SignDate_1">יו"ר דירקטוריון</ifrs-il:PositionOfManagementReportSignatory>
+  <ifrs-il:NameOfManagementReportSignatory contextRef="AsOf_MR_SignDate_2">עמוס דאבוש</ifrs-il:NameOfManagementReportSignatory>
+  <ifrs-il:PositionOfManagementReportSignatory contextRef="AsOf_MR_SignDate_2">מנכ"ל</ifrs-il:PositionOfManagementReportSignatory>
+</xbrl>
