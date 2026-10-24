@@ -6,7 +6,7 @@ B = "https://maya.tase.co.il"
 S = requests.Session()
 S.headers.update({"User-Agent": UA, "Accept": "application/json", "Referer": B + "/he/companies", "Origin": B})
 res = {}
-for q in ["אנרג'יקס", "אנרגיקס", "אנרג'יקס אנרגיות מתחדשות"]:
+for q in ["אקרו", "אקרו קבוצה", "אקרו נדלן"]:
     try:
         r = S.get(B + "/api/v1/companies/autocomplete", params={"search": q, "take": 10}, timeout=60)
         res[q] = dict(status=r.status_code, body=r.text[:4000])
