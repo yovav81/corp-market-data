@@ -1,0 +1,431 @@
+{
+ "companyId": 578,
+ "resolve": null,
+ "details": {
+  "companyId": 578,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "אפקון החזקות",
+  "longName": "אפקון החזקות בע\"מ",
+  "logo": null,
+  "corporateNo": "520033473",
+  "sector": "ריאלי",
+  "branch": "השקעה ואחזקות",
+  "subBranch": "השקעה ואחזקות",
+  "incorporationPlace": "ישראל",
+  "address": "סמטת התבור 4",
+  "city": "פתח-תקוה",
+  "zipCode": "49691",
+  "site": "www.afcon.co.il",
+  "email": "gilb@afcon.co.il",
+  "phone": "073-2001333",
+  "fax": "03-9216491",
+  "marketValue": 3363066,
+  "mainSecurityId": 578013,
+  "companyActivites": "החברה עוסקת בביצוע פרויקטי תשתית,מערכות אלקטרומכניות,תקשורת, בקרה ואוטומציה.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-10-23",
+  "indices": [
+   "ת\"א SME60",
+   "ת\"א-90 ו-SME60",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א תשתיות",
+   "ת\"א-200"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 578013,
+    "indexId": 147,
+    "name": "חברות במדד ת\"א SME60",
+    "shortName": "ת\"א SME60",
+    "weight": 3.25274,
+    "factor": 0.80097
+   },
+   {
+    "securityId": 578013,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.81963,
+    "factor": 0.6494
+   },
+   {
+    "securityId": 578013,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.51501,
+    "factor": 0.49335
+   },
+   {
+    "securityId": 578013,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 0.24629,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.10368,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 714,
+    "name": "מדד תל בונד תשואות",
+    "shortName": "תל בונד-תשואות",
+    "weight": 0.72188,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 0.38416,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 712,
+    "name": "מדד תל בונד צמודות-יתר",
+    "shortName": "תל בונד צמודות-יתר",
+    "weight": 0.19748,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.10617,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 0.07835,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.05941,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.0436,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 721,
+    "name": "תל בונד-צמודות 0-3",
+    "shortName": "תל בונד-צמוד 0-3",
+    "weight": 0.24131,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 725,
+    "name": "תל בונד-שקלי 3-5",
+    "shortName": "תל בונד-שקלי 3-5",
+    "weight": 0.35189,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 735,
+    "name": "תל בונד-צמודות A",
+    "shortName": "בונד צמוד A",
+    "weight": 0.52217,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.24275,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 745,
+    "name": "תל בונד תשואות–פיזור רחב",
+    "shortName": "תל בונד תשואות–פיזור רחב",
+    "weight": 1.39354,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.23383,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.05623,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.05304,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.02654,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.01948,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 758,
+    "name": "חיסכון צמודות דירוג כפול",
+    "shortName": "חיסכון צמודות דירוג כפול",
+    "weight": 0.15456,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 759,
+    "name": "חיסכון לא צמודות דירוג כפול",
+    "shortName": "חיסכון לא צמודות דירוג כפול",
+    "weight": 0.20416,
+    "factor": 1.0
+   },
+   {
+    "securityId": 578013,
+    "indexId": 206,
+    "name": "ת\"א תשתיות",
+    "shortName": "ת\"א תשתיות",
+    "weight": 0.52721,
+    "factor": 1.0
+   },
+   {
+    "securityId": 578013,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 0.26185,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 762,
+    "name": "מדד תל-בונד בולט 2029 ישראל",
+    "shortName": "תל-בונד בולט 2029 ישראל",
+    "weight": 0.7112,
+    "factor": 1.0
+   },
+   {
+    "securityId": 5780168,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.41216,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1225838,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.30246,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 578013,
+    "isin": "IL0005780130",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפהח",
+    "securityType": "מניה רגילה",
+    "securityName": "אפקון החזקות",
+    "issuedPaidUp": 6154368,
+    "tradableSecurities": 6065559.0,
+    "marketCap": 3358.5,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1225846,
+    "isin": "IL0012258468",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפהח.א1",
+    "securityType": "אופציה למניה",
+    "securityName": "אפקון החז  אפ 1",
+    "issuedPaidUp": 14076,
+    "tradableSecurities": 14076.0,
+    "marketCap": 4.6,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 5780168,
+    "isin": "IL0057801685",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפהח.ק4",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אפקון החז אגח ד",
+    "issuedPaidUp": 181611110,
+    "tradableSecurities": 181611110.0,
+    "marketCap": 219.9,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1225838,
+    "isin": "IL0012258385",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפהח.ק5",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אפקון החז אגח ה",
+    "issuedPaidUp": 160000000,
+    "tradableSecurities": 160000000.0,
+    "marketCap": 162.1,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 5780069,
+    "isin": null,
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפהח.רד",
+    "securityType": "מניה רדומה",
+    "securityName": "אפקון החז רדומו",
+    "issuedPaidUp": 88809,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1193150,
+    "isin": "IL0011931503",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפק.עובד",
+    "securityType": "אופציה עובדים",
+    "securityName": "אפקון אפ עובדים",
+    "issuedPaidUp": 260412,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1206390,
+    "isin": "IL0012063900",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפק.אחר",
+    "securityType": "אופציה לאחרים",
+    "securityName": "אפקון  אפ אחרים",
+    "issuedPaidUp": 8704,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1243971,
+    "isin": "IL0012439712",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אפק.אח2",
+    "securityType": "אופציה לאחרים",
+    "securityName": "אפקון  אפ אחר 2",
+    "issuedPaidUp": 117000,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
