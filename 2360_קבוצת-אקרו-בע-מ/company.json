@@ -1,0 +1,400 @@
+{
+ "companyId": 2360,
+ "resolve": null,
+ "details": {
+  "companyId": 2360,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "אקרו קבוצה",
+  "longName": "קבוצת אקרו בע\"מ",
+  "logo": null,
+  "corporateNo": "511996803",
+  "sector": "ריאלי",
+  "branch": "נדל\"ן ובנייה",
+  "subBranch": "בנייה",
+  "incorporationPlace": "ישראל",
+  "address": "המנופים 2",
+  "city": "הרצליה",
+  "zipCode": "4672553",
+  "site": "www.acronadlan.com",
+  "email": "vered@acrogrp.com",
+  "phone": "09-9718900",
+  "fax": "09-9718901",
+  "marketValue": 2510403,
+  "mainSecurityId": 1184902,
+  "companyActivites": "החברה עוסקת בנדל\"ן יזמי ובנדל\"ן מניב בישראל.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-10-23",
+  "indices": [
+   "ת\"א 90",
+   "ת\"א 125",
+   "ת\"א-90 ו-SME60",
+   "ת\"א סקטור-באלאנס",
+   "ת\"א נדל\"ן",
+   "ת\"א-בנייה",
+   "ת\"א 125-אקלים נקי",
+   "ת\"א-EW125",
+   "ת\"א 90 ובנקים",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א נדל\"ן- 35",
+   "ת\"א-200",
+   "תא90רוח"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1184902,
+    "indexId": 143,
+    "name": "חברות במדד ת\"א 90",
+    "shortName": "ת\"א 90",
+    "weight": 0.37701,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 137,
+    "name": "חברות במדד ת\"א 125",
+    "shortName": "ת\"א 125",
+    "weight": 0.07033,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.76154,
+    "factor": 0.68437
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 177,
+    "name": "ת\"א סקטור-באלאנס",
+    "shortName": "ת\"א סקטור-באלאנס",
+    "weight": 0.14457,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 149,
+    "name": "חברות במדד ת\"א נדל\"ן",
+    "shortName": "ת\"א נדל\"ן",
+    "weight": 0.92487,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 181,
+    "name": "חברות במדד ת\"א-בנייה",
+    "shortName": "ת\"א-בנייה",
+    "weight": 3.30749,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 185,
+    "name": "ת\"א-125 אקלים ללא דלקים פוסיליים \r\n",
+    "shortName": "ת\"א 125-אקלים נקי",
+    "weight": 0.08974,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 189,
+    "name": "ת\"א-EW125",
+    "shortName": "ת\"א-EW125",
+    "weight": 0.73303,
+    "factor": 0.42754
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 196,
+    "name": "חברות במדד ת\"א 90 ובנקים",
+    "shortName": "ת\"א 90 ובנקים",
+    "weight": 0.21624,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.4785,
+    "factor": 0.51991
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 0.21715,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.36496,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.16168,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 0.59906,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 1.35229,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.37373,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.16556,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.06799,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.15347,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 1.07101,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 725,
+    "name": "תל בונד-שקלי 3-5",
+    "shortName": "תל בונד-שקלי 3-5",
+    "weight": 0.54875,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.37855,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.85452,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 0.5446,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.82311,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.36463,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.19795,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.08769,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.06856,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.03037,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 208,
+    "name": "ת\"א נדל\"ן- 35",
+    "shortName": "ת\"א נדל\"ן- 35",
+    "weight": 0.86042,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 0.23086,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1184902,
+    "indexId": 202,
+    "name": "ת\"א-90 חברות רווחיות משקל שווה",
+    "shortName": "תא90רוח",
+    "weight": 1.18636,
+    "factor": 0.42754
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 765,
+    "name": "תל בונד שקלי 60",
+    "shortName": "תל בונד שקלי 60",
+    "weight": 1.31856,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1188572,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 1.06471,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1226059,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.47166,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1184902,
+    "isin": "IL0011849028",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "אקרו",
+    "securityType": "מניה רגילה",
+    "securityName": "אקרו",
+    "issuedPaidUp": 63107169,
+    "tradableSecurities": 63107169.0,
+    "marketCap": 2510.4,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1188572,
+    "isin": "IL0011885725",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אקרו.ק1",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אקרו      אגח א",
+    "issuedPaidUp": 560000000,
+    "tradableSecurities": 560000000.0,
+    "marketCap": 568.8,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1226059,
+    "isin": "IL0012260597",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אקרו.ק2",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אקרו      אגח ב",
+    "issuedPaidUp": 250000000,
+    "tradableSecurities": 250000000.0,
+    "marketCap": 252.4,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   }
+  ]
+ }
+}
