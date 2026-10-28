@@ -10,6 +10,8 @@
   * מח"מ ≥ MIN_DUR, מרווח נוכחי ≤ MAX_SPREAD (לא אג"ח במצוקה); ללא דירוג — רק אם INCLUDE_NR=1 (נשארות בטבלה, לא בהודעה)
 סינון "הסבר ידוע": הורדת דירוג שנצפתה בגלובס → נפסל. דיווח חדש במאיה ב-MAYA_DAYS הימים האחרונים (מנפיקים מסוקרים בלבד,
 מ-maya/state.json) → נשאר אך מסומן "לבדוק דיווח". לשאר המנפיקים אין לנו מעקב דיווחים — ההודעה אומרת זאת.
+פערים תוך-מנפיק (data/hist/intra_issuer.csv): זוג סדרות של אותו מנפיק שהפער ביניהן היום חורג מהפער הרגיל ב-3 השנים —
+  |Z זוג| ≥ PAIR_Z ו-PAIR_DEV_BP+ נ"ב, הסדרה הרחבה במח"מ ≥ PAIR_MIN_DUR, אותה הצמדה; לכל סדרה רחבה נשלח רק הזוג החריג ביותר.
 מניעת חזרות: data/hist/alert_state.json — התראה חוזרת רק אחרי REPEAT_DAYS ימים או אם ה-Z עלה ב-REPEAT_DZ.
 
 פלט: data/hist/alerts_latest.csv (הטבלה המלאה, כולל מה שנשלח בעבר), data/hist/alert_message.txt (כיתוב לטלגרם; ריק = אין מה לשלוח),
@@ -24,7 +26,7 @@ from pathlib import Path
 import pandas as pd
 
 PARAMS = dict(MIN_N=6, Z_ABS=1.5, DEV_BP=40, Z_REL=1.0, MIN_DUR=1.0, MAX_SPREAD=12.0, INCLUDE_NR=0, MAYA_DAYS=14,
-              REPEAT_DAYS=7, REPEAT_DZ=0.5)
+              REPEAT_DAYS=7, REPEAT_DZ=0.5, PAIR_Z=2.0, PAIR_DEV_BP=30, PAIR_MIN_DUR=1.5)
 for k in list(PARAMS):
     v = os.environ.get(f"ALERT_{k}")
     if v:
@@ -89,6 +91,25 @@ def main(data="data", *flags):
                 continue
         send.append(r)
     a["sent_today"] = a["security_id"].isin([r["security_id"] for r in send]).astype(int)
+
+    # פערים תוך-מנפיק
+    pairs_send, pairs = [], pd.DataFrame()
+    pp = data / "hist" / "intra_issuer.csv"
+    if pp.exists():
+        pairs = pd.read_csv(pp, dtype={"sid_a": str, "sid_b": str}, encoding="utf-8-sig")
+        if len(pairs):
+            pairs["covered"] = pairs["covered"].fillna("")
+            okp = ((pairs["z_pair"] >= P["PAIR_Z"]) & (pairs["dev_bp"] >= P["PAIR_DEV_BP"]) & (pairs["dur_a"] >= P["PAIR_MIN_DUR"])
+                   & (pairs["mixed"] == 0) & (pairs["spread_a"] <= P["MAX_SPREAD"]))
+            cand = pairs[okp].sort_values("z_pair", ascending=False).drop_duplicates("sid_a")
+            for _, r in cand.iterrows():
+                key = f"pair:{r['sid_a']}:{r['sid_b']}"; prev = state.get(key)
+                if prev:
+                    days = (dt.date.fromisoformat(today) - dt.date.fromisoformat(prev["date"])).days
+                    if days < P["REPEAT_DAYS"] and r["z_pair"] < prev["z"] + P["REPEAT_DZ"]:
+                        continue
+                pairs_send.append(r)
+            pairs["sent_today"] = (pairs["sid_a"] + ":" + pairs["sid_b"]).isin([f"{r['sid_a']}:{r['sid_b']}" for r in pairs_send]).astype(int)
     cols = ["security_id", "name", "issuer", "covered", "rating_low", "linkage", "duration", "cur_date", "cur_spread", "mean", "std",
             "min", "max", "dev_bp", "z", "rel_z", "rel_dev_bp", "pct_rank", "chg_5d_bp", "chg_vs_lastq_bp", "peer_cur_median",
             "rating_change", "maya_recent", "note", "sent_today"]
@@ -98,7 +119,7 @@ def main(data="data", *flags):
     from alert_render import render_png, render_xlsx  # noqa: E402
     for old in (data / "hist").glob("alert_table*.png"):
         old.unlink()
-    if send:
+    if send or pairs_send:
         d = dt.date.fromisoformat(today).strftime("%d.%m.%Y")
         # כיתוב קצר לתמונה; הטבלה עצמה בתמונה(ות) + אקסל מצורף
         msg = (f"📈 <b>מרווחים חריגים שנפתחו — {d}</b>  ({len(send)} סדרות)\n"
@@ -106,14 +127,24 @@ def main(data="data", *flags):
                f"הורדות דירוג סוננו. ★ מסוקר · ⚠ דיווח חדש במאיה. לשאר המנפיקים אין מעקב דיווחים — לבדוק לפני פעולה.</i>")
         sub = ("מרווח נוכחי מול ממוצע 3 שנים; +נ\"ב = כמה מעל הממוצע. Z = סטיות תקן מול ההיסטוריה של הסדרה; Z יחסי = מול קבוצת דירוג/הצמדה/מח\"מ | "
                "אחוזון 100 = שיא 3 שנים. 5 ימים = שינוי המרווח בנ\"ב. ★ מנפיק מסוקר · ⚠ דיווח חדש במאיה (תאריך)")
-        render_png(send, f"מרווחים חריגים שנפתחו — {d}", sub, str(data / "hist" / "alert_table"))
-        render_xlsx(a[cols], data / "hist" / "alert_table.xlsx")
+        if send:
+            render_png(send, f"מרווחים חריגים שנפתחו — {d}", sub, str(data / "hist" / "alert_table"))
+        if pairs_send:
+            from alert_render import PAIR_COLS
+            render_png(pairs_send, f"פערים חריגים בין סדרות של אותו מנפיק — {d}",
+                       "פער היום = מרווח הסדרה הרחבה פחות הסדרה האחות (נ\"ב); פער רגיל = ממוצע 3 שנים; חריגה = ההפרש ביניהם; Z זוג = בסטיות תקן של הפער | "
+                       "פער שנפתח בלי הסבר (בטוחה/מח\"מ/הודעה) — הסדרה הרחבה זולה יחסית לאחותה. ★ מנפיק מסוקר",
+                       str(data / "hist" / "alert_table_pairs"), cols=PAIR_COLS)
+            msg += f"\n<b>פערים תוך-מנפיק:</b> {len(pairs_send)} זוגות (תמונה שנייה)"
+        render_xlsx(a[cols], data / "hist" / "alert_table.xlsx", pairs=pairs if len(pairs) else None)
         for r in send:
             state[r["security_id"]] = {"date": today, "z": float(r["z"]), "name": r["name"]}
+        for r in pairs_send:
+            state[f"pair:{r['sid_a']}:{r['sid_b']}"] = {"date": today, "z": float(r["z_pair"]), "name": f"{r['name_a']} / {r['name_b']}"}
         if "--no-state" not in flags:
             sp.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
     (data / "hist" / "alert_message.txt").write_text(msg, encoding="utf-8")
-    print(f"עומדות בתנאים: {len(a)}, מהן הורדת דירוג: {int(a['downgrade'].sum())}, נשלחות היום: {len(send)}")
+    print(f"עומדות בתנאים: {len(a)}, מהן הורדת דירוג: {int(a['downgrade'].sum())}, נשלחות היום: {len(send)}, זוגות תוך-מנפיק: {len(pairs_send)}")
     return 0
 
 

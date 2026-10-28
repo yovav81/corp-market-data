@@ -19,6 +19,7 @@
   data/hist/spread_stats.csv  — שורה לכל אג"ח (ראו COLS)
   data/hist/peer_medians.csv  — חציון מרווח לכל קבוצה בכל תאריך (מדד תנאי אשראי)
   data/hist/sample_points.csv — כל נקודות המדגם (לגרפים/בדיקה)
+  data/hist/credit_conditions.csv — מדד תנאי אשראי: חציון מרווח לפי הצמדה × קבוצת דירוג (כל המח"מים) בכל תאריך, + מס' סדרות
 """
 import json
 import sys
@@ -129,8 +130,9 @@ def main(data="data"):
         c = cur.reset_index()[["date", "security_id", "name", "spread", "duration", "ytm_gross"]].copy(); c["src"] = "cur"
         pts = pd.concat([pts, c.merge(meta[["linkage", "rating_group"]], left_on="security_id", right_index=True, how="inner")], ignore_index=True)
     pts["dur_bucket"] = pts["duration"].map(dur_bucket)
-    pts = pts[pts["linkage"].notna() & pts["dur_bucket"].notna()]
-    pts["peer_group"] = pts["linkage"] + "|" + pts["rating_group"] + "|" + pts["dur_bucket"]
+    pts = pts[pts["linkage"].notna()]
+    # נקודה בלי מח"מ (למשל 01/2024 בקובץ ההיסטוריה) נשארת בהיסטוריה של הסדרה, אך בלי קבוצת השוואה
+    pts["peer_group"] = np.where(pts["dur_bucket"].notna(), pts["linkage"] + "|" + pts["rating_group"] + "|" + pts["dur_bucket"].astype(str), None)
     pm = pts.groupby(["date", "peer_group"])["spread"].agg(peer_median="median", peer_n="size").reset_index()
     pts = pts.merge(pm, on=["date", "peer_group"], how="left")
     pts["rel"] = np.where(pts["peer_n"] >= 3, pts["spread"] - pts["peer_median"], np.nan)
@@ -189,6 +191,13 @@ def main(data="data"):
     out.to_csv(hist_dir / "spread_stats.csv", index=False, encoding="utf-8-sig")
     pm.sort_values(["peer_group", "date"]).to_csv(hist_dir / "peer_medians.csv", index=False, encoding="utf-8-sig")
     pts.sort_values(["security_id", "date"]).to_csv(hist_dir / "sample_points.csv", index=False, encoding="utf-8-sig")
+    # מדד תנאי אשראי — חציון לפי הצמדה × קבוצת דירוג, בלי פיצול מח"מ (מספיק סדרות בכל נקודה)
+    wide = pts[pts["rating_group"] != "NR"].copy()
+    wide["series"] = wide["linkage"] + "|" + wide["rating_group"]
+    cc = wide.groupby(["date", "series"])["spread"].agg(median="median", n="size").reset_index()
+    cc = cc[cc["n"] >= 5]
+    cc["median"] = cc["median"].round(3)
+    cc.sort_values(["series", "date"]).to_csv(hist_dir / "credit_conditions.csv", index=False, encoding="utf-8-sig")
     print(f"אג\"ח: {len(out)}, עם נוכחי: {int(out['cur_spread'].notna().sum())}, עם Z: {int(out['z'].notna().sum())}, "
           f"עם Z יחסי: {int(out['rel_z'].notna().sum())}, מסוקרות: {int((out['covered'] != '').sum())}, נוכחי ל-{cur_date}")
     return 0

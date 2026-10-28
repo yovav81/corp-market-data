@@ -64,6 +64,10 @@ except Exception as e:
     print("אזהרה: אין היסטוריית מרווחים", e); hs = pd.DataFrame(columns=HS_COLS)
 try: al = pd.read_csv(alerts_csv, encoding="utf-8-sig")
 except Exception: al = pd.DataFrame()
+try:
+    pairs = pd.read_csv(os.path.join(os.path.dirname(hist_csv), "intra_issuer.csv"), encoding="utf-8-sig")
+    pairs = pairs[(pairs["z_pair"].abs() >= 1.5) & (pairs["mixed"] == 0)].head(150)
+except Exception: pairs = pd.DataFrame()
 
 # ---------- סגנונות ----------
 NAVY = "1F3864"; HDR = PatternFill("solid", fgColor=NAVY); SUB = PatternFill("solid", fgColor="D9E2F3")
@@ -343,6 +347,69 @@ for i, (_, rw) in enumerate(al.iterrows()):
         if k in afm: c.number_format = afm[k]
 for j, w in enumerate([22, 18, 6, 7, 7, 7, 11, 9, 10, 8, 8, 9, 6, 7, 8, 9, 10, 12, 11, 24]): wa.column_dimensions[L(j + 1)].width = w
 wa.freeze_panes = "B5"; wa.auto_filter.ref = f"A4:{L(len(ah))}{4 + max(1, len(al))}"
+# בלוק שני: פערים חריגים בין סדרות של אותו מנפיק
+r0 = 5 + max(1, len(al)) + 3
+wa.cell(r0, 1, "פערים חריגים בין סדרות של אותו מנפיק (|Z זוג| ≥ 1.5, אותה הצמדה)").font = Font(name="Arial", size=12, bold=True)
+wa.cell(r0 + 1, 1, "פער = מרווח הסדרה הרחבה פחות הסדרה האחות (נ״ב). ׳פער רגיל׳ = ממוצע 3 שנים. Z זוג גבוה בלי הסבר (בטוחה, מח״מ, הודעה) — הסדרה הרחבה זולה יחסית לאחותה. מקור: data/hist/intra_issuer.csv").font = BASE
+ph = [("issuer", "מנפיק"), ("covered", "מסוקר"), ("name_a", "סדרה רחבה"), ("spread_a", "מרווח א %"), ("dur_a", "מח״מ א"), ("name_b", "סדרה אחות"), ("spread_b", "מרווח ב %"), ("dur_b", "מח״מ ב"),
+      ("cur_diff_bp", "פער היום"), ("mean_diff_bp", "פער רגיל"), ("min_diff_bp", "מינ׳"), ("max_diff_bp", "מקס׳"), ("dev_bp", "חריגה (נ״ב)"), ("z_pair", "Z זוג"), ("n", "נק׳")]
+hdr(wa, r0 + 3, [h for _, h in ph])
+pfm = {"spread_a": "0.00", "spread_b": "0.00", "dur_a": "0.0", "dur_b": "0.0", "z_pair": "0.0"}
+for i, (_, rw) in enumerate(pairs.iterrows()):
+    for j, (k, _) in enumerate(ph):
+        v = rw.get(k); v = None if (v is None or (isinstance(v, float) and pd.isna(v))) else v
+        if k == "covered": v = "★" if isinstance(v, str) and v else None
+        c = wa.cell(r0 + 4 + i, 1 + j, v); c.font = BASE
+        if k in pfm: c.number_format = pfm[k]
+
+# ---------- תנאי_אשראי ----------
+try:
+    cc = pd.read_csv(os.path.join(os.path.dirname(hist_csv), "credit_conditions.csv"), encoding="utf-8-sig")
+    cc = cc[~cc["series"].str.startswith("fx")]
+    ccp = cc.pivot(index="date", columns="series", values="median").sort_index()
+    ccn = cc.pivot(index="date", columns="series", values="n").sort_index()
+except Exception as e:
+    print("אזהרה: אין credit_conditions", e); ccp = pd.DataFrame(); ccn = pd.DataFrame()
+wk = wb.create_sheet("תנאי_אשראי", 5); rtl(wk)
+wk["A1"] = "תנאי אשראי בשוק — חציון המרווח הממשלתי לפי הצמדה וקבוצת דירוג, 3 שנים"; wk["A1"].font = Font(name="Arial", size=14, bold=True)
+wk["A2"] = ("חציון על כל הסדרות בקבוצה (כל המח״מים, מינימום 5 סדרות). נ״ב. מקור: data/hist/credit_conditions.csv — נקודות רבעוניות (מגמה) + סוף-חודש מגלובס + היום. "
+            "שורת ׳אחוזון היום׳: היכן המרווח הנוכחי של הקבוצה ביחס ל-3 השנים (0% = הצר ביותר, 100% = הרחב ביותר)."); wk["A2"].font = BASE
+HEB_S = {"ils|AAA": "שקלי AAA", "ils|AA": "שקלי AA", "ils|A": "שקלי A", "ils|BBB-": "שקלי BBB ומטה", "cpi|AAA": "צמוד AAA", "cpi|AA": "צמוד AA", "cpi|A": "צמוד A", "cpi|BBB-": "צמוד BBB ומטה"}
+order = [k for k in HEB_S if k in ccp.columns]
+hdr(wk, 4, ["תאריך"] + [HEB_S[k] for k in order])
+for i, (d, rw) in enumerate(ccp.iterrows()):
+    r = 5 + i
+    wk.cell(r, 1, dt.datetime.strptime(d, "%Y-%m-%d")).number_format = "dd/mm/yyyy"
+    for j, k in enumerate(order):
+        v = rw[k]; c = wk.cell(r, 2 + j, None if pd.isna(v) else round(v * 100)); c.number_format = "0"
+    for cidx in range(1, 2 + len(order)): wk.cell(r, cidx).font = BASE
+n_rows = len(ccp); last_r = 4 + n_rows
+if n_rows:
+    rs = last_r + 2
+    labels = [("ממוצע 3 ש׳", "AVERAGE"), ("מינימום", "MIN"), ("מקסימום", "MAX")]
+    for li, (lab, fn) in enumerate(labels):
+        wk.cell(rs + li, 1, lab).font = BOLD
+        for j in range(len(order)):
+            col = L(2 + j); c = wk.cell(rs + li, 2 + j, f"=IFERROR({fn}({col}5:{col}{last_r}),\"\")"); c.font = BASE; c.number_format = "0"
+    wk.cell(rs + 3, 1, "אחוזון היום").font = BOLD
+    for j in range(len(order)):
+        col = L(2 + j)
+        c = wk.cell(rs + 3, 2 + j, f"=IFERROR(PERCENTRANK({col}5:{col}{last_r},{col}{last_r}),\"\")"); c.font = BASE; c.number_format = "0%"
+    wk.cell(rs + 4, 1, "מס׳ סדרות היום").font = BOLD
+    for j, k in enumerate(order):
+        v = ccn[k].iloc[-1] if k in ccn.columns else None
+        wk.cell(rs + 4, 2 + j, None if pd.isna(v) else int(v)).font = BASE
+    from openpyxl.chart import LineChart, Reference
+    for ci, (pref, title) in enumerate((("ils", "שקלי — חציון מרווח לפי דירוג (נ״ב)"), ("cpi", "צמוד — חציון מרווח לפי דירוג (נ״ב)"))):
+        ch = LineChart(); ch.title = title; ch.height = 9; ch.width = 18; ch.y_axis.title = "נ״ב"; ch.x_axis.number_format = "mm/yy"
+        for j, k in enumerate(order):
+            if k.startswith(pref):
+                ch.add_data(Reference(wk, min_col=2 + j, min_row=4, max_row=last_r), titles_from_data=True)
+        ch.set_categories(Reference(wk, min_col=1, min_row=5, max_row=last_r))
+        wk.add_chart(ch, f"{L(len(order) + 3)}{4 + ci * 20}")
+wk.column_dimensions["A"].width = 14
+for j in range(len(order)): wk.column_dimensions[L(2 + j)].width = 13
+wk.freeze_panes = "B5"
 
 # ---------- השוואה_מנפיקים ----------
 NI = 300
@@ -489,7 +556,8 @@ lines = [
  ("דירוג_פרמיה — חציון המרווח לכל דירוג פנימי. נותן משמעות רק עם מספר מנפיקים בקבוצה.", ""),
  ("סינון_שוק — כל האג״ח הקונצרניות עם הפרש ממשלתי ודירוגי סוכנות, כולל סדרות בלי מודל. מסננים לפי דירוג, מח״מ, הפרש.", ""),
  ("Watchlist — מזינים מספר ני״ע; מושך את ההשוואה והשוק.", ""),
- ("מרווחים_חריגים — סדרות (מכל השוק) שהמרווח שלהן נפתח חריג מול ממוצע 3 שנים וגם מול קבוצת ההשוואה; אותה טבלה נשלחת לטלגרם מדי ערב.", ""),
+ ("מרווחים_חריגים — סדרות (מכל השוק) שהמרווח שלהן נפתח חריג מול ממוצע 3 שנים וגם מול קבוצת ההשוואה; אותה טבלה נשלחת לטלגרם מדי ערב. מתחתיה: פערים חריגים בין סדרות של אותו מנפיק.", ""),
+ ("תנאי_אשראי — חציון המרווח לפי הצמדה וקבוצת דירוג לאורך 3 שנים, עם גרף ואחוזון נוכחי: איפה השוק במחזור האשראי.", ""),
  ("נתוני_היסטוריה — סטטיסטיקת מרווח ל-3 שנים לכל סדרה (ממוצע, מינ׳/מקס׳, Z, Z יחסי, אחוזון). מקור: קובץ ההיסטוריה הרבעוני (מגמה, 1/2023–10/2026) + סוף-חודש מגלובס מכאן ואילך.", ""),
  ("פרמטרים — סף כל ההתראות.", ""),
  ("", ""),

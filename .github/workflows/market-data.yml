@@ -51,6 +51,7 @@ jobs:
         if: always()
         run: |
           python hist/hist_spreads.py data
+          python hist/intra_issuer.py data
           python hist/spread_alerts.py data
 
       - name: Telegram — מרווחים חריגים

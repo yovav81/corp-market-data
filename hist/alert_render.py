@@ -29,6 +29,12 @@ COLS = [("סדרה", "name", 270, "r"), ("דירוג", "rating_low", 85, "c"), (
         ("Z יחסי", "rel_z", 90, "c"), ("אחוזון", "pct_rank", 90, "c"), ("5 ימים נ\"ב", "chg_5d_bp", 110, "c"), ("★ / ⚠ דיווח", "flag", 170, "c")]
 
 
+# טבלת זוגות תוך-מנפיק
+PAIR_COLS = [("מנפיק", "issuer", 170, "r"), ("סדרה רחבה", "name_a", 230, "r"), ("מרווח %", "spread_a", 90, "c"), ("מח\"מ", "dur_a", 70, "c"),
+             ("סדרה אחות", "name_b", 230, "r"), ("מרווח %", "spread_b", 90, "c"), ("מח\"מ", "dur_b", 70, "c"),
+             ("פער היום", "cur_diff_bp", 90, "c"), ("פער רגיל", "mean_diff_bp", 90, "c"), ("חריגה נ\"ב", "dev_bp", 95, "c"), ("Z זוג", "z_pair", 75, "c"), ("★", "flag", 50, "c")]
+
+
 def _font(size, bold=False):
     import matplotlib
     d = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
@@ -40,15 +46,15 @@ def _fmt(k, v):
         return "—" if k != "flag" else ""
     if k == "linkage":
         return LINK.get(v, str(v))
-    if k in ("cur_spread", "mean"):
+    if k in ("cur_spread", "mean", "spread_a", "spread_b"):
         return f"{v:.2f}"
-    if k == "duration":
+    if k in ("duration", "dur_a", "dur_b"):
         return f"{v:.1f}"
-    if k in ("z", "rel_z"):
+    if k in ("z", "rel_z", "z_pair"):
         return f"{v:.1f}"
     if k == "pct_rank":
         return f"{v*100:.0f}"
-    if k in ("dev_bp", "chg_5d_bp"):
+    if k in ("dev_bp", "chg_5d_bp", "cur_diff_bp", "mean_diff_bp"):
         return f"{v:+.0f}"
     return str(v)
 
@@ -62,8 +68,9 @@ def flag_of(r):
     return " ".join(parts)
 
 
-def render_png(rows, title, subtitle, out_prefix):
+def render_png(rows, title, subtitle, out_prefix, cols=None):
     """rows: רשימת dict/Series עם מפתחות COLS. מחזיר רשימת נתיבים."""
+    COLS = cols or globals()["COLS"]
     rows = list(rows)
     paths = []
     f, fb, fh, fs = _font(22), _font(22, bold=True), _font(19, bold=True), _font(16)
@@ -95,11 +102,11 @@ def render_png(rows, title, subtitle, out_prefix):
                 v = flag_of(r) if key == "flag" else r.get(key)
                 s = _fmt(key, v)
                 color = "black"
-                if key in ("z", "rel_z") and isinstance(v, (int, float)) and v >= 2:
+                if key in ("z", "rel_z", "z_pair") and isinstance(v, (int, float)) and v >= 2:
                     color = "#C00000"
                 if key == "dev_bp":
                     color = "#C00000"
-                fnt = fb if key == "name" else f
+                fnt = fb if key in ("name", "name_a") else f
                 if al == "c":
                     dr.text((x - w / 2, y + RH / 2), get_display(s), font=fnt, fill=color, anchor="mm")
                 else:
@@ -112,28 +119,40 @@ def render_png(rows, title, subtitle, out_prefix):
     return paths
 
 
-def render_xlsx(df, path):
+def render_xlsx(df, path, pairs=None):
     import openpyxl
     from openpyxl.styles import Font, PatternFill, Alignment
     from openpyxl.utils import get_column_letter as L
     heb = {"name": "סדרה", "issuer": "מנפיק", "covered": "מסוקר", "rating_low": "דירוג", "linkage": "הצמדה", "duration": "מח\"מ", "cur_date": "תאריך",
            "cur_spread": "מרווח %", "mean": "ממוצע 3 ש' %", "std": "סטיית תקן", "min": "מינ' %", "max": "מקס' %", "dev_bp": "סטייה (נ\"ב)", "z": "Z",
            "rel_z": "Z יחסי", "rel_dev_bp": "סטייה יחסית (נ\"ב)", "pct_rank": "אחוזון", "chg_5d_bp": "5 ימים (נ\"ב)", "chg_vs_lastq_bp": "מול רבעון (נ\"ב)",
-           "peer_cur_median": "חציון קבוצה %", "rating_change": "שינוי דירוג", "maya_recent": "דיווח מאיה", "note": "הערה", "sent_today": "נשלח היום", "security_id": "מס' ני\"ע"}
-    fmt = {"duration": "0.00", "cur_spread": "0.00", "mean": "0.00", "std": "0.00", "min": "0.00", "max": "0.00", "dev_bp": "0", "z": "0.0", "rel_z": "0.0",
+           "peer_cur_median": "חציון קבוצה %", "rating_change": "שינוי דירוג", "maya_recent": "דיווח מאיה", "note": "הערה", "sent_today": "נשלח היום", "security_id": "מס' ני\"ע",
+           "sid_a": "ני\"ע א", "name_a": "סדרה רחבה (א)", "sid_b": "ני\"ע ב", "name_b": "סדרה אחות (ב)", "link_a": "הצמדה א", "link_b": "הצמדה ב", "mixed": "הצמדה שונה",
+           "dur_a": "מח\"מ א", "dur_b": "מח\"מ ב", "spread_a": "מרווח א %", "spread_b": "מרווח ב %", "n": "נק'", "mean_diff_bp": "פער רגיל (נ\"ב)", "std_bp": "סטיית תקן (נ\"ב)",
+           "min_diff_bp": "פער מינ'", "max_diff_bp": "פער מקס'", "cur_diff_bp": "פער היום (נ\"ב)", "z_pair": "Z זוג", "z_a": "Z א", "z_b": "Z ב"}
+    fmt = {"dur_a": "0.00", "dur_b": "0.00", "spread_a": "0.00", "spread_b": "0.00", "z_pair": "0.0", "z_a": "0.0", "z_b": "0.0", "duration": "0.00", "cur_spread": "0.00", "mean": "0.00", "std": "0.00", "min": "0.00", "max": "0.00", "dev_bp": "0", "z": "0.0", "rel_z": "0.0",
            "rel_dev_bp": "0", "pct_rank": "0%", "chg_5d_bp": "0", "chg_vs_lastq_bp": "0", "peer_cur_median": "0.00"}
-    wb = openpyxl.Workbook(); ws = wb.active; ws.title = "מרווחים חריגים"; ws.sheet_view.rightToLeft = True
+    wb = openpyxl.Workbook(); ws = wb.active; ws.title = "מרווחים חריגים"
+    sheets = [(ws, df)]
+    if pairs is not None and len(pairs):
+        sheets.append((wb.create_sheet("פערים תוך-מנפיק"), pairs))
+    for ws, df in sheets:
+        _fill_sheet(ws, df, heb, fmt, Font, PatternFill, Alignment, L)
+    wb.save(path)
+
+
+def _fill_sheet(ws, df, heb, fmt, Font, PatternFill, Alignment, L):
+    ws.sheet_view.rightToLeft = True
     cols = list(df.columns)
     for j, c in enumerate(cols):
         cell = ws.cell(1, j + 1, heb.get(c, c)); cell.font = Font(name="Arial", bold=True, color="FFFFFF"); cell.fill = PatternFill("solid", fgColor="1F3864")
         cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
-        ws.column_dimensions[L(j + 1)].width = 22 if c in ("name", "issuer", "note") else 10
+        ws.column_dimensions[L(j + 1)].width = 22 if c in ("name", "issuer", "note", "name_a", "name_b") else 10
     for i, (_, r) in enumerate(df.iterrows()):
         for j, c in enumerate(cols):
             v = r[c]; v = None if (v is None or (isinstance(v, float) and v != v)) else v
             if c == "covered": v = "★" if isinstance(v, str) and v else None
-            if c == "linkage": v = LINK.get(v, v)
+            if c in ("linkage", "link_a", "link_b"): v = LINK.get(v, v)
             cell = ws.cell(i + 2, j + 1, v); cell.font = Font(name="Arial", size=10)
             if c in fmt: cell.number_format = fmt[c]
     ws.freeze_panes = "B2"; ws.auto_filter.ref = f"A1:{L(len(cols))}{max(2, len(df) + 1)}"; ws.row_dimensions[1].height = 30
-    wb.save(path)
