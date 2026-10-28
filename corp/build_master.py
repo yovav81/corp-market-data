@@ -48,6 +48,23 @@ except Exception as e:
     print("אזהרה: אין קובץ יומי", e)
     for c in ("last_price", "chg_pct", "volume_k_nis", "maturity"): cur[c] = None
 
+# היסטוריית מרווחים (data/hist/spread_stats.csv — נבנה ב-GitHub מקובץ ההיסטוריה הרבעוני + גלובס יומי)
+import os
+hist_csv = os.path.join(os.path.dirname(os.path.dirname(sp_csv)), "hist", "spread_stats.csv")
+alerts_csv = os.path.join(os.path.dirname(hist_csv), "alerts_latest.csv")
+HS_COLS = ["security_id", "name", "n_hist", "hist_from", "mean_bp", "median_bp", "std_bp", "min_bp", "min_date", "max_bp", "max_date",
+           "dev_bp", "z", "pct_rank", "rel_z", "rel_dev_bp", "chg_vs_lastq_bp", "peer_group", "peer_cur_median_bp", "rating_change"]
+try:
+    hs = pd.read_csv(hist_csv, encoding="utf-8-sig")
+    hs = hs[hs["security_id"].notna()].copy(); hs["security_id"] = pd.to_numeric(hs["security_id"], errors="coerce")
+    for c in ("mean", "median", "std", "min", "max", "peer_cur_median"): hs[c + "_bp"] = (hs[c] * 100).round(0)
+    hs = hs[HS_COLS]
+    print("היסטוריית מרווחים:", len(hs), "סדרות")
+except Exception as e:
+    print("אזהרה: אין היסטוריית מרווחים", e); hs = pd.DataFrame(columns=HS_COLS)
+try: al = pd.read_csv(alerts_csv, encoding="utf-8-sig")
+except Exception: al = pd.DataFrame()
+
 # ---------- סגנונות ----------
 NAVY = "1F3864"; HDR = PatternFill("solid", fgColor=NAVY); SUB = PatternFill("solid", fgColor="D9E2F3")
 INP = PatternFill("solid", fgColor="FFF2CC"); WH = Font(bold=True, color="FFFFFF", name="Arial", size=10)
@@ -75,6 +92,7 @@ params = [
  ("p_excess", "מרווח עודף מול דירוג (נ״ב)", 100, "מעל חציון הדירוג הפנימי באותה קבוצה — ׳זול׳ מעניין; מתחת ל- (−X) — ׳יקר׳", "0"),
  ("p_ndcap", "חוב נטו / CAP — סף אזהרה", 0.70, "מעל — התראת מינוף", "0%"),
  ("p_minvol", "מחזור יומי מינימלי (אלפי ש״ח)", 50, "מתחת — מסומן ׳נזילות נמוכה׳ בהשוואה", "0"),
+ ("p_z", "Z היסטורי — סף מרווח חריג", 1.5, "מרווח נוכחי מול ממוצע 3 שנים, בסטיות תקן; מעל — התראת ׳מרווח חריג מול היסטוריה׳", "0.0"),
 ]
 PR = {}
 for i, (key, lab, val, note, fmt) in enumerate(params):
@@ -95,7 +113,7 @@ def dump(name, headers, rows, fmt=None):
             if isinstance(v, dt.datetime): c.number_format = "dd/mm/yyyy"
     ws.freeze_panes = "A2"
     for j in range(len(headers)): ws.column_dimensions[L(j + 1)].width = 16
-    t = Table(displayName={"נתוני_מנפיקים": "tblIssuer", "נתוני_סדרות": "tblSeries", "נתוני_שוק": "tblMarket"}[name],
+    t = Table(displayName={"נתוני_מנפיקים": "tblIssuer", "נתוני_סדרות": "tblSeries", "נתוני_שוק": "tblMarket", "נתוני_היסטוריה": "tblHist"}[name],
               ref=f"A1:{L(len(headers))}{max(2, len(rows) + 1)}")
     t.tableStyleInfo = TableStyleInfo(name="TableStyleLight1", showRowStripes=False); ws.add_table(t)
     return ws
@@ -105,11 +123,13 @@ mk_cols = ["date", "source", "security_id", "name", "last_price", "chg_pct", "vo
 for c in mk_cols:
     if c not in cur.columns: cur[c] = None
 dump("נתוני_שוק", mk_cols, cur[mk_cols].where(pd.notna(cur[mk_cols]), None).values.tolist())
+dump("נתוני_היסטוריה", HS_COLS, hs.where(pd.notna(hs), None).values.tolist())
 CI = {h: L(i + 1) for i, h in enumerate(issuers_h)}; CS = {h: L(i + 1) for i, h in enumerate(series_h)}
-CM = {h: L(i + 1) for i, h in enumerate(mk_cols)}
+CM = {h: L(i + 1) for i, h in enumerate(mk_cols)}; CH = {h: L(i + 1) for i, h in enumerate(HS_COLS)}
 def IS(h): return f"נתוני_מנפיקים!${CI[h]}$2:${CI[h]}${DMAX}"
 def SE(h): return f"נתוני_סדרות!${CS[h]}$2:${CS[h]}${DMAX}"
 def MK(h): return f"נתוני_שוק!${CM[h]}$2:${CM[h]}${DMAX}"
+def HS(h): return f"נתוני_היסטוריה!${CH[h]}$2:${CH[h]}${DMAX}"
 
 
 # ---------- מפת ענפים ----------
@@ -165,6 +185,9 @@ cols = [  # כותרת, מקור, פורמט, רוחב
  ("תשואה ממשלתי באותו מח״מ", "mk:gov_ytm", "0.00", 10),
  ("שינוי מרווח יומי (נ״ב)", "dsp_bp", "0", 10), ("חציון קבוצת הדירוג (נ״ב)", "peer", "0", 11), ("מרווח עודף (נ״ב)", "excess", "0", 10),
  ("חציון תת-ענף (נ״ב)", "subpeer", "0", 11), ("מרווח מול תת-ענף (נ״ב)", "subex", "0", 11),
+ ("ממוצע 3 ש׳ (נ״ב)", "hs:mean_bp", "0", 9), ("מינ׳ 3 ש׳", "hs:min_bp", "0", 7), ("מקס׳ 3 ש׳", "hs:max_bp", "0", 7),
+ ("סטייה מהממוצע (נ״ב)", "hs:dev_bp", "0", 9), ("Z היסטורי", "hs:z", "0.0", 7), ("Z יחסי לקבוצה", "hs:rel_z", "0.0", 7),
+ ("אחוזון היסטורי", "hs:pct_rank", "0%", 8), ("מול רבעון אחרון (נ״ב)", "hs:chg_vs_lastq_bp", "0", 9), ("נק׳ היסטוריה", "hs:n_hist", "0", 6),
  ("התראות", "alerts", None, 60),
 ]
 hdr(wc, 4, [c[0] for c in cols]); wc.row_dimensions[4].height = 42
@@ -180,6 +203,7 @@ for k in range(NROW):
     ISS_ID = f'INDEX({SE("issuer_id")},{ser_match})'
     iss_match = f'MATCH(INDEX({SE("issuer_id")},{ser_match}),{IS("issuer_id")},0)'
     mk_match = f'MATCH({sid},{MK("security_id")},0)'
+    hs_match = f'MATCH({sid},{HS("security_id")},0)'
     for hd, src, fmt, w in cols:
         if src == "sid": continue
         col = CL[src]
@@ -187,6 +211,7 @@ for k in range(NROW):
         elif src.startswith("iss:"): f[src] = f'=IF({sid}="","",IFERROR(IF(INDEX({IS(src[4:])},{iss_match})="","",INDEX({IS(src[4:])},{iss_match})),""))'
         elif src.startswith("sec:"): f[src] = f'=IF({sid}="","",{SECLK(src[4:], ISS_ID)})'
         elif src.startswith("mk:"): f[src] = f'=IF({sid}="","",IFERROR(IF(INDEX({MK(src[3:])},{mk_match})="","",INDEX({MK(src[3:])},{mk_match})),""))'
+        elif src.startswith("hs:"): f[src] = f'=IF({sid}="","",IFERROR(IF(INDEX({HS(src[3:])},{hs_match})="","",INDEX({HS(src[3:])},{hs_match})),""))'
     f["agency"] = (f'=IF({sid}="","",IFERROR(IF(INDEX({SE("maalot")},{ser_match})<>"",INDEX({SE("maalot")},{ser_match}),'
                    f'IF(INDEX({SE("midroog")},{ser_match})<>"",INDEX({SE("midroog")},{ser_match}),"")),""))')
     sp = CL["mk:ytm_gross"]
@@ -210,6 +235,8 @@ for k in range(NROW):
       f'IF(AND({CL["excess"]}{r}<>"",N({CL["excess"]}{r})>={PR["p_excess"]}),"מרווח עודף (זול); ","")',
       f'IF(AND({CL["excess"]}{r}<>"",N({CL["excess"]}{r})<=-{PR["p_excess"]}),"מרווח נמוך (יקר); ","")',
       f'IF(AND({CL["mk:volume_k_nis"]}{r}<>"",N({CL["mk:volume_k_nis"]}{r})<{PR["p_minvol"]}),"סחירות נמוכה; ","")',
+      f'IF(AND({CL["hs:z"]}{r}<>"",N({CL["hs:z"]}{r})>={PR["p_z"]}),"מרווח חריג מול היסטוריה; ","")',
+      f'IF(AND({CL["hs:z"]}{r}<>"",N({CL["hs:z"]}{r})<=-{PR["p_z"]}),"מרווח צר מול היסטוריה; ","")',
     ]
     f["alerts"] = f'=IF({sid}="","",IFERROR({"&".join(parts)},""))'
     for i, (hd, src, fmt, w) in enumerate(cols):
@@ -221,6 +248,7 @@ for k in range(NROW):
 wc.freeze_panes = "D5"; wc.auto_filter.ref = f"A4:{L(len(cols))}{4 + NROW}"
 red = PatternFill("solid", fgColor="F8CBAD")
 wc.conditional_formatting.add(f"{CL['alerts']}5:{CL['alerts']}{4+NROW}", FormulaRule(formula=[f'LEN({CL["alerts"]}5)>0'], fill=red))
+wc.conditional_formatting.add(f"{CL['hs:z']}5:{CL['hs:z']}{4+NROW}", FormulaRule(formula=[f'AND({CL["hs:z"]}5<>"",{CL["hs:z"]}5>={PR["p_z"]})'], fill=red))
 for key in ("ser:min_cov_headroom",):
     wc.conditional_formatting.add(f"{CL[key]}5:{CL[key]}{4+NROW}", FormulaRule(formula=[f'AND({CL[key]}5<>"",{CL[key]}5<{PR["p_headroom"]})'], fill=red))
 
@@ -246,7 +274,8 @@ wm = wb.create_sheet("סינון_שוק", 2); rtl(wm)
 wm["A1"] = "כל האג״ח הקונצרניות בשוק — מרווח ממשלתי ודירוג סוכנות"; wm["A1"].font = Font(name="Arial", size=14, bold=True)
 wm["A2"] = "כולל סדרות שאין להן עדיין מודל מנפיק. ׳יש מודל׳ מסמן סדרות שנמצאות בהשוואה."; wm["A2"].font = BASE
 mh = ["מס׳ ני״ע", "סדרה", "סוג", "מח״מ", "תשואה ברוטו %", "ממשלתי באותו מח״מ", "הפרש (נ״ב)", "שינוי יומי (נ״ב)", "מחיר", "מחזור (אלפי ₪)",
-      "פירעון", "מעלות", "מידרוג", "יש מודל", "מחוץ לטווח העקום", "מצוקה"]
+      "פירעון", "מעלות", "מידרוג", "יש מודל", "מחוץ לטווח העקום", "מצוקה",
+      "ממוצע 3 ש׳ (נ״ב)", "Z היסטורי", "Z יחסי לקבוצה", "אחוזון היסטורי", "מול רבעון אחרון (נ״ב)"]
 hdr(wm, 4, mh); wm.row_dimensions[4].height = 32
 src_type = {"corp_cpi": "צמוד", "corp_unlinked": "שקלי"}
 for k in range(len(cur)):
@@ -257,13 +286,17 @@ for k in range(len(cur)):
             f'=IF({m("last_price")}="","",{m("last_price")})', f'=IF({m("volume_k_nis")}="","",{m("volume_k_nis")})', f'=IF({m("maturity")}="","",{m("maturity")})',
             f'=IF({m("rating_maalot")}="","",{m("rating_maalot")})', f'=IF({m("rating_midroog")}="","",{m("rating_midroog")})',
             f'=IF(COUNTIF({SE("security_id")},A{r})>0,"כן","")', f'=IF({m("extrap")}=1,"כן","")', f'=IF(OR({m("ytm_gross")}>12,G{r}>600),"כן","")']
-    fm = ["0", None, None, "0.00", "0.00", "0.00", "0", "0", "0.00", "#,##0", "mm/yyyy", None, None, None, None, None]
+    hm = f'MATCH($A{r},{HS("security_id")},0)'
+    def hcol(h): return f'=IFERROR(IF(INDEX({HS(h)},{hm})="","",INDEX({HS(h)},{hm})),"")'
+    vals += [hcol("mean_bp"), hcol("z"), hcol("rel_z"), hcol("pct_rank"), hcol("chg_vs_lastq_bp")]
+    fm = ["0", None, None, "0.00", "0.00", "0.00", "0", "0", "0.00", "#,##0", "mm/yyyy", None, None, None, None, None, "0", "0.0", "0.0", "0%", "0"]
     for j, v in enumerate(vals):
         c = wm.cell(r, 1 + j, v); c.font = BASE
         if fm[j]: c.number_format = fm[j]
-for j, w in enumerate([11, 22, 7, 7, 10, 11, 10, 10, 8, 10, 9, 9, 9, 8, 10, 7]): wm.column_dimensions[L(j + 1)].width = w
+for j, w in enumerate([11, 22, 7, 7, 10, 11, 10, 10, 8, 10, 9, 9, 9, 8, 10, 7, 9, 7, 7, 8, 9]): wm.column_dimensions[L(j + 1)].width = w
 wm.freeze_panes = "C5"; wm.auto_filter.ref = f"A4:{L(len(mh))}{4+len(cur)}"
-wm.conditional_formatting.add(f"A5:P{4+len(cur)}", FormulaRule(formula=['$N5="כן"'], fill=SUB))
+wm.conditional_formatting.add(f"A5:{L(len(mh))}{4+len(cur)}", FormulaRule(formula=['$N5="כן"'], fill=SUB))
+wm.conditional_formatting.add(f"R5:R{4+len(cur)}", FormulaRule(formula=[f'AND(R5<>"",R5>={PR["p_z"]})'], fill=red))
 
 # ---------- Watchlist ----------
 ww = wb.create_sheet("Watchlist", 3); rtl(ww)
@@ -291,6 +324,25 @@ for k in range(60):
     for c in range(3, 13): ww.cell(r, c).font = BASE
 for j, w in enumerate([11, 26, 20, 26, 9, 10, 10, 11, 11, 9, 8, 60]): ww.column_dimensions[L(j + 1)].width = w
 ww.freeze_panes = "C5"
+
+# ---------- מרווחים_חריגים ----------
+wa = wb.create_sheet("מרווחים_חריגים", 4); rtl(wa)
+wa["A1"] = "מרווחים חריגים שנפתחו מול ההיסטוריה — כל השוק"; wa["A1"].font = Font(name="Arial", size=14, bold=True)
+wa["A2"] = ("תמונת מצב מ-data/hist/alerts_latest.csv (מחושב ב-GitHub בכל ערב; אותה טבלה נשלחת לטלגרם). תנאים: Z≥1.5 מול ממוצע 3 שנים, +40 נ״ב לפחות, "
+            "Z יחסי≥1 מול קבוצת דירוג/הצמדה/מח״מ, מח״מ≥1, לא במצוקה. ׳הערה׳ מסבירה למה שורה לא נשלחה."); wa["A2"].font = BASE
+ah = [("name", "סדרה"), ("issuer", "מנפיק"), ("covered", "מסוקר"), ("rating_low", "דירוג"), ("linkage", "הצמדה"), ("duration", "מח״מ"), ("cur_date", "תאריך"),
+      ("cur_spread", "מרווח %"), ("mean", "ממוצע 3 ש׳ %"), ("min", "מינ׳ %"), ("max", "מקס׳ %"), ("dev_bp", "סטייה (נ״ב)"), ("z", "Z"), ("rel_z", "Z יחסי"),
+      ("pct_rank", "אחוזון"), ("chg_5d_bp", "5 ימים (נ״ב)"), ("chg_vs_lastq_bp", "מול רבעון (נ״ב)"), ("rating_change", "שינוי דירוג"), ("maya_recent", "דיווח מאיה"), ("note", "הערה")]
+hdr(wa, 4, [h for _, h in ah]); wa.row_dimensions[4].height = 32
+afm = {"duration": "0.00", "cur_spread": "0.00", "mean": "0.00", "min": "0.00", "max": "0.00", "dev_bp": "0", "z": "0.0", "rel_z": "0.0", "pct_rank": "0%", "chg_5d_bp": "0", "chg_vs_lastq_bp": "0"}
+for i, (_, rw) in enumerate(al.iterrows()):
+    for j, (k, _) in enumerate(ah):
+        v = rw.get(k); v = None if (v is None or (isinstance(v, float) and pd.isna(v))) else v
+        if k == "covered": v = "★" if isinstance(v, str) and v else None
+        c = wa.cell(5 + i, 1 + j, v); c.font = BASE
+        if k in afm: c.number_format = afm[k]
+for j, w in enumerate([22, 18, 6, 7, 7, 7, 11, 9, 10, 8, 8, 9, 6, 7, 8, 9, 10, 12, 11, 24]): wa.column_dimensions[L(j + 1)].width = w
+wa.freeze_panes = "B5"; wa.auto_filter.ref = f"A4:{L(len(ah))}{4 + max(1, len(al))}"
 
 # ---------- השוואה_מנפיקים ----------
 NI = 300
@@ -437,11 +489,14 @@ lines = [
  ("דירוג_פרמיה — חציון המרווח לכל דירוג פנימי. נותן משמעות רק עם מספר מנפיקים בקבוצה.", ""),
  ("סינון_שוק — כל האג״ח הקונצרניות עם הפרש ממשלתי ודירוגי סוכנות, כולל סדרות בלי מודל. מסננים לפי דירוג, מח״מ, הפרש.", ""),
  ("Watchlist — מזינים מספר ני״ע; מושך את ההשוואה והשוק.", ""),
+ ("מרווחים_חריגים — סדרות (מכל השוק) שהמרווח שלהן נפתח חריג מול ממוצע 3 שנים וגם מול קבוצת ההשוואה; אותה טבלה נשלחת לטלגרם מדי ערב.", ""),
+ ("נתוני_היסטוריה — סטטיסטיקת מרווח ל-3 שנים לכל סדרה (ממוצע, מינ׳/מקס׳, Z, Z יחסי, אחוזון). מקור: קובץ ההיסטוריה הרבעוני (מגמה, 1/2023–10/2026) + סוף-חודש מגלובס מכאן ואילך.", ""),
  ("פרמטרים — סף כל ההתראות.", ""),
  ("", ""),
  ("שיטת המרווח", "h"),
  ("הפרש = תשואה ברוטו של האג״ח פחות תשואה ברוטו של ממשלתי באותו מח״מ (אינטרפולציה ליניארית). צמוד מול עקום צמוד, שקלי מול עקום שקלי קבוע. מחושב ב-GitHub (spreads.py).", ""),
  ("מרווח עודף = ההפרש פחות חציון ההפרש של אותו דירוג פנימי. חיובי — האג״ח נסחרת מעל מה שהדירוג הפנימי מצדיק (מעניינת); שלילי — יקרה יחסית.", ""),
+ ("Z היסטורי = (מרווח נוכחי − ממוצע 3 שנים) / סטיית תקן של ההיסטוריה. Z יחסי = אותו חישוב על המרווח פחות חציון קבוצת ההשוואה (הצמדה × קבוצת דירוג × טווח מח״מ) — מבודד את סיפור המנפיק מתנועת השוק. שני המדדים גבוהים יחד = נפתח בלי הסבר שוקי.", ""),
  ("הערה: ההפרש מוצג בנקודות בסיס. סדרות במצוקה (תשואה >12% או הפרש >600 נ״ב) מסומנות ׳מצוקה׳ בסינון_שוק ולא לבסס עליהן השוואה.", ""),
  ("", ""),
  ("חיבור חי (Power Query)", "h"),
