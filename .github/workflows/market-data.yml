@@ -59,28 +59,32 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
-          # נשלח רק אם יש התראות חדשות (הקובץ לא ריק); אותו בוט/צ'אט כמו corp-notify
+          # נשלח רק אם יש התראות חדשות (הכיתוב לא ריק): הטבלה כתמונה (או כמה), ואז קובץ האקסל המלא
           [ -s data/hist/alert_message.txt ] || { echo "אין התראות חדשות"; exit 0; }
           python3 - <<'PY'
-          import json, os, sys, urllib.request
+          import glob, json, os, sys, urllib.request, uuid
           tok, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
-          text = open("data/hist/alert_message.txt", encoding="utf-8").read()
           if not tok or not chat:
               print("::warning::TELEGRAM secrets missing — alert not sent"); sys.exit(0)
-          parts, cur = [], ""
-          for line in text.split("\n"):
-              if len(cur) + len(line) + 1 > 3800:
-                  parts.append(cur); cur = ""
-              cur += line + "\n"
-          parts.append(cur)
-          for part in parts:
-              body = json.dumps({"chat_id": chat, "text": part, "parse_mode": "HTML", "disable_web_page_preview": True}).encode()
-              req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/sendMessage", body, {"Content-Type": "application/json"})
+          caption = open("data/hist/alert_message.txt", encoding="utf-8").read()[:1000]
+          def post(method, fields, files):
+              b = uuid.uuid4().hex; body = b""
+              for k, v in fields.items():
+                  body += f"--{b}\r\nContent-Disposition: form-data; name=\"{k}\"\r\n\r\n{v}\r\n".encode()
+              for k, path in files.items():
+                  body += f"--{b}\r\nContent-Disposition: form-data; name=\"{k}\"; filename=\"{os.path.basename(path)}\"\r\nContent-Type: application/octet-stream\r\n\r\n".encode()
+                  body += open(path, "rb").read() + b"\r\n"
+              body += f"--{b}--\r\n".encode()
+              req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/{method}", body, {"Content-Type": f"multipart/form-data; boundary={b}"})
               try:
-                  with urllib.request.urlopen(req, timeout=30) as r:
-                      print("sent", r.status)
+                  with urllib.request.urlopen(req, timeout=60) as r: print(method, r.status)
               except urllib.error.HTTPError as e:
-                  print("::error::telegram", e.code, e.read()[:300]); sys.exit(1)
+                  print("::error::telegram", method, e.code, e.read()[:300]); sys.exit(1)
+          pngs = sorted(glob.glob("data/hist/alert_table*.png"))
+          for i, png in enumerate(pngs):
+              post("sendPhoto", {"chat_id": chat, "parse_mode": "HTML", "caption": caption if i == 0 else ""}, {"photo": png})
+          if os.path.exists("data/hist/alert_table.xlsx"):
+              post("sendDocument", {"chat_id": chat, "caption": "הטבלה המלאה (כולל שורות שלא נשלחו ולמה)"}, {"document": "data/hist/alert_table.xlsx"})
           PY
 
       - name: Commit data

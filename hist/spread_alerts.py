@@ -12,7 +12,8 @@
 מ-maya/state.json) → נשאר אך מסומן "לבדוק דיווח". לשאר המנפיקים אין לנו מעקב דיווחים — ההודעה אומרת זאת.
 מניעת חזרות: data/hist/alert_state.json — התראה חוזרת רק אחרי REPEAT_DAYS ימים או אם ה-Z עלה ב-REPEAT_DZ.
 
-פלט: data/hist/alerts_latest.csv (הטבלה המלאה, כולל מה שנשלח בעבר), data/hist/alert_message.txt (הודעת טלגרם; ריק = אין מה לשלוח)
+פלט: data/hist/alerts_latest.csv (הטבלה המלאה, כולל מה שנשלח בעבר), data/hist/alert_message.txt (כיתוב לטלגרם; ריק = אין מה לשלוח),
+      data/hist/alert_table*.png (הטבלה כתמונה, עד 25 שורות לתמונה) ו-alert_table.xlsx (הטבלה המלאה) — נשלחים כתמונה + קובץ מצורף
 """
 import datetime as dt
 import json
@@ -23,7 +24,7 @@ from pathlib import Path
 import pandas as pd
 
 PARAMS = dict(MIN_N=6, Z_ABS=1.5, DEV_BP=40, Z_REL=1.0, MIN_DUR=1.0, MAX_SPREAD=12.0, INCLUDE_NR=0, MAYA_DAYS=14,
-              REPEAT_DAYS=7, REPEAT_DZ=0.5, MAX_LINES=30)
+              REPEAT_DAYS=7, REPEAT_DZ=0.5)
 for k in list(PARAMS):
     v = os.environ.get(f"ALERT_{k}")
     if v:
@@ -46,17 +47,6 @@ def recent_maya(here, days):
         if last and last >= cutoff and key_of.get(str(cid)):
             out[key_of[str(cid)]] = last
     return out
-
-
-def fmt_row(r):
-    cov = "★" if isinstance(r["covered"], str) and r["covered"] else ""
-    rating = r["rating_low"] if isinstance(r["rating_low"], str) else "NR"
-    flag = ""
-    if r.get("maya_recent"):
-        flag = f" ⚠דיווח {r['maya_recent'][5:]}"
-    return (f"{cov}<b>{r['name']}</b> ({r['rating_low'] or 'NR'}, {LINK.get(r['linkage'], '')}, מח\"מ {r['duration']:.1f}): "
-            f"{r['cur_spread']:.2f}% מול ממוצע {r['mean']:.2f}% (+{r['dev_bp']:.0f} נ\"ב, Z {r['z']:.1f}, יחסי {r['rel_z']:.1f}, "
-            f"אחוזון {r['pct_rank']*100:.0f}){flag}")
 
 
 def main(data="data", *flags):
@@ -105,16 +95,19 @@ def main(data="data", *flags):
     a[cols].to_csv(data / "hist" / "alerts_latest.csv", index=False, encoding="utf-8-sig")
 
     msg = ""
+    from alert_render import render_png, render_xlsx  # noqa: E402
+    for old in (data / "hist").glob("alert_table*.png"):
+        old.unlink()
     if send:
         d = dt.date.fromisoformat(today).strftime("%d.%m.%Y")
-        lines = [f"📈 <b>מרווחים חריגים שנפתחו — {d}</b>",
-                 f"<i>מול ממוצע 3 שנים (Z≥{P['Z_ABS']}, +{P['DEV_BP']} נ\"ב) וגם מול קבוצת הדירוג/הצמדה/מח\"מ (Z יחסי ≥{P['Z_REL']}). "
-                 f"הורדות דירוג סוננו. ★ = מנפיק מסוקר. לשאר המנפיקים אין מעקב דיווחים — לבדוק במאיה לפני פעולה.</i>", ""]
-        for r in send[:P["MAX_LINES"]]:
-            lines.append("• " + fmt_row(r))
-        if len(send) > P["MAX_LINES"]:
-            lines.append(f"… ועוד {len(send) - P['MAX_LINES']} בטבלה המלאה (data/hist/alerts_latest.csv)")
-        msg = "\n".join(lines)
+        # כיתוב קצר לתמונה; הטבלה עצמה בתמונה(ות) + אקסל מצורף
+        msg = (f"📈 <b>מרווחים חריגים שנפתחו — {d}</b>  ({len(send)} סדרות)\n"
+               f"<i>Z≥{P['Z_ABS']} ו-{P['DEV_BP']}+ נ\"ב מול ממוצע 3 שנים, Z יחסי≥{P['Z_REL']} מול קבוצת דירוג/הצמדה/מח\"מ. "
+               f"הורדות דירוג סוננו. ★ מסוקר · ⚠ דיווח חדש במאיה. לשאר המנפיקים אין מעקב דיווחים — לבדוק לפני פעולה.</i>")
+        sub = ("מרווח נוכחי מול ממוצע 3 שנים; +נ\"ב = כמה מעל הממוצע. Z = סטיות תקן מול ההיסטוריה של הסדרה; Z יחסי = מול קבוצת דירוג/הצמדה/מח\"מ | "
+               "אחוזון 100 = שיא 3 שנים. 5 ימים = שינוי המרווח בנ\"ב. ★ מנפיק מסוקר · ⚠ דיווח חדש במאיה (תאריך)")
+        render_png(send, f"מרווחים חריגים שנפתחו — {d}", sub, str(data / "hist" / "alert_table"))
+        render_xlsx(a[cols], data / "hist" / "alert_table.xlsx")
         for r in send:
             state[r["security_id"]] = {"date": today, "z": float(r["z"]), "name": r["name"]}
         if "--no-state" not in flags:
