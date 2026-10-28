@@ -455,6 +455,11 @@ BRENT,2026-10-15,126.35,FRED (St. Louis Fed)
 BRENT,2026-10-16,119.33,FRED (St. Louis Fed)
 BRENT,2026-10-19,118.82,FRED (St. Louis Fed)
 BRENT,2026-10-20,115.22,FRED (St. Louis Fed)
+BRENT,2026-10-21,117.37,FRED (St. Louis Fed)
+BRENT,2026-10-22,125.39,FRED (St. Louis Fed)
+BRENT,2026-10-23,128.3,FRED (St. Louis Fed)
+BRENT,2026-10-26,128.12,FRED (St. Louis Fed)
+BRENT,2026-10-27,123.1,FRED (St. Louis Fed)
 BRLILS,2025-01-02,0.586854,ECB — שער צולב מול השקל
 BRLILS,2025-01-03,0.592552,ECB — שער צולב מול השקל
 BRLILS,2025-01-06,0.595532,ECB — שער צולב מול השקל
@@ -920,6 +925,7 @@ BRLILS,2026-10-22,0.615548,ECB — שער צולב מול השקל
 BRLILS,2026-10-23,0.618554,ECB — שער צולב מול השקל
 BRLILS,2026-10-26,0.551125,ECB — שער צולב מול השקל
 BRLILS,2026-10-27,0.57029,ECB — שער צולב מול השקל
+BRLILS,2026-10-28,0.586794,ECB — שער צולב מול השקל
 CHFILS,2025-01-02,4.0176,בנק ישראל — שער יציג (SDMX)
 CHFILS,2025-01-03,4.0161,בנק ישראל — שער יציג (SDMX)
 CHFILS,2025-01-06,4.0307,בנק ישראל — שער יציג (SDMX)
@@ -1365,6 +1371,7 @@ CHFILS,2026-10-21,3.75,בנק ישראל — שער יציג (SDMX)
 CHFILS,2026-10-22,3.7805,בנק ישראל — שער יציג (SDMX)
 CHFILS,2026-10-23,3.7808,בנק ישראל — שער יציג (SDMX)
 CHFILS,2026-10-26,3.7257,בנק ישראל — שער יציג (SDMX)
+CHFILS,2026-10-28,3.7685,בנק ישראל — שער יציג (SDMX)
 CONST_IL,2025-02-15,137.1,הלמ״ס — API מדדים
 CONST_IL,2025-03-15,137.7,הלמ״ס — API מדדים
 CONST_IL,2025-04-15,138.2,הלמ״ס — API מדדים
@@ -1873,6 +1880,7 @@ EURILS,2026-10-21,3.4722,בנק ישראל — שער יציג (SDMX)
 EURILS,2026-10-22,3.4816,בנק ישראל — שער יציג (SDMX)
 EURILS,2026-10-23,3.4844,בנק ישראל — שער יציג (SDMX)
 EURILS,2026-10-26,3.4462,בנק ישראל — שער יציג (SDMX)
+EURILS,2026-10-28,3.4801,בנק ישראל — שער יציג (SDMX)
 GBPILS,2025-01-02,4.531,בנק ישראל — שער יציג (SDMX)
 GBPILS,2025-01-03,4.5333,בנק ישראל — שער יציג (SDMX)
 GBPILS,2025-01-06,4.5579,בנק ישראל — שער יציג (SDMX)
@@ -2318,6 +2326,7 @@ GBPILS,2026-10-21,4.1421,בנק ישראל — שער יציג (SDMX)
 GBPILS,2026-10-22,4.1562,בנק ישראל — שער יציג (SDMX)
 GBPILS,2026-10-23,4.1624,בנק ישראל — שער יציג (SDMX)
 GBPILS,2026-10-26,4.1098,בנק ישראל — שער יציג (SDMX)
+GBPILS,2026-10-28,4.1549,בנק ישראל — שער יציג (SDMX)
 HH,2025-01-02,3.65,FRED (St. Louis Fed)
 HH,2025-01-03,3.4,FRED (St. Louis Fed)
 HH,2025-01-06,4.05,FRED (St. Louis Fed)
@@ -2766,6 +2775,11 @@ HH,2026-10-15,3.3,FRED (St. Louis Fed)
 HH,2026-10-16,3.22,FRED (St. Louis Fed)
 HH,2026-10-19,3.28,FRED (St. Louis Fed)
 HH,2026-10-20,3.1,FRED (St. Louis Fed)
+HH,2026-10-21,3.01,FRED (St. Louis Fed)
+HH,2026-10-22,2.95,FRED (St. Louis Fed)
+HH,2026-10-23,2.78,FRED (St. Louis Fed)
+HH,2026-10-26,2.52,FRED (St. Louis Fed)
+HH,2026-10-27,2.76,FRED (St. Louis Fed)
 HOUSE_IL,2025-03-15,609.8,הלמ״ס — API מדדים
 HOUSE_IL,2025-04-15,608.6,הלמ״ס — API מדדים
 HOUSE_IL,2025-05-15,607.4,הלמ״ס — API מדדים
@@ -3250,6 +3264,7 @@ PLNILS,2026-10-22,0.796979,ECB — שער צולב מול השקל
 PLNILS,2026-10-23,0.795062,ECB — שער צולב מול השקל
 PLNILS,2026-10-26,0.782461,ECB — שער צולב מול השקל
 PLNILS,2026-10-27,0.772444,ECB — שער צולב מול השקל
+PLNILS,2026-10-28,0.790124,ECB — שער צולב מול השקל
 SOFR,2025-01-02,0.044,FRED (St. Louis Fed)
 SOFR,2025-01-03,0.0431,FRED (St. Louis Fed)
 SOFR,2025-01-06,0.0427,FRED (St. Louis Fed)
@@ -3703,6 +3718,7 @@ SOFR,2026-10-21,0.0388,FRED (St. Louis Fed)
 SOFR,2026-10-22,0.039,FRED (St. Louis Fed)
 SOFR,2026-10-23,0.0392,FRED (St. Louis Fed)
 SOFR,2026-10-26,0.0393,FRED (St. Louis Fed)
+SOFR,2026-10-27,0.0395,FRED (St. Louis Fed)
 SONIA,2025-01-02,0.047,FRED (St. Louis Fed)
 SONIA,2025-01-03,0.047,FRED (St. Louis Fed)
 SONIA,2025-01-06,0.047,FRED (St. Louis Fed)
@@ -4629,6 +4645,7 @@ USDILS,2026-10-21,3.091,בנק ישראל — שער יציג (SDMX)
 USDILS,2026-10-22,3.107,בנק ישראל — שער יציג (SDMX)
 USDILS,2026-10-23,3.112,בנק ישראל — שער יציג (SDMX)
 USDILS,2026-10-26,3.078,בנק ישראל — שער יציג (SDMX)
+USDILS,2026-10-28,3.128,בנק ישראל — שער יציג (SDMX)
 UST10,2025-01-02,0.0457,FRED (St. Louis Fed)
 UST10,2025-01-03,0.046,FRED (St. Louis Fed)
 UST10,2025-01-06,0.0462,FRED (St. Louis Fed)
@@ -5083,6 +5100,7 @@ UST10,2026-10-21,0.0513,FRED (St. Louis Fed)
 UST10,2026-10-22,0.0496,FRED (St. Louis Fed)
 UST10,2026-10-23,0.05,FRED (St. Louis Fed)
 UST10,2026-10-26,0.05,FRED (St. Louis Fed)
+UST10,2026-10-27,0.0499,FRED (St. Louis Fed)
 WTI,2025-01-02,73.79,FRED (St. Louis Fed)
 WTI,2025-01-03,74.64,FRED (St. Louis Fed)
 WTI,2025-01-06,74.31,FRED (St. Louis Fed)
@@ -5532,3 +5550,8 @@ WTI,2026-10-15,104.71,FRED (St. Louis Fed)
 WTI,2026-10-16,108.21,FRED (St. Louis Fed)
 WTI,2026-10-19,110.01,FRED (St. Louis Fed)
 WTI,2026-10-20,107.89,FRED (St. Louis Fed)
+WTI,2026-10-21,103.95,FRED (St. Louis Fed)
+WTI,2026-10-22,104.27,FRED (St. Louis Fed)
+WTI,2026-10-23,109.72,FRED (St. Louis Fed)
+WTI,2026-10-26,105.25,FRED (St. Louis Fed)
+WTI,2026-10-27,103.37,FRED (St. Louis Fed)
