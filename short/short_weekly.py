@@ -87,7 +87,7 @@ def main(data="data"):
             ws.column_dimensions[ws.cell(1, i + 1).column_letter].width = w
     top = ok.head(5)
     lines = "\n".join(f"• {r['name']}: {fmt(r['ytm_nominal_exp'])}% שקלי צפוי, {fmt(r['sort'], '{:+.0f}')} נ\"ב" for _, r in top.iterrows())
-    msg = (f"📅 <b>אג\"ח קצרות (מח\"מ < 1) — {dd}</b>  ({len(ok)} סדרות + {len(dist)} במצוקה)\n"
+    msg = (f"📅 <b>אג\"ח קצרות (מח\"מ עד שנה) — {dd}</b>  ({len(ok)} סדרות + {len(dist)} במצוקה)\n"
            f"<i>תשואה שקלית צפויה עם המדדים הצפויים; מרווח מול ממשלתי שקלי באותו מח\"מ. המובילות:</i>\n{lines}")
     (sd / "weekly_message.txt").write_text(msg, encoding="utf-8")
     print(f"{len(rows)} שורות, {len(pngs)} תמונות")
