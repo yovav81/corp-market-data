@@ -1,0 +1,33 @@
+{
+ "as_of": "2026-10-29",
+ "known_month": "2026-09",
+ "known_index": 105.3,
+ "expectations": {
+  "forecasters": {
+   "series": "EXP_HAZ_MAD_AVG_01Y_MA",
+   "name": "בנק ישראל — ממוצע החזאים ל-12 חודשים",
+   "period": "2026-09",
+   "value": 2.0220666667
+  },
+  "market": {
+   "series": "EXP_EXP_01Y_BI_MA",
+   "name": "בנק ישראל — ציפיות משוק ההון לשנה",
+   "period": "2026-09",
+   "value": 1.5746830431
+  },
+  "banks": {
+   "series": "EXP_EXP_IRB_1Y_MA",
+   "name": "בנק ישראל — ציפיות מריביות הבנקים לשנה",
+   "period": "2026-09",
+   "value": 1.9029477328
+  },
+  "swaps": {
+   "series": "EXP_EXP_ISSWIT1_01Y_MA",
+   "name": "בנק ישראל — ציפיות מחוזי אינפלציה לשנה",
+   "period": "2026-09",
+   "value": 1.90636363636363
+  }
+ },
+ "used": "forecasters",
+ "season_years": 6
+}
