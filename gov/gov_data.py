@@ -50,8 +50,9 @@ def maturity_from_name(name: str, ref: dt.date) -> dt.date | None:
         else: return None
         base = ref.year - ref.year % 10
         cands = [base - 10 + yd, base + yd, base + 10 + yd]
-        y = min(cands, key=lambda yy: abs((dt.date(yy, mo, 1) - ref).days) if 1 <= mo <= 12 else 9e9)
-        return dt.date(y, mo, 1) if 1 <= mo <= 12 else None
+        if not 1 <= mo <= 12: return None
+        y = min(cands, key=lambda yy: abs((dt.date(yy, mo, 1) - ref).days))
+        first = dt.date(y, mo, 1); return first + dt.timedelta(days=(2 - first.weekday()) % 7)   # יום רביעי הראשון בחודש
     m = re.search(r"(\d{2})(\d{2})\s*$", s)
     if m:
         mo, yy = int(m.group(1)), int(m.group(2))

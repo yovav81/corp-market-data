@@ -22,7 +22,7 @@ import argparse
 import re
 import sys
 import time
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -137,6 +137,20 @@ def fetch(page, url, wait_s):
     return df
 
 
+def makam_maturity(name, day):
+    """מק"מ נפדה ביום רביעי הראשון של החודש שבשמו (למשל 217 → פברואר 2027). מחזיר תאריך ISO או None."""
+    d = re.sub(r"\D", "", str(name))
+    if len(d) == 3: mo, yd = int(d[0]), int(d[2])
+    elif len(d) == 4: mo, yd = int(d[:2]), int(d[3])
+    else: return None
+    if not 1 <= mo <= 12: return None
+    ref = datetime.strptime(day, "%Y-%m-%d").date()
+    base = ref.year - ref.year % 10
+    y = min((base - 10 + yd, base + yd, base + 10 + yd), key=lambda yy: abs((date(yy, mo, 1) - ref).days))
+    first = date(y, mo, 1); wed = first + timedelta(days=(2 - first.weekday()) % 7)
+    return wed.isoformat()
+
+
 def fetch_json(ctx, name, day):
     """טבלה מה-handler של גלובס (JSON) — למק"מ. מחזיר DataFrame באותן עמודות של הטבלאות הרגילות."""
     mode, ref = JSON_PAGES[name]
@@ -158,6 +172,17 @@ def fetch_json(ctx, name, day):
             row["maturity"] = (datetime.strptime(day, "%Y-%m-%d") + timedelta(days=d)).strftime("%Y-%m-%d")
         except (TypeError, ValueError): row.pop("days_to_redemption", None); row["maturity"] = None
         row["coupon"] = 0; row["adjusted_value"] = 100
+        # גלובס מחזיר תשואה ומח"מ רק לחלק מהסדרות; מק"מ הוא אפס-קופון, ולכן השאר מחושבים מהמחיר ומיום הפדיון (רביעי הראשון בחודש)
+        if row.get("maturity") in (None, "") : row["maturity"] = makam_maturity(row["name"], day)
+        try:
+            px = float(row.get("last_price")); mat = datetime.strptime(row["maturity"], "%Y-%m-%d").date()
+            days = (mat - datetime.strptime(day, "%Y-%m-%d").date()).days - 1   # סליקה T+1
+            if days > 0:
+                if row.get("ytm_gross") in (None, ""):
+                    row["ytm_gross"] = round(((100.0 / px) ** (365.0 / days) - 1) * 100, 4); row["ytm_net"] = None
+                if row.get("duration") in (None, ""): row["duration"] = round(days / 365.0, 2)
+        except (TypeError, ValueError):
+            pass
         rows.append(row)
     return pd.DataFrame(rows)
 
