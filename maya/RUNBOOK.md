@@ -16,10 +16,10 @@ Standing rules (from the CORP project — `claude/CORP-principles.md`, `claude/C
 
 Repos (clone both; if a clone or `gh api` call is refused, attach the repo with the add_repo tool —
 owner `yovav81`, access `push` — and retry once):
-- `yovav81/corp-market-data` → `/home/claude/cmd`: bot code `maya/`, master builder `corp/build_master.py`,
+- `yovav81/corp-market-data` → `/home/claude/cmd`: bot code `maya/`, master builder `corp/build_live.py` (+ `build_master.py`, `short_sheet.py`),
   sectors `corp/sectors.csv`, merge tool `corp/merge_xlsx.py`, spreads `data/spreads/<year>.csv`, workflows.
 - `yovav81/corp-data` → `/home/claude/cd` (full clone, not shallow): the CORP folder tree —
-  `00_Master_vNN.xlsx`, `01_Template/`, `02_Issuers/<corp_folder>/` (model `*.xlsx`, `_log/`, `_archive/`, `_build/`),
+  `00_Master_LIVE.xlsx` (the single master — no `00_Master_vNN` versions since 29.10.2026), `00_Master/` (build scripts, `פרמטרים_רוחביים.xlsx`), `01_Template/`, `_archive/` (old versions — ignore), `02_Issuers/<corp_folder>/` (model `*.xlsx`, `_log/`, `_archive/`, `_build/`),
   `_sync/` (PC sync tool; conflict records in `_sync/conflicts/`). No report PDFs here.
 Only REST `gh api` works for workflows (no GraphQL, no branch deletes, no artifact downloads) — bot results
 travel through `maya-out/*` branches of corp-market-data; those are deleted by dispatching `maya-cleanup`.
@@ -85,9 +85,13 @@ completed with confidence, do not overwrite the model** — keep the files filed
 "נדרשת בדיקה" with the reason. Register every document in `מקורות` and log in `יומן`.
 
 ## 5. Master
-If any model changed: copy the newest model per issuer folder into one dir;
-`python cmd/corp/build_master.py <dir_with_models> cmd/data/spreads/<year>.csv cd/00_Master_vNN.xlsx cmd/corp/sectors.csv`
-(NN = highest existing `00_Master_v*.xlsx` in cd + 1), recalc (0 errors).
+If any model changed, rebuild the single live master **in place** (never create `00_Master_vNN.xlsx`):
+`python3 cd/00_Master/_build/build_live.py /home/claude/cd /home/claude/cmd --check`
+It rebuilds `cd/00_Master_LIVE.xlsx` from all models in `cd/02_Issuers` + `cmd/data` (spreads, hist, short, factors),
+adds the `בדיקות_לדוח_הבא` sheet, keeps Yovav's Watchlist / parameters / index overrides from the existing file,
+and re-injects the three Power Query queries. `--check` recalcs a copy in LibreOffice and must report 0 errors
+(needs `pandas openpyxl numpy` and `soffice`). Do not open or edit `00_Master_LIVE.xlsx` with openpyxl afterwards —
+that would strip the queries; any change goes through the build scripts.
 
 ## 6. Commit and push corp-data
 `git -C cd add -A && git -C cd commit -m "<Hebrew summary>"` then `git -C cd push origin main`.
