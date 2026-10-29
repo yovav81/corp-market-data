@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """build_gov.py — בונה את קובץ הממשלתי (ממשלתי.xlsx) מתוך data/gov/*.csv (gov/gov_data.py).
 שימוש: python gov/build_gov.py data <פלט.xlsx> [--settings קובץ_קיים.xlsx]
-   --settings  מעתיק את הפרמטרים (01_הגדרות B4:B18, E5:E16, F5:F16) ואת ההחזקות (02, עמודת כמות) מגרסה קודמת של הקובץ.
+   --settings  מעתיק מגרסה קודמת: פרמטרים (01), החזקות / ״כלול בעקום?״ / הערות (02, לפי שם הנייר), בחירות ב-07.
+בענן (המשימה המתוזמנת 23:10) הקובץ נבנה מחדש בכל ערב ל-corp-data/00_Gov/ממשלתי.xlsx עם --settings על עצמו — השינויים של יובב נשמרים.
 
 מבנה (לפי המודל של יובב, בלי מערכת המסחר): 01_הגדרות, 02_קלט_אגח (נתונים מהמאגר שלנו + נוסחאות), 03_עקומים, 04_ציפיות_אינפלציה,
 05_אנליטיקה_נייר, 06_תיק_והחלטה, 07_סינטטי_מול_בולט, 08_מדריך + חדשים: 09_היסטוריה, 10_ארהב, 11_בנק_ישראל.
@@ -134,14 +135,19 @@ def main():
     C = {h: L(i + 1) for i, h in enumerate(dcols)}            # אותיות עמודות הנתונים
     F = {h: L(len(dcols) + i + 1) for i, h in enumerate(fcols)}
     cY, cT, cB, cI, cQ, cMV, cW, cXd, cXy, cXc, cXn, cXr, cN = (F[h] for h in fcols)
-    prev_q = {}
+    prev_q, prev_in, prev_note = {}, {}, {}
     if prev:
-        p2 = prev["02_קלט_אגח"]
+        p2 = prev["02_קלט_אגח"]; hmap = {p2.cell(5, c).value: c for c in range(1, p2.max_column + 1)}
         for r in range(6, p2.max_row + 1):
             nm = p2.cell(r, 3).value
-            if nm:
-                for c in range(1, p2.max_column + 1):
-                    if p2.cell(5, c).value == "כמות נקובה מוחזקת" and isinstance(p2.cell(r, c).value, (int, float)): prev_q[str(nm).strip()] = p2.cell(r, c).value
+            if not nm: continue
+            nm = str(nm).strip()
+            c = hmap.get("כמות נקובה מוחזקת")
+            if c and isinstance(p2.cell(r, c).value, (int, float)): prev_q[nm] = p2.cell(r, c).value
+            c = hmap.get("כלול בעקום?")
+            if c and p2.cell(r, c).value == "לא": prev_in[nm] = "לא"
+            c = hmap.get("הערות")
+            if c and p2.cell(r, c).value not in (None, ""): prev_note[nm] = p2.cell(r, c).value
     gfill = PatternFill("solid", fgColor="F2F2F2")
     for k in range(NB):
         r = R0 + k
@@ -158,7 +164,9 @@ def main():
             elif h in ("coupon", "last_price", "adjusted_value", "ytm_gross", "ytm_net", "duration_globes", "ttm", "accrued", "clean_price", "macaulay_calc", "modified", "convexity", "pv_check"): c.number_format = "0.00"
             elif h == "L": c.number_format = "0.0000"
             elif h == "volume_k_nis": c.number_format = "#,##0"
-            if h == "in_curve": c.fill = INP; c.font = BLUE
+            if h == "in_curve":
+                c.fill = INP; c.font = BLUE
+                if b is not None and prev_in.get(str(b["name"]).strip()): c.value = "לא"
             elif b is not None: c.fill = gfill
         nm = C["name"]; ytm = C["ytm_gross"]; mat = C["maturity"]; kind = C["kind"]
         put(wi, f"{cY}{r}", f'=IF({ytm}{r}="","",{ytm}{r}/100)', BASE, None, "0.00%", BOX)
@@ -174,7 +182,7 @@ def main():
         put(wi, f"{cXc}{r}", f'=IFERROR({cW}{r}*{C["convexity"]}{r},0)', BASE, None, "0.00", BOX)
         put(wi, f"{cXn}{r}", f'=IF(AND({cI}{r}="כן",OR({kind}{r}="שקלי",{kind}{r}="מק""מ"),ISNUMBER({cT}{r}),ISNUMBER({cY}{r})),{cT}{r},"")', Font(name="Arial", size=9, color="808080"), None, "0.00")
         put(wi, f"{cXr}{r}", f'=IF(AND({cI}{r}="כן",{kind}{r}="מדד",ISNUMBER({cT}{r}),ISNUMBER({cY}{r})),{cT}{r},"")', Font(name="Arial", size=9, color="808080"), None, "0.00")
-        put(wi, f"{cN}{r}", None, BLUE, INP, None, BOX)
+        put(wi, f"{cN}{r}", prev_note.get(str(b["name"]).strip()) if b is not None else None, BLUE, INP, None, BOX)
     dv = DataValidation(type="list", formula1='"כן,לא"', allow_blank=True); wi.add_data_validation(dv); dv.add(f"{C['in_curve']}{R0}:{C['in_curve']}{R1}")
     widths = [11, 10, 20, 7, 14, 11, 8, 9, 9, 9, 9, 8, 10, 10, 9, 9, 10, 10, 9, 8, 9, 8] + [9, 10, 8, 8, 12, 11, 8, 8, 9, 8, 8, 8, 20]
     for i, w in enumerate(widths): wi.column_dimensions[L(i + 1)].width = w
