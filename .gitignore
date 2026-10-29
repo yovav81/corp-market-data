@@ -2,3 +2,6 @@ debug/
 __pycache__/
 *.pyc
 data/hist/alert_table*
+data/short/weekly_table*.png
+data/short/weekly_table.xlsx
+data/short/weekly_message.txt

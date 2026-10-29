@@ -1,0 +1,51 @@
+name: short-weekly
+
+# טבלת האג"ח הקצרות (מח"מ < 1) לטלגרם — כל יום ראשון בבוקר, מנתוני הריצה האחרונה (יום שישי). short/short_weekly.py
+on:
+  schedule:
+    - cron: "11 6 * * 0"   # 08:11 חורף / 09:11 קיץ, שעון ישראל
+  workflow_dispatch: {}
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install pandas openpyxl pillow python-bidi matplotlib
+      - name: Build table
+        run: python short/short_weekly.py data
+      - name: Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python3 - <<'PY'
+          import glob, json, os, sys, urllib.request, uuid
+          tok, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
+          if not tok or not chat:
+              print("::warning::TELEGRAM secrets missing — alert not sent"); sys.exit(0)
+          caption = open("data/short/weekly_message.txt", encoding="utf-8").read()[:1000]
+          def post(method, fields, files):
+              b = uuid.uuid4().hex; body = b""
+              for k, v in fields.items():
+                  body += f"--{b}\r\nContent-Disposition: form-data; name=\"{k}\"\r\n\r\n{v}\r\n".encode()
+              for k, path in files.items():
+                  body += f"--{b}\r\nContent-Disposition: form-data; name=\"{k}\"; filename=\"{os.path.basename(path)}\"\r\nContent-Type: application/octet-stream\r\n\r\n".encode()
+                  body += open(path, "rb").read() + b"\r\n"
+              body += f"--{b}--\r\n".encode()
+              req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/{method}", body, {"Content-Type": f"multipart/form-data; boundary={b}"})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as r: print(method, r.status)
+              except urllib.error.HTTPError as e:
+                  print("::error::telegram", method, e.code, e.read()[:300]); sys.exit(1)
+          pngs = sorted(glob.glob("data/short/weekly_table*.png"))
+          for i, png in enumerate(pngs):
+              post("sendPhoto", {"chat_id": chat, "parse_mode": "HTML", "caption": caption if i == 0 else ""}, {"photo": png})
+          if os.path.exists("data/short/weekly_table.xlsx"):
+              post("sendDocument", {"chat_id": chat, "caption": "הטבלה המלאה כאקסל (כולל מחיר, מח\"מ מחושב, אקס, פער מול גלובס)"}, {"document": "data/short/weekly_table.xlsx"})
+          PY
