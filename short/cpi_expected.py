@@ -45,18 +45,43 @@ def pub_date(y, m):
     return dt.date(y2, m2, 15)
 
 
-def fetch_cbs(start_year=2010) -> dict[tuple[int, int], float]:
+def fetch_cbs(start_year=2010):
+    """{(שנה,חודש): {"value": מדד (בסיס נוכחי), "base": תיאור הבסיס, "pct": שינוי חודשי % מה-API אם קיים}}"""
     txt = get(f"https://api.cbs.gov.il/index/data/price?id={CBS_ID}&format=json&download=false&startPeriod=01-{start_year}&endPeriod=12-{dt.date.today().year}&lang=he")
     js = json.loads(txt); out = {}
     def walk(o):
         if isinstance(o, dict):
             if "year" in o and "month" in o and isinstance(o.get("currBase"), dict) and o["currBase"].get("value") is not None:
-                out[(int(o["year"]), int(o["month"]))] = float(o["currBase"]["value"])
+                pct = None
+                for k in ("percent", "percentChange", "change"):
+                    v = o.get(k)
+                    if isinstance(v, dict):
+                        for kk in ("monthly", "month", "m", "value"):
+                            if v.get(kk) is not None:
+                                try: pct = float(v[kk]); break
+                                except (TypeError, ValueError): pass
+                    elif v is not None:
+                        try: pct = float(v)
+                        except (TypeError, ValueError): pass
+                    if pct is not None: break
+                out[(int(o["year"]), int(o["month"]))] = {"value": float(o["currBase"]["value"]),
+                                                          "base": str(o["currBase"].get("baseDesc") or o["currBase"].get("base") or ""), "pct": pct}
             for v in o.values(): walk(v)
         elif isinstance(o, list):
             for v in o: walk(v)
     walk(js)
     return out
+
+
+def monthly_change(cpi, k):
+    """השינוי החודשי (שבר) לחודש k: מה-API אם קיים, אחרת יחס למדד הקודם באותו בסיס; None במעבר בסיס."""
+    o = cpi.get(k)
+    if not o: return None
+    if o.get("pct") is not None and abs(o["pct"]) < 10: return o["pct"] / 100
+    pk = (k[0], k[1] - 1) if k[1] > 1 else (k[0] - 1, 12)
+    p = cpi.get(pk)
+    if not p or p["base"] != o["base"]: return None
+    return o["value"] / p["value"] - 1
 
 
 def fetch_boi() -> dict:
@@ -73,15 +98,16 @@ def fetch_boi() -> dict:
     return out
 
 
-def seasonality(cpi: dict[tuple[int, int], float], years: int) -> dict[int, float]:
-    """סטיית השינוי החודשי מהממוצע לכל חודש קלנדרי (שבר), על השנים המלאות האחרונות."""
+def seasonality(cpi: dict, years: int):
+    """סטיית השינוי החודשי מהממוצע לכל חודש קלנדרי (שבר), על השנים המלאות האחרונות.
+    שינויים שלא ניתן לחשב (מעבר בסיס) או חריגים (|שינוי| > 1.5%) לא נכנסים לממוצע."""
     ys = sorted({y for y, _ in cpi})
-    full = [y for y in ys if all((y, m) in cpi for m in range(1, 13)) and (y - 1, 12) in cpi][-years:]
+    full = [y for y in ys if all((y, m) in cpi for m in range(1, 13))][-years:]
     ch = {m: [] for m in range(1, 13)}
     for y in full:
         for m in range(1, 13):
-            prev = cpi[(y, m - 1)] if m > 1 else cpi[(y - 1, 12)]
-            ch[m].append(cpi[(y, m)] / prev - 1)
+            c = monthly_change(cpi, (y, m))
+            if c is not None and abs(c) <= 0.015: ch[m].append(c)
     avg = {m: sum(v) / len(v) for m, v in ch.items() if v}
     mean = sum(avg.values()) / len(avg) if avg else 0.0
     return {m: v - mean for m, v in avg.items()}, full
@@ -110,9 +136,9 @@ def build(cpi, boi, manual, today: dt.date):
     # היסטוריה קצרה (12 חודשים ידועים) לצורך הצגה
     hist = sorted(k for k in cpi if k <= known)[-13:]
     for i, k in enumerate(hist):
-        prev = cpi.get((k[0], k[1] - 1) if k[1] > 1 else (k[0] - 1, 12))
-        rows.append({"ym": f"{k[0]}-{k[1]:02d}", "pub_date": pub_date(*k).isoformat(), "kind": "ידוע", "index": cpi[k],
-                     "monthly_pct": round((cpi[k] / prev - 1) * 100, 3) if prev else None, "cum_factor": None,
+        c = monthly_change(cpi, k)
+        rows.append({"ym": f"{k[0]}-{k[1]:02d}", "pub_date": pub_date(*k).isoformat(), "kind": "ידוע", "index": cpi[k]["value"],
+                     "monthly_pct": round(c * 100, 3) if c is not None else None, "cum_factor": None,
                      "source": "הלמ״ס — API המדדים", "as_of": today.isoformat()})
     f = 1.0; y, m = known
     for _ in range(HORIZON):
@@ -147,10 +173,11 @@ def main(data="data"):
     with open(d / "cpi_expected.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=["ym", "pub_date", "kind", "index", "monthly_pct", "cum_factor", "source", "as_of"])
         w.writeheader(); w.writerows(rows)
-    json.dump({"as_of": today.isoformat(), "known_month": f"{known[0]}-{known[1]:02d}", "known_index": cpi[known],
+    json.dump({"as_of": today.isoformat(), "known_month": f"{known[0]}-{known[1]:02d}", "known_index": cpi[known]["value"],
+               "known_base": cpi[known]["base"], "seasonality_pct": {m: round(v * 100, 3) for m, v in seasonality(cpi, SEASON_YEARS)[0].items()},
                "expectations": boi, "used": EXP_SOURCE, "season_years": SEASON_YEARS},
               open(d / "cpi_sources.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"מדד ידוע: {known[0]}-{known[1]:02d} = {cpi[known]}; ציפיות: " + ", ".join(f"{k}={v['value']:.2f}% ({v['period']})" for k, v in boi.items()))
+    print(f"מדד ידוע: {known[0]}-{known[1]:02d} = {cpi[known]['value']} ({cpi[known]['base']}); ציפיות: " + ", ".join(f"{k}={v['value']:.2f}% ({v['period']})" for k, v in boi.items()))
     for r in rows:
         if r["kind"] != "ידוע": print(r["ym"], r["monthly_pct"], r["cum_factor"], r["kind"])
 

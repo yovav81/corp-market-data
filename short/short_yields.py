@@ -88,7 +88,7 @@ def main(data="data"):
         ctype = str(t.get("coupon_type") or "")
         b = Bond(sid, r["name"], linkage, coupon, ctype, freq, flows_from_schedule(rows, _d(t.get("next_ex"))))
         linked = "מדד" in linkage
-        res = compute(b, float(price), float(adj) if (linked and not pd.isna(adj)) else None, date, exp)
+        res = compute(b, float(price), float(adj) if ((linked or r["source"] == "corp_fx") and not pd.isna(adj)) else None, date, exp)
         row.update(linkage=linkage, redemption_type=t.get("redemption_type"), coupon=coupon, coupon_type=ctype, coupon_freq=t.get("coupon_freq"),
                    L=round(res.L, 5), n_flows=len(res.flows_real))
         if not res.flows_real:
