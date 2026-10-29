@@ -46,6 +46,14 @@ jobs:
         if: always()
         run: python spreads.py data
 
+      - name: Short bonds — לוחות סילוקין, מדדים צפויים, תשואה מחושבת (מח"מ < 1)
+        # ביזפורטל (לוחות, פעם בשבוע לכל סדרה), הלמ"ס + בנק ישראל (מדדים וציפיות), ואז חישוב מחדש → data/short/
+        if: always()
+        run: |
+          python short/schedules.py data || echo "::warning::schedules failed"
+          python short/cpi_expected.py data || echo "::warning::cpi_expected failed"
+          python short/short_yields.py data || echo "::warning::short_yields failed"
+
       - name: Historical spread stats + alerts
         # סטטיסטיקה מול ההיסטוריה הרבעונית (data/hist) ואיתור מרווחים חריגים; ההודעה נכתבת ל-data/hist/alert_message.txt
         if: always()
