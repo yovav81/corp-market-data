@@ -1,0 +1,546 @@
+{
+ "companyId": 1630,
+ "resolve": null,
+ "details": {
+  "companyId": 1630,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": true,
+  "isTaseup": false,
+  "name": "לייטסטון",
+  "longName": "לייטסטון אנטרפרייזס לימיטד",
+  "logo": null,
+  "corporateNo": "1838682",
+  "sector": "ריאלי",
+  "branch": "נדל\"ן ובנייה",
+  "subBranch": "נדל\"ן מניב בחו\"ל",
+  "incorporationPlace": "איי הבתולה הבריטיים",
+  "address": "אצל שמעונוב עו\"ד,מזא\"ה 56",
+  "city": "תל אביב",
+  "zipCode": "6578906",
+  "site": null,
+  "email": "thelightstonegroup@lightstonegroup.com",
+  "phone": "03-6111000",
+  "fax": "03-6733355",
+  "marketValue": 0,
+  "mainSecurityId": null,
+  "companyActivites": "חברה זרה העוסקת בנדל\"ן מניב למגורים ומרכזים מסחריים בארה\"ב.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-10-28",
+  "indices": null,
+  "securityIndices": [
+   {
+    "securityId": 1190099,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.38392,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.41269,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.61517,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.67133,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.24277,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 5.02161,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 1.81595,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 4.60156,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 3.08697,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 2.8718,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.39311,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.42256,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.68739,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.62989,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.24858,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.10183,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.28159,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.25803,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.16104,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.1731,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 1.21012,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 1.12577,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 1.96851,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 725,
+    "name": "תל בונד-שקלי 3-5",
+    "shortName": "תל בונד-שקלי 3-5",
+    "weight": 2.08467,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 726,
+    "name": "תל בונד-שקלי 5-15",
+    "shortName": "תל בונד-שקלי 5-15",
+    "weight": 0.79151,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.56891,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 1.4416,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.89969,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 738,
+    "name": "תל בונד-שקלי AA-AAA",
+    "shortName": "בונד שקלי AA",
+    "weight": 0.75422,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 738,
+    "name": "תל בונד-שקלי AA-AAA",
+    "shortName": "בונד שקלי AA",
+    "weight": 1.2269,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 748,
+    "name": "תל בונד שקלי 5-10",
+    "shortName": "תל בונד שקלי 5-10",
+    "weight": 0.84495,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.54764,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.86605,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.38769,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.33333,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.22361,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.20803,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.13154,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.36375,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.04545,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.07188,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.07726,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.11517,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.12568,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212588,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.74048,
+    "factor": 0.41253
+   },
+   {
+    "securityId": 1190099,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.46213,
+    "factor": 0.41253
+   },
+   {
+    "securityId": 1236553,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.29222,
+    "factor": 0.41253
+   },
+   {
+    "securityId": 1216514,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 1.04474,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1204296,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 0.64224,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1190099,
+    "isin": "IL0011900995",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "לטסט.ק3",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "לייטסטון  אגח ג",
+    "issuedPaidUp": 594000000,
+    "tradableSecurities": 594000000.0,
+    "marketCap": 593.8,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1204296,
+    "isin": "IL0012042961",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "לטסט.ק4",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "לייטסטון  אגח ד",
+    "issuedPaidUp": 633750000,
+    "tradableSecurities": 633750000.0,
+    "marketCap": 638.2,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1212588,
+    "isin": "IL0012125881",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "לטסט.ק5",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "לייטסטון  אגח ה",
+    "issuedPaidUp": 1000000000,
+    "tradableSecurities": 1000000000.0,
+    "marketCap": 951.4,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1216514,
+    "isin": "IL0012165143",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "לטסט.ק6",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "לייטסטון  אגח ו",
+    "issuedPaidUp": 1039600000,
+    "tradableSecurities": 1039600000.0,
+    "marketCap": 1038.2,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1236553,
+    "isin": "IL0012365537",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "לטסט.ק7",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "לייטסטון  אגח ז",
+    "issuedPaidUp": 415532337,
+    "tradableSecurities": 415532337.0,
+    "marketCap": 368.5,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1133982,
+    "isin": "IL0011339822",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "לטסט",
+    "securityType": "מניה רגילה",
+    "securityName": "לייטסטון",
+    "issuedPaidUp": 5100,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
