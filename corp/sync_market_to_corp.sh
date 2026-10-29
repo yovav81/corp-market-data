@@ -19,6 +19,7 @@ cp "$SP" "$WORK/03_Market/data/spreads_$YEAR.csv"
 [ -f data/gov/curves_latest.csv ] && cp data/gov/curves_latest.csv "$WORK/03_Market/data/gov_curves_latest.csv"
 # קובץ הממשלתי — נבנה מחדש מדי ערב מ-data/gov (gov/gov_data.py רץ ב-market-data); הפרמטרים וההחזקות של יובב נשמרים (--settings על הקובץ הקיים)
 GOV="$WORK/00_Gov/ממשלתי.xlsx"; mkdir -p "$WORK/00_Gov/_build"
+python3 -c "import pandas, numpy, openpyxl" 2>/dev/null || pip install -q --break-system-packages pandas numpy openpyxl 2>/dev/null || true
 if [ -f data/gov/bonds_latest.csv ]; then
   if [ -f "$GOV" ]; then python3 gov/build_gov.py data "$GOV.new" --settings "$GOV" && mv -f "$GOV.new" "$GOV"; else python3 gov/build_gov.py data "$GOV"; fi \
     && cp gov/build_gov.py gov/gov_data.py "$WORK/00_Gov/_build/" || echo "אזהרה: בניית קובץ הממשלתי נכשלה"
