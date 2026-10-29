@@ -1,12 +1,12 @@
 ﻿series,name,date,value,chg_1m_bp,chg_3m_bp,source
-DFF,ריבית הפד (אפקטיבית),,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DGS3MO,UST 3 חודשים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DGS1,UST שנה,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DGS2,UST 2 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DGS5,UST 5 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DGS10,UST 10 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DGS30,UST 30 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DFII5,TIPS 5 שנים (ריאלי),,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-DFII10,TIPS 10 שנים (ריאלי),,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-T5YIE,Breakeven 5 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
-T10YIE,Breakeven 10 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DFF,ריבית הפד (אפקטיבית),2026-10-27,3.88,0.0,25.0,FRED (St. Louis Fed)
+DGS3MO,UST 3 חודשים,2026-10-27,4.22,-2.0,32.0,FRED (St. Louis Fed)
+DGS1,UST שנה,2026-10-27,4.5,0.0,41.0,FRED (St. Louis Fed)
+DGS2,UST 2 שנים,2026-10-27,4.7,-11.0,44.0,FRED (St. Louis Fed)
+DGS5,UST 5 שנים,2026-10-27,4.82,-16.0,47.0,FRED (St. Louis Fed)
+DGS10,UST 10 שנים,2026-10-27,4.99,-18.0,38.0,FRED (St. Louis Fed)
+DGS30,UST 30 שנים,2026-10-27,5.3,-19.0,21.0,FRED (St. Louis Fed)
+DFII5,TIPS 5 שנים (ריאלי),2026-10-27,2.37,-27.0,18.0,FRED (St. Louis Fed)
+DFII10,TIPS 10 שנים (ריאלי),2026-10-27,2.64,-19.0,23.0,FRED (St. Louis Fed)
+T5YIE,Breakeven 5 שנים,2026-10-28,2.49,16.0,25.0,FRED (St. Louis Fed)
+T10YIE,Breakeven 10 שנים,2026-10-28,2.38,4.0,12.0,FRED (St. Louis Fed)
