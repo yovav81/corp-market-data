@@ -36,9 +36,15 @@ PAGES = {
     "corp_fx": "currency-linked-corporate-bonds",
     "gov_unlinked_fixed": "unlinked-fixed-rate-government-bonds",
     "gov_cpi": "cpi-linked-government-bonds",
-    "gov_makam": "unlinked-short-government-bonds",            # מק"מ — הקצה הקצר של העקום השקלי (קובץ הממשלתי)
     "gov_float": "unlinked-floating-rate-government-bonds",    # ממשל משתנה — לעיון בלבד
 }
+# מק"מ: דף גלובס (unlinked-short-government-bonds) מבקש מה-handler את המצב unlinkedShortGovernmentBonds שמחזיר 0 שורות (באג באתר);
+# הנתונים עצמם קיימים באותו handler במצב shortTermTreasuryBills — נמשכים ישירות (JSON) ומצטרפים כטבלה gov_makam.
+HANDLER = "https://www.globes.co.il/portal/Handlers/GTOQuotes2022.ashx"
+JSON_PAGES = {"gov_makam": ("shortTermTreasuryBills", BASE + "unlinked-short-government-bonds")}
+JSON_FIELDS = {"-Key": "security_id", "HebName": "name", "Rate": "last_price", "BaseRateChangePercentage": "chg_pct", "BaseRateChange": "chg_agorot",
+               "GrossYieldToMaturity": "ytm_gross", "NetYieldToMaturity": "ytm_net", "GrossDuration": "duration", "DaysToRedemption": "days_to_redemption",
+               "LastDealTime": "last_trade_time", "DailyNISRevenue": "volume_nis"}
 
 # שמות עמודות אחידים לפי מילות מפתח בכותרת (אחרי הסרת מרכאות, רווחים וסימנים)
 COLUMN_MAP = [
@@ -131,6 +137,31 @@ def fetch(page, url, wait_s):
     return df
 
 
+def fetch_json(ctx, name, day):
+    """טבלה מה-handler של גלובס (JSON) — למק"מ. מחזיר DataFrame באותן עמודות של הטבלאות הרגילות."""
+    mode, ref = JSON_PAGES[name]
+    r = ctx.request.post(HANDLER, form={"sortby": "HebName", "direction": "asc", "showAll": "true", "searchValue": "", "mode": mode,
+                                        "groupType": "", "isMobile": "", "gls": "", "feeder": "0", "test": ""},
+                         headers={"X-Requested-With": "XMLHttpRequest", "Referer": ref})
+    js = r.json(); secs = js.get("Table", {}).get("Security", [])
+    if isinstance(secs, dict): secs = [secs]
+    rows = []
+    for sc in secs:
+        row = {out: sc.get(k) for k, out in JSON_FIELDS.items()}
+        row["name"] = re.sub(r"\s+", " ", str(row.get("name") or "")).strip()
+        lt = str(row.get("last_trade_time") or "")
+        row["last_trade_time"] = lt[11:16] if len(lt) >= 16 else lt
+        try: row["volume_k_nis"] = round(float(row.pop("volume_nis")) / 1000, 1)
+        except (TypeError, ValueError): row["volume_k_nis"] = None; row.pop("volume_nis", None)
+        try:
+            d = int(float(row.pop("days_to_redemption")))
+            row["maturity"] = (datetime.strptime(day, "%Y-%m-%d") + timedelta(days=d)).strftime("%Y-%m-%d")
+        except (TypeError, ValueError): row.pop("days_to_redemption", None); row["maturity"] = None
+        row["coupon"] = 0; row["adjusted_value"] = 100
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
 def save_debug(page, dbg, name):
     dbg.mkdir(parents=True, exist_ok=True)
     try:
@@ -209,7 +240,7 @@ def save_outputs(allf, out, day, problems, xlsx=False):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="data")
-    ap.add_argument("--only", choices=list(PAGES))
+    ap.add_argument("--only", choices=list(PAGES) + list(JSON_PAGES))
     ap.add_argument("--show", action="store_true")
     ap.add_argument("--url", help="כתובת מלאה לבדיקה בודדת")
     ap.add_argument("--skip-if-exists", action="store_true")
@@ -240,6 +271,7 @@ def main():
 
     targets = {"custom": args.url} if args.url else {
         k: BASE + v + "?showAll=true" for k, v in PAGES.items() if not args.only or k == args.only}
+    if args.only in JSON_PAGES: targets = {}
     dbg = Path(args.debug_dir)
     frames, problems = [], []
     with sync_playwright() as p:
@@ -273,6 +305,17 @@ def main():
             print(f"   {len(df)} שורות, {n} עם תשואה")
             df.insert(0, "source", name)
             frames.append(df)
+        # טבלאות JSON (מק"מ)
+        if not args.url:
+            for name in JSON_PAGES:
+                if args.only and args.only != name: continue
+                try:
+                    df = fetch_json(ctx, name, day); n = count_filled(df)
+                    print(f"[{name}] handler JSON: {len(df)} שורות, {n} עם תשואה")
+                    if n: df.insert(0, "source", name); frames.append(df)
+                    else: print(f"   אזהרה: {name} — אין תשואות (אופציונלי)")
+                except Exception as e:
+                    print(f"   אזהרה: {name} — {e} (אופציונלי)")
         browser.close()
 
     if not frames:

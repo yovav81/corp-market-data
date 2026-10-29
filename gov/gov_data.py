@@ -226,7 +226,8 @@ def main(data="data"):
         price = pd.to_numeric(r.get("last_price"), errors="coerce"); adj = pd.to_numeric(r.get("adjusted_value"), errors="coerce")
         L = None
         if a and kind == "מדד" and not pd.isna(adj): L = adj / (100 * (1 + a["accrued"] / 100))
-        rows.append({"date": date.isoformat(), "security_id": sid_by_name.get(name), "name": name, "kind": kind, "source": r["source"],
+        sid = pd.to_numeric(r.get("security_id"), errors="coerce")
+        rows.append({"date": date.isoformat(), "security_id": int(sid) if pd.notna(sid) else sid_by_name.get(name), "name": name, "kind": kind, "source": r["source"],
                      "maturity": mat.isoformat() if mat else None, "coupon": None if pd.isna(c) else float(c),
                      "last_price": None if pd.isna(price) else float(price), "adjusted_value": None if pd.isna(adj) else float(adj),
                      "ytm_gross": None if pd.isna(y) else float(y), "ytm_net": pd.to_numeric(r.get("ytm_net"), errors="coerce"),
