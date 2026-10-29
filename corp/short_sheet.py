@@ -26,6 +26,9 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
         src = json.load(open(os.path.join(sd, "cpi_sources.json"), encoding="utf-8"))
     except Exception as e:
         print("אזהרה: אין נתוני אג״ח קצרות (data/short) —", e); return None
+    gd = os.path.join(os.path.dirname(sd), "gov")
+    try: gcv = pd.read_csv(os.path.join(gd, "curves_latest.csv"), encoding="utf-8-sig")
+    except Exception: gcv = pd.DataFrame()
     ws = wb.create_sheet("מחמ מתחת ל 1", index); ws.sheet_view.rightToLeft = True
     ws["A1"] = "אג״ח קונצרניות עם מח״מ מתחת ל-1 — תשואה מחושבת מחדש מלוח הסילוקין, עם מדד צפוי"; ws["A1"].font = Font(name="Arial", size=14, bold=True)
     ws["A2"] = ("התשואה הריאלית של גלובס/הבורסה נכונה חשבונאית אבל מתעלמת מהמדדים שעוד לא פורסמו: באג״ח צמודה קצרה שני מדדים צפויים יכולים לשנות את התשואה "
@@ -45,52 +48,18 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
             c = ws.cell(row, c0 + i, t); c.fill = HDR; c.font = WH; c.border = BOX
             c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
 
-    # ---- פרמטרים ----
+    # ---- פרמטרים (שורה אחת) ----
     date = _d(sb["date"].iloc[0]) if len(sb) else dt.datetime.today()
-    put("A4", "תאריך נתוני השוק (גלובס)", BOLD); put("B4", date, fmt="dd/mm/yyyy", border=BOX)
-    put("A5", "מועד ערך (T+1)", BOLD); put("B5", "=B4+1", fmt="dd/mm/yyyy", border=BOX)
-    put("A6", "המדד הידוע", BOLD); put("B6", src.get("known_month"), border=BOX); put("C6", src.get("known_index"), fmt="0.0", border=BOX)
-    put("D6", "פורסם ב-15 לחודש העוקב; ידוע מה-16", Font(name="Arial", size=9, italic=True))
-    put("A7", "ציפיות לאינפלציה לשנה (בנק ישראל)", BOLD)
-    ex = src.get("expectations", {}); col = 2
-    for k, lab in (("forecasters", "חזאים"), ("market", "שוק ההון"), ("banks", "בנקים"), ("swaps", "חוזי אינפלציה")):
-        if k in ex:
-            put(f"{L(col)}7", f"{lab}: {ex[k]['value']:.2f}% ({ex[k]['period']})", border=BOX); col += 1
-    put("A8", "מקור התוואי האוטומטי", BOLD)
-    used = ex.get(src.get("used", "forecasters")) or ex.get("forecasters") or {}
-    put("B8", (used.get("name", "—") + f" + עונתיות הלמ״ס {src.get('season_years', '')} שנים") if used else "אין ציפיות — 0", border=BOX); ws.merge_cells("B8:F8")
-
-    # ---- טבלת מדדים ----
-    R0 = 10
-    put(f"A{R0}", "מדדים: ידועים וצפויים", Font(name="Arial", size=12, bold=True))
-    hdr(R0 + 1, ["חודש המדד", "מועד פרסום", "ידוע מ-", "מדד", "שינוי % אוטומטי", "דריסה ידנית %", "שינוי % בפועל", "מקדם מצטבר מהמדד הידוע", "מקור"])
-    ws.row_dimensions[R0 + 1].height = 32
-    known = cpi[cpi["kind"] == "ידוע"].tail(6); expc = cpi[cpi["kind"] != "ידוע"]
-    rows = pd.concat([known, expc]); r = R0 + 2; first = r; last_known_row = None
-    for _, x in rows.iterrows():
-        y, m = str(x["ym"]).split("-"); pub = _d(x["pub_date"])
-        put(f"A{r}", dt.datetime(int(y), int(m), 1), fmt="mm/yyyy", border=BOX)
-        put(f"B{r}", pub, fmt="dd/mm/yyyy", border=BOX); put(f"C{r}", f"=B{r}+1", fmt="dd/mm/yyyy", border=BOX)
-        isk = str(x["kind"]) == "ידוע"
-        put(f"D{r}", None if pd.isna(x["index"]) else float(x["index"]), fmt="0.0", border=BOX)
-        put(f"E{r}", None if pd.isna(x["monthly_pct"]) else float(x["monthly_pct"]), fmt="0.00", border=BOX, fill=None if not isk else SUB)
-        put(f"F{r}", None, fill=None if isk else INP, fmt="0.00", border=BOX)
-        if isk:
-            put(f"G{r}", f"=E{r}", fmt="0.00", border=BOX, fill=SUB); last_known_row = r
-            put(f"H{r}", None, border=BOX)
-        else:
-            put(f"G{r}", f'=IF(F{r}<>"",F{r},E{r})', fmt="0.00", border=BOX)
-            prev = f"H{r-1}" if r - 1 != last_known_row else "1"
-            put(f"H{r}", f"={prev}*(1+G{r}/100)", fmt="0.0000", border=BOX)
-        put(f"I{r}", str(x["source"]) if not isk else "הלמ״ס", Font(name="Arial", size=9), border=BOX)
-        r += 1
-    if last_known_row: put(f"H{last_known_row}", 1.0, fmt="0.0000", border=BOX, fill=SUB)
-    lastr = r - 1
-    KEY, CUM = f"$A${first}:$A${lastr}", f"$H${first}:$H${lastr}"; LASTCUM = f"$H${lastr}"
-    for j, w in enumerate([10, 11, 11, 8, 11, 11, 11, 13, 60]): ws.column_dimensions[L(j + 1)].width = max(ws.column_dimensions[L(j + 1)].width or 0, w)
-
+    ex = src.get("expectations", {}); used_key = src.get("used", "gov"); used = ex.get(used_key) or {}
+    put("A4", "תאריך נתונים", BOLD); put("B4", date, fmt="dd/mm/yyyy", border=BOX)
+    put("C4", "מועד ערך (T+1)", BOLD); put("D4", "=B4+1", fmt="dd/mm/yyyy", border=BOX)
+    put("E4", "המדד הידוע", BOLD); put("F4", src.get("known_month"), border=BOX); put("G4", src.get("known_index"), fmt="0.0", border=BOX)
+    put("H4", "ציפיות לשנה", BOLD); put("I4", used.get("value"), fmt="0.00", border=BOX)
+    put("J4", ("מקובץ הממשלתי (BEI לשנה)" if used_key == "gov" else used.get("name", "")) + f" · {used.get('period', '')}", Font(name="Arial", size=9, italic=True))
+    put("N4", "טבלת המדדים (דריסה ידנית) והעקום הממשלתי — מתחת לרשימת הסדרות ↓", Font(name="Arial", size=9, italic=True, color="1F3864"))
+    gcv_n = len(gcv)
     # ---- טבלת הסדרות ----
-    HR = lastr + 3
+    HR = 6
     put(f"A{HR-1}", f"סדרות עם מח״מ גלובס מתחת ל-1 ({len(sb)}; חושבו {(sb['status']=='ok').sum()})", Font(name="Arial", size=12, bold=True))
     H = ["מס׳ ני״ע", "סדרה", "הצמדה", "סוג פדיון", "ריבית %", "תדירות", "מעלות", "מידרוג", "יש מודל", "פדיון סופי", "מחיר", "ערך מתואם",
          "מח״מ גלובס", "תשואה ברוטו גלובס %", "הפרש ממשלתי גלובס (נ״ב)", "תשלומים נותרים", "תשלום קרוב", "% קרן בתשלום הקרוב", "אקס קרוב",
@@ -107,6 +76,19 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
         + [f"מקדם מדד {i+1}" for i in range(SLOTS)] + ["−מחיר"] + [f"שקלי צפוי {i+1}" for i in range(SLOTS)], cD)
     put(f"{L(cD)}{HR-1}", "תזרים לכל סדרה ל-100 ע.נ. נותרת (עמודות מקובצות — לחצו + לפתיחה)", BOLD)
     cfg = {int(k): g.sort_values("slot") for k, g in cf.groupby("security_id")} if len(cf) else {}
+    # מיקומי הטבלאות שמתחת לרשימה (ידועים מראש כדי שנוסחאות התזרים יפנו אליהן)
+    RL_ = HR + len(sb)
+    GR0 = RL_ + 8                                   # כותרת העקום הממשלתי (אחרי 5 שורות ההסבר)
+    GT0 = GR0 + 2; GT1 = GT0 + max(1, gcv_n) - 1     # שורות העקום
+    R0 = GT1 + 3                                     # כותרת טבלת המדדים
+    known = cpi[cpi["kind"] == "ידוע"].tail(6); expc = cpi[cpi["kind"] != "ידוע"]
+    cpi_rows = pd.concat([known, expc]); first = R0 + 2; lastr = first + len(cpi_rows) - 1
+    KEY, CUM = f"$A${first}:$A${lastr}", f"$H${first}:$H${lastr}"; LASTCUM = f"$H${lastr}"
+    GTEN, GNOM, GREAL = f"$B${GT0}:$B${GT1}", f"$C${GT0}:$C${GT1}", f"$D${GT0}:$D${GT1}"
+    def ginterp(x, ys):
+        m = f"MATCH({x},{GTEN},1)"
+        return (f'IF({x}="","",IF(ISNA({m}),INDEX({ys},1),IF({m}=ROWS({GTEN}),INDEX({ys},ROWS({GTEN})),'
+                f'INDEX({ys},{m})+({x}-INDEX({GTEN},{m}))*(INDEX({ys},{m}+1)-INDEX({ys},{m}))/(INDEX({GTEN},{m}+1)-INDEX({GTEN},{m})))))')
     lk = {"corp_cpi": "מדד", "corp_unlinked": "שקלי", "corp_fx": "מט״ח"}
     r = HR + 1
     for _, b in sb.iterrows():
@@ -124,12 +106,12 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
                   f'=IF(OR(V{r}="",N{r}=""),"",(V{r}-N{r})*100)',
                   (f"=IFERROR((INDEX({L(cF)}{r}:{L(cF+SLOTS-1)}{r},{n})^(365/({L(cD+n)}{r}-{L(cD)}{r}))-1)*100,\"\")" if linked else None),
                   f"=IFERROR(XIRR({L(cN)}{r}:{L(cN+SLOTS)}{r},{dates})*100,\"\")",
-                  b.get("gov_ils_at_dur"), f'=IF(OR(Y{r}="",Z{r}=""),"",(Y{r}-Z{r})*100)',
-                  b.get("gov_cpi_at_dur"), (f'=IF(OR(V{r}="",AB{r}=""),"",(V{r}-AB{r})*100)' if linked else f'=IF(OR(V{r}="",Z{r}=""),"",(V{r}-Z{r})*100)')]
+                  f"__GOVN_{r}__", f'=IF(OR(Y{r}="",Z{r}=""),"",(Y{r}-Z{r})*100)',
+                  f"__GOVR_{r}__", (f'=IF(OR(V{r}="",AB{r}=""),"",(V{r}-AB{r})*100)' if linked else f'=IF(OR(V{r}="",Z{r}=""),"",(V{r}-Z{r})*100)')]
         else:
             v += [None] * 8
         if ok and n:
-            v += [f'=IF({L(cD+n)}{r}="","",{L(cD+n)}{r}-$B$5)', f"=IFERROR(SUM({L(cN+1)}{r}:{L(cN+SLOTS)}{r})/K{r}*100-100,\"\")", b.get("cpi_sens_bp")]
+            v += [f'=IF({L(cD+n)}{r}="","",{L(cD+n)}{r}-$D$4)', f"=IFERROR(SUM({L(cN+1)}{r}:{L(cN+SLOTS)}{r})/K{r}*100-100,\"\")", b.get("cpi_sens_bp")]
         else:
             v += [None, None, None]
         v += [b.get("flags") if ok else b.get("status"), b.get("volume_k_nis")]
@@ -137,11 +119,13 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
               "0.0000", "0.00", "0.00", "0", "0.00", "0.00", "0.00", "0", "0.00", "0", "0", "0.00", "0", None, "#,##0"]
         for j, x in enumerate(v):
             if isinstance(x, float) and pd.isna(x): x = None
+            if x == f"__GOVN_{r}__": x = ("=" + ginterp(f"U{r}", GNOM)) if gcv_n else b.get("gov_ils_at_dur")
+            if x == f"__GOVR_{r}__": x = ("=" + ginterp(f"U{r}", GREAL)) if gcv_n else b.get("gov_cpi_at_dur")
             c = ws.cell(r, 1 + j, x); c.font = BASE
             if fm[j]: c.number_format = fm[j]
         # תזרים
         if ok and n:
-            ws.cell(r, cD, f"=$B$5").number_format = "dd/mm/yyyy"
+            ws.cell(r, cD, f"=$D$4").number_format = "dd/mm/yyyy"
             lastd = _d(g["pay_date"].iloc[-1])
             ws.cell(r, cR, f"=-K{r}").number_format = "0.00"; ws.cell(r, cN, f"=-K{r}").number_format = "0.00"
             for i in range(SLOTS):
@@ -168,6 +152,7 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
     for cc in range(cD, cN + SLOTS + 1): ws.column_dimensions[L(cc)].width = 10
     ws.column_dimensions.group(L(cD), L(cN + SLOTS), outline_level=1, hidden=False)
     ws.freeze_panes = f"C{HR+1}"; ws.auto_filter.ref = f"A{HR}:{L(NC)}{RL}"
+    assert RL == RL_, (RL, RL_)
     rng = f"A{HR+1}:{L(NC)}{RL}"
     ws.conditional_formatting.add(f"W{HR+1}:W{RL}", FormulaRule(formula=[f'AND(W{HR+1}<>"",ABS(W{HR+1})>={PR["p_sgap"]})'], fill=RED))
     ws.conditional_formatting.add(rng, FormulaRule(formula=[f'ISNUMBER(SEARCH("מצוקה",$AG{HR+1}))'], font=Font(name="Arial", size=10, color="808080")))
@@ -176,9 +161,46 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
     # הסבר קצר מתחת לטבלה
     r = RL + 2
     for t in ["קריאה: ׳תשואה ריאלית מחושבת׳ צריכה להתלכד עם גלובס (פער של נ״ב בודדות); פער גדול = עיוות בנתון המצוטט (למשל אחרי פדיון חלקי) — לבדוק.",
-              "׳תשואה שקלית צפויה׳ = אותו תזרים כשכל תשלום מוצמד למדד הידוע במועדו לפי הטבלה למעלה; זו התשואה להשוואה מול אג״ח שקלית/ממשלתי שקלי באותו מח״מ (׳מרווח שקלי צפוי׳).",
+              "׳תשואה שקלית צפויה׳ = אותו תזרים כשכל תשלום מוצמד למדד הידוע במועדו לפי טבלת המדדים למטה; ׳מרווח שקלי צפוי׳ = מול העקום הממשלתי השקלי (קובץ הממשלתי) באותו מח״מ.",
               "מקדם ההצמדה L נגזר מהערך המתואם ברוטו של גלובס (ערך מתואם ÷ (1 + ריבית צבורה)), לא ממדד הבסיס — דיוק של כ-0.01%. רצפת מדד (אם קיימת בשטר) לא מיושמת.",
               "טווח קצר מ-60 יום (ימים לפדיון בכתום): התשואה השנתית נשענת על מדד צפוי אחד — להסתכל על ׳רווח כולל לפדיון׳ (לא שנתי) ועל הרגישות: כמה נ״ב בתשואה השנתית משנה סטייה של 0.1% במדד.",
-              "ריבית משתנה חושבה לפי הריבית הנוכחית; צמודות מט״ח — ללא תחזית שער (תשואה במונחי המטבע). מקור הלוחות: ביזפורטל, נתוני אג״ח (מתעדכן בענן בכל ערב, short/schedules.py)."]:
+              "ריבית משתנה חושבה לפי הריבית הנוכחית; צמודות מט״ח — ללא תחזית שער. מוסכמות: סליקה T+1, ACT/365, ריבית שנתית אפקטיבית; תשלום שמועד האקס שלו עבר הושמט. מקור הלוחות: ביזפורטל (מתעדכן בענן בכל ערב)."]:
         put(f"A{r}", t, Font(name="Arial", size=9)); r += 1
+    # ---- העקום הממשלתי (מקובץ הממשלתי) ----
+    put(f"A{GR0}", "העקום הממשלתי — מקובץ הממשלתי (00_Gov/ממשלתי.xlsx, גיליון 03_עקומים; אותו מקור: data/gov/curves_latest.csv)", Font(name="Arial", size=12, bold=True))
+    hdr(GR0 + 1, ["", "טווח (שנים)", "שקלי %", "ריאלי %", "BEI %", "תאריך"])
+    for i in range(max(1, gcv_n)):
+        rr = GT0 + i
+        if gcv_n:
+            x = gcv.iloc[i]
+            put(f"B{rr}", float(x["tenor"]), fmt="0.00", border=BOX); put(f"C{rr}", float(x["nominal"]), fmt="0.00", border=BOX)
+            put(f"D{rr}", float(x["real"]), fmt="0.00", border=BOX); put(f"E{rr}", None if pd.isna(x["bei"]) else float(x["bei"]), fmt="0.00", border=BOX)
+            put(f"F{rr}", str(x["date"]), border=BOX)
+        else:
+            put(f"B{rr}", "אין נתוני עקום — הממשלתי בשורות הסדרות מגלובס", Font(name="Arial", size=9, italic=True))
+    put(f"H{GT0}", "׳ממשלתי שקלי/צמוד באותו מח״מ׳ בטבלה למעלה מחושב באינטרפולציה על העקום הזה (שקלי = מק״מ + שקלית קבועה). כל ערב העקום מתחלף יחד עם קובץ הממשלתי.", Font(name="Arial", size=9, italic=True))
+    # ---- טבלת מדדים ----
+    put(f"A{R0}", "מדדים: ידועים וצפויים (תאים צהובים — דריסה ידנית; נשמרת בין בנייה לבנייה)", Font(name="Arial", size=12, bold=True))
+    hdr(R0 + 1, ["חודש המדד", "מועד פרסום", "ידוע מ-", "מדד", "שינוי % אוטומטי", "דריסה ידנית %", "שינוי % בפועל", "מקדם מצטבר מהמדד הידוע", "מקור"])
+    ws.row_dimensions[R0 + 1].height = 32
+    r = first; last_known_row = None
+    for _, x in cpi_rows.iterrows():
+        y, m = str(x["ym"]).split("-"); pub = _d(x["pub_date"])
+        put(f"A{r}", dt.datetime(int(y), int(m), 1), fmt="mm/yyyy", border=BOX)
+        put(f"B{r}", pub, fmt="dd/mm/yyyy", border=BOX); put(f"C{r}", f"=B{r}+1", fmt="dd/mm/yyyy", border=BOX)
+        isk = str(x["kind"]) == "ידוע"
+        put(f"D{r}", None if pd.isna(x["index"]) else float(x["index"]), fmt="0.0", border=BOX)
+        put(f"E{r}", None if pd.isna(x["monthly_pct"]) else float(x["monthly_pct"]), fmt="0.00", border=BOX, fill=None if not isk else SUB)
+        put(f"F{r}", None, fill=None if isk else INP, fmt="0.00", border=BOX)
+        if isk:
+            put(f"G{r}", f"=E{r}", fmt="0.00", border=BOX, fill=SUB); last_known_row = r
+            put(f"H{r}", None, border=BOX)
+        else:
+            put(f"G{r}", f'=IF(F{r}<>"",F{r},E{r})', fmt="0.00", border=BOX)
+            prev = f"H{r-1}" if r - 1 != last_known_row else "1"
+            put(f"H{r}", f"={prev}*(1+G{r}/100)", fmt="0.0000", border=BOX)
+        put(f"I{r}", str(x["source"]) if not isk else "הלמ״ס", Font(name="Arial", size=9), border=BOX)
+        r += 1
+    if last_known_row: put(f"H{last_known_row}", 1.0, fmt="0.0000", border=BOX, fill=SUB)
+    put(f"A{r+1}", "המדד לחודש M מתפרסם ב-15 ל-M+1 ונחשב ידוע מה-16; תשלום מוצמד למדד הידוע במועדו. תוואי: ציפיות לשנה (קובץ הממשלתי) + עונתיות הלמ״ס; דריסה בעמודה F גוברת.", Font(name="Arial", size=9))
     return ws

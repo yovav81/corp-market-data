@@ -51,8 +51,12 @@ def main(data="data"):
     for _, r in cpi.iterrows():
         if str(r["kind"]).startswith("צפוי"):
             y, m = str(r["ym"]).split("-"); exp[(int(y), int(m))] = float(r["monthly_pct"]) / 100
-    # עקומים ממשלתיים
-    xi, yi = curve(mk, "gov_cpi"); xs, ys = curve(mk, "gov_unlinked_fixed")
+    # עקומים ממשלתיים — מקובץ הממשלתי (data/gov/curves_latest.csv: מק"מ + שקלית, צמודה; על שנים לפדיון) אם קיים, אחרת גלובס ישירות
+    try:
+        gc = pd.read_csv(d / "gov" / "curves_latest.csv", encoding="utf-8-sig").sort_values("tenor")
+        xi, yi = gc["tenor"].to_numpy(float), gc["real"].to_numpy(float); xs, ys = gc["tenor"].to_numpy(float), gc["nominal"].to_numpy(float)
+    except Exception:
+        xi, yi = curve(mk, "gov_cpi"); xs, ys = curve(mk, "gov_unlinked_fixed")
     # מרווח גלובס (מהחישוב היומי)
     try:
         sp = pd.read_csv(d / "spreads" / f"{date.year}.csv", encoding="utf-8-sig", dtype={"security_id": str})

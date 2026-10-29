@@ -50,7 +50,19 @@ def build_snapshot(cd, cmd, out):
     n, k = build_checklist.add_sheets(wb, iss, os.path.join(cd, "00_Master", "checks_extra.csv"), index=wb.index(wb["מה_חדש"]) + 1)
     print("בדיקות לדוח הבא:", n, "פריטים,", k, "מנפיקים")
     _fix_guide(wb)
+    reorder(wb)
     return wb
+
+
+ORDER = ["השוואה_מנפיקים", "השוואה_ענפית", "Watchlist", "השוואה_אגחים", "סינון_שוק", "מרווחים_חריגים", "מחמ מתחת ל 1", "תנאי_אשראי",
+         "מה_חדש", "בדיקות_לדוח_הבא", "בדיקות_סיכום", "גורמים_חיצוניים"]   # סדר הגיליונות שיובב ביקש (29.10); השאר אחריהם בסדר הקיים
+
+
+def reorder(wb):
+    rest = [n for n in wb.sheetnames if n not in ORDER]
+    want = [n for n in ORDER if n in wb.sheetnames] + rest
+    wb._sheets = [wb[n] for n in want]
+    wb.active = 0
 
 
 def _has_header(p):
@@ -97,7 +109,7 @@ def carry_over(wb, prev_path):
     if sn in pv.sheetnames and sn in wb.sheetnames:
         o, n = pv[sn], wb[sn]
         def idx_rows(ws):
-            hdr = next((r for r in range(1, 60) if ws.cell(r, 1).value == "חודש המדד"), None)
+            hdr = next((r for r in range(1, ws.max_row + 1) if ws.cell(r, 1).value == "חודש המדד"), None)
             out = {}
             if hdr:
                 r = hdr + 1
