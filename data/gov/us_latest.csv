@@ -1,0 +1,12 @@
+﻿series,name,date,value,chg_1m_bp,chg_3m_bp,source
+DFF,ריבית הפד (אפקטיבית),,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DGS3MO,UST 3 חודשים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DGS1,UST שנה,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DGS2,UST 2 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DGS5,UST 5 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DGS10,UST 10 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DGS30,UST 30 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DFII5,TIPS 5 שנים (ריאלי),,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+DFII10,TIPS 10 שנים (ריאלי),,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+T5YIE,Breakeven 5 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>
+T10YIE,Breakeven 10 שנים,,,,,שגיאה: <urlopen error Tunnel connection failed: 403 Forbidden>

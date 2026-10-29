@@ -15,6 +15,8 @@ rm -rf "$WORK"; git clone -q --depth 1 "$REMOTE" "$WORK"
 mkdir -p "$WORK/03_Market/data"
 cp "$LAT" "$WORK/03_Market/data/daily_latest.csv"
 cp "$SP" "$WORK/03_Market/data/spreads_$YEAR.csv"
+[ -f data/gov/bonds_latest.csv ] && cp data/gov/bonds_latest.csv "$WORK/03_Market/data/gov_bonds_latest.csv"
+[ -f data/gov/curves_latest.csv ] && cp data/gov/curves_latest.csv "$WORK/03_Market/data/gov_curves_latest.csv"
 cd "$WORK"; git add 03_Market/data
 if git diff --cached --quiet; then echo "no change"; else
   git -c user.name="market-bot" -c user.email="corp-bot@users.noreply.github.com" commit -qm "03_Market/data: נתוני שוק $LAST"

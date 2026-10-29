@@ -36,6 +36,8 @@ PAGES = {
     "corp_fx": "currency-linked-corporate-bonds",
     "gov_unlinked_fixed": "unlinked-fixed-rate-government-bonds",
     "gov_cpi": "cpi-linked-government-bonds",
+    "gov_makam": "unlinked-short-government-bonds",            # מק"מ — הקצה הקצר של העקום השקלי (קובץ הממשלתי)
+    "gov_float": "unlinked-floating-rate-government-bonds",    # ממשל משתנה — לעיון בלבד
 }
 
 # שמות עמודות אחידים לפי מילות מפתח בכותרת (אחרי הסרת מרכאות, רווחים וסימנים)

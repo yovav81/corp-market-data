@@ -25,7 +25,7 @@ UA = {"User-Agent": "Mozilla/5.0 corp-market-data"}
 CBS_ID = 120010
 SEASON_YEARS = int(os.environ.get("SHORT_SEASON_YEARS", "6"))
 HORIZON = int(os.environ.get("SHORT_HORIZON_MONTHS", "18"))
-EXP_SOURCE = os.environ.get("SHORT_EXP_SOURCE", "forecasters")   # forecasters | market | banks | swaps | gov
+EXP_SOURCE = os.environ.get("SHORT_EXP_SOURCE", "gov")   # gov (BEI לשנה מקובץ הממשלתי) | forecasters | market | banks | swaps
 BOI_SERIES = {"forecasters": ("EXP_HAZ_MAD_AVG_01Y_MA", "בנק ישראל — ממוצע החזאים ל-12 חודשים"),
               "market": ("EXP_EXP_01Y_BI_MA", "בנק ישראל — ציפיות משוק ההון לשנה"),
               "banks": ("EXP_EXP_IRB_1Y_MA", "בנק ישראל — ציפיות מריביות הבנקים לשנה"),
@@ -113,6 +113,19 @@ def seasonality(cpi: dict, years: int):
     return {m: v - mean for m, v in avg.items()}, full
 
 
+def gov_bei(data: Path):
+    """ציפיות לשנה מהעקום הממשלתי שלנו (data/gov/curves_latest.csv, gov/gov_data.py) — BEI לטווח שנה."""
+    p = data / "gov" / "curves_latest.csv"
+    if not p.exists(): return None
+    for r in csv.DictReader(open(p, encoding="utf-8-sig")):
+        try:
+            if float(r["tenor"]) == 1.0 and r.get("bei") not in (None, ""):
+                return {"series": "BEI_1Y", "name": "קובץ הממשלתי — אינפלציה גלומה לשנה (מק״מ/שקלית מול צמודה, גלובס)", "period": r["date"], "value": float(r["bei"])}
+        except (KeyError, ValueError):
+            pass
+    return None
+
+
 def load_manual(p: Path) -> dict[tuple[int, int], dict]:
     out = {}
     if p.exists():
@@ -169,6 +182,8 @@ def main(data="data"):
     except Exception as e:
         print("אזהרה: בנק ישראל לא זמין —", e); boi = {}
     manual = load_manual(d / "cpi_manual.csv")
+    g = gov_bei(Path(data))
+    if g: boi["gov"] = g
     rows, known = build(cpi, boi, manual, today)
     with open(d / "cpi_expected.csv", "w", newline="", encoding="utf-8-sig") as f:
         w = csv.DictWriter(f, fieldnames=["ym", "pub_date", "kind", "index", "monthly_pct", "cum_factor", "source", "as_of"])
@@ -177,7 +192,7 @@ def main(data="data"):
                "known_base": cpi[known]["base"], "seasonality_pct": {m: round(v * 100, 3) for m, v in seasonality(cpi, SEASON_YEARS)[0].items()},
                "expectations": boi, "used": EXP_SOURCE, "season_years": SEASON_YEARS},
               open(d / "cpi_sources.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"מדד ידוע: {known[0]}-{known[1]:02d} = {cpi[known]['value']} ({cpi[known]['base']}); ציפיות: " + ", ".join(f"{k}={v['value']:.2f}% ({v['period']})" for k, v in boi.items()))
+    print(f"מדד ידוע: {known[0]}-{known[1]:02d} = {cpi[known]['value']} ({cpi[known]['base']}); מקור בשימוש: {EXP_SOURCE}; ציפיות: " + ", ".join(f"{k}={v['value']:.2f}% ({v['period']})" for k, v in boi.items()))
     for r in rows:
         if r["kind"] != "ידוע": print(r["ym"], r["monthly_pct"], r["cum_factor"], r["kind"])
 

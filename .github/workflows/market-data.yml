@@ -46,6 +46,10 @@ jobs:
         if: always()
         run: python spreads.py data
 
+      - name: Government — עקומים, BEI, היסטוריה, ארה"ב, בנק ישראל (data/gov, מקור הממשלתי של המערכת)
+        if: always()
+        run: python gov/gov_data.py data || echo "::warning::gov_data failed"
+
       - name: Short bonds — לוחות סילוקין, מדדים צפויים, תשואה מחושבת (מח"מ < 1)
         # ביזפורטל (לוחות, פעם בשבוע לכל סדרה), הלמ"ס + בנק ישראל (מדדים וציפיות), ואז חישוב מחדש → data/short/
         if: always()
