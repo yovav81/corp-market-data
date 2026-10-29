@@ -80,11 +80,17 @@ class Bond:
 
 def flows_from_schedule(rows: Iterable[dict], next_ex: dt.date | None) -> list[Flow]:
     """rows: שורות לוח הסילוקין (pay_date, principal_amt, interest_amt) בסכומים כספיים. מנרמל ל-100 ע.נ. נותרת."""
+    def num(v):
+        try:
+            x = float(v)
+            return 0.0 if x != x else x      # NaN (תא ריק / "--") = 0
+        except (TypeError, ValueError):
+            return 0.0
     rows = sorted(rows, key=lambda r: r["pay_date"])
-    tot = sum(float(r.get("principal_amt") or 0) for r in rows)
+    tot = sum(num(r.get("principal_amt")) for r in rows)
     out = []
     for i, r in enumerate(rows):
-        p = float(r.get("principal_amt") or 0); it = float(r.get("interest_amt") or 0)
+        p = num(r.get("principal_amt")); it = num(r.get("interest_amt"))
         if tot <= 0:
             raise ValueError("סך הקרן בלוח הוא 0")
         ex = next_ex if (i == 0 and next_ex) else r["pay_date"] - dt.timedelta(days=DEFAULT_EX_DAYS)

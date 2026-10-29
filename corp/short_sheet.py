@@ -96,6 +96,7 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
          "מח״מ גלובס", "תשואה ברוטו גלובס %", "הפרש ממשלתי גלובס (נ״ב)", "תשלומים נותרים", "תשלום קרוב", "% קרן בתשלום הקרוב", "אקס קרוב",
          "מקדם הצמדה L", "מח״מ מחושב", "תשואה ריאלית מחושבת %", "פער מול גלובס (נ״ב)", "אינפלציה צפויה עד הפדיון (שנתי) %",
          "תשואה שקלית צפויה %", "ממשלתי שקלי באותו מח״מ %", "מרווח שקלי צפוי (נ״ב)", "ממשלתי צמוד באותו מח״מ %", "מרווח ריאלי (נ״ב)",
+         "ימים לפדיון", "רווח כולל לפדיון % (לא שנתי)", "רגישות: +0.1% במדד = נ״ב בתשואה השנתית",
          "דגלים / סטטוס", "מחזור (אלפי ₪)"]
     NC = len(H)
     hdr(HR, H); ws.row_dimensions[HR].height = 48
@@ -127,9 +128,13 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
                   b.get("gov_cpi_at_dur"), (f'=IF(OR(V{r}="",AB{r}=""),"",(V{r}-AB{r})*100)' if linked else f'=IF(OR(V{r}="",Z{r}=""),"",(V{r}-Z{r})*100)')]
         else:
             v += [None] * 8
+        if ok and n:
+            v += [f'=IF({L(cD+n)}{r}="","",{L(cD+n)}{r}-$B$5)', f"=IFERROR(SUM({L(cN+1)}{r}:{L(cN+SLOTS)}{r})/K{r}*100-100,\"\")", b.get("cpi_sens_bp")]
+        else:
+            v += [None, None, None]
         v += [b.get("flags") if ok else b.get("status"), b.get("volume_k_nis")]
         fm = ["0", None, None, None, "0.00", None, None, None, None, "dd/mm/yyyy", "0.00", "0.00", "0.00", "0.00", "0", "0", "dd/mm/yyyy", "0.0", "dd/mm/yyyy",
-              "0.0000", "0.00", "0.00", "0", "0.00", "0.00", "0.00", "0", "0.00", "0", None, "#,##0"]
+              "0.0000", "0.00", "0.00", "0", "0.00", "0.00", "0.00", "0", "0.00", "0", "0", "0.00", "0", None, "#,##0"]
         for j, x in enumerate(v):
             if isinstance(x, float) and pd.isna(x): x = None
             c = ws.cell(r, 1 + j, x); c.font = BASE
@@ -158,20 +163,22 @@ def build(wb, sp_csv, *, index, styles, SE, PR):
             for cc in range(cD, cN + SLOTS + 1): ws.cell(r, cc).font = Font(name="Arial", size=9, color="808080")
         r += 1
     RL = r - 1
-    widths = [10, 20, 7, 11, 7, 9, 8, 8, 7, 10, 8, 9, 7, 9, 9, 8, 10, 8, 10, 8, 8, 10, 9, 11, 10, 10, 10, 10, 9, 40, 9]
+    widths = [10, 20, 7, 11, 7, 9, 8, 8, 7, 10, 8, 9, 7, 9, 9, 8, 10, 8, 10, 8, 8, 10, 9, 11, 10, 10, 10, 10, 9, 8, 11, 12, 40, 9]
     for j, w in enumerate(widths): ws.column_dimensions[L(j + 1)].width = max(ws.column_dimensions[L(j + 1)].width or 0, w) if j < 9 else w
     for cc in range(cD, cN + SLOTS + 1): ws.column_dimensions[L(cc)].width = 10
     ws.column_dimensions.group(L(cD), L(cN + SLOTS), outline_level=1, hidden=False)
     ws.freeze_panes = f"C{HR+1}"; ws.auto_filter.ref = f"A{HR}:{L(NC)}{RL}"
     rng = f"A{HR+1}:{L(NC)}{RL}"
     ws.conditional_formatting.add(f"W{HR+1}:W{RL}", FormulaRule(formula=[f'AND(W{HR+1}<>"",ABS(W{HR+1})>={PR["p_sgap"]})'], fill=RED))
-    ws.conditional_formatting.add(rng, FormulaRule(formula=[f'ISNUMBER(SEARCH("מצוקה",$AD{HR+1}))'], font=Font(name="Arial", size=10, color="808080")))
+    ws.conditional_formatting.add(rng, FormulaRule(formula=[f'ISNUMBER(SEARCH("מצוקה",$AG{HR+1}))'], font=Font(name="Arial", size=10, color="808080")))
+    ws.conditional_formatting.add(f"Y{HR+1}:Y{RL}", FormulaRule(formula=[f'AND(AD{HR+1}<>"",AD{HR+1}<60)'], font=Font(name="Arial", size=10, italic=True, color="7F6000")))
     ws.conditional_formatting.add(f"Y{HR+1}:Y{RL}", FormulaRule(formula=[f'AND(Y{HR+1}<>"",V{HR+1}<>"",ABS(Y{HR+1}-V{HR+1})>=1)'], fill=SUB))
     # הסבר קצר מתחת לטבלה
     r = RL + 2
     for t in ["קריאה: ׳תשואה ריאלית מחושבת׳ צריכה להתלכד עם גלובס (פער של נ״ב בודדות); פער גדול = עיוות בנתון המצוטט (למשל אחרי פדיון חלקי) — לבדוק.",
               "׳תשואה שקלית צפויה׳ = אותו תזרים כשכל תשלום מוצמד למדד הידוע במועדו לפי הטבלה למעלה; זו התשואה להשוואה מול אג״ח שקלית/ממשלתי שקלי באותו מח״מ (׳מרווח שקלי צפוי׳).",
               "מקדם ההצמדה L נגזר מהערך המתואם ברוטו של גלובס (ערך מתואם ÷ (1 + ריבית צבורה)), לא ממדד הבסיס — דיוק של כ-0.01%. רצפת מדד (אם קיימת בשטר) לא מיושמת.",
+              "טווח קצר מ-60 יום (ימים לפדיון בכתום): התשואה השנתית נשענת על מדד צפוי אחד — להסתכל על ׳רווח כולל לפדיון׳ (לא שנתי) ועל הרגישות: כמה נ״ב בתשואה השנתית משנה סטייה של 0.1% במדד.",
               "ריבית משתנה חושבה לפי הריבית הנוכחית; צמודות מט״ח — ללא תחזית שער (תשואה במונחי המטבע). מקור הלוחות: ביזפורטל, נתוני אג״ח (מתעדכן בענן בכל ערב, short/schedules.py)."]:
         put(f"A{r}", t, Font(name="Arial", size=9)); r += 1
     return ws

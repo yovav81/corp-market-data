@@ -22,7 +22,7 @@ OUT_COLS = ["date", "security_id", "name", "source", "linkage", "redemption_type
             "maturity", "last_price", "adjusted_value", "volume_k_nis", "rating_maalot", "rating_midroog",
             "dur_globes", "ytm_globes", "gov_ytm_globes", "spread_globes",
             "L", "n_flows", "next_pay_date", "next_pay_amt", "next_principal_pct", "next_ex", "final_pay_date",
-            "dur_calc", "ytm_real_calc", "ytm_nominal_exp", "infl_period_pct", "infl_annual_pct",
+            "dur_calc", "ytm_real_calc", "ytm_nominal_exp", "infl_period_pct", "infl_annual_pct", "days_to_final", "total_return_pct", "cpi_sens_bp",
             "gap_bp", "gov_cpi_at_dur", "gov_ils_at_dur", "spread_real_bp", "spread_nominal_bp", "flags", "months", "status"]
 
 
@@ -79,7 +79,7 @@ def main(data="data"):
         s = sched[sched["security_id"] == sid]
         rows = [{"pay_date": _d(x["pay_date"]), "principal_amt": x["principal_amt"], "interest_amt": x["interest_amt"]} for _, x in s.iterrows()]
         rows = [x for x in rows if x["pay_date"]]
-        if not rows or sum(float(x["principal_amt"] or 0) for x in rows) <= 0:
+        if not rows or sum(float(x["principal_amt"]) for x in rows if x["principal_amt"] == x["principal_amt"]) <= 0:
             row.update(status="לוח ריק"); out.append(row); continue
         linkage = str(t.get("linkage") or ("מדד" if r["source"] == "corp_cpi" else "שקלי"))
         if r["source"] == "corp_cpi" and "מדד" not in linkage: linkage = "מדד"
@@ -121,6 +121,17 @@ def main(data="data"):
         if (not pd.isna(yg) and yg > 50) or price < 70: flags.append("מצוקה")
         if any(e is None for _, e in res.months_used): flags.append("חסר מדד צפוי לחלק מהחודשים")
         if res.dur is not None and nx.date and (nx.date - date).days <= 10: flags.append("תשלום בתוך 10 ימים")
+        # טווח, רווח כולל (לא שנתי) ורגישות למדד
+        days = (live[-1].date - res.val_date).days
+        tot = sum(v for _, v in res.flows_nominal) / float(price) - 1
+        row.update(days_to_final=days, total_return_pct=round(tot * 100, 3))
+        if linked and res.y_nominal is not None:
+            exp_up = {k: v + 0.001 for k, v in exp.items()}
+            for f in b.flows: f.included = True
+            res_up = compute(b, float(price), float(adj), date, exp_up)
+            if res_up.y_nominal is not None:
+                row["cpi_sens_bp"] = round((res_up.y_nominal - res.y_nominal) * 10000, 0)
+        if days < 60: flags.append(f"טווח {days} ימים — התשואה השנתית נשענת על מדד אחד")
         row.update(flags="; ".join(flags), status="ok")
         out.append(row)
         for i, (f, (dd, real), (_, nom), k) in enumerate(zip(live, res.flows_real, res.flows_nominal, res.factors)):
