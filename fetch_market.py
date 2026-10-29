@@ -56,6 +56,7 @@ FIRST = ["date", "snapshot", "source", "security_id", "name", "last_trade_time",
          "rating_maalot", "rating_midroog"]
 KEY = ["date", "source", "security_id", "name"]  # לממשלתיות אין מספר ני"ע בגלובס, לכן המפתח כולל גם את השם
 MIN_SHARE = 0.8  # טבלה נחשבת מלאה אם יש בה לפחות 80% מהתשואות של יום המסחר הקודם
+OPTIONAL = {"gov_makam", "gov_float"}  # כשל בטבלאות האלה הוא אזהרה בלבד — לא מסמן את היום כחלקי
 
 EXTRACT_JS = """
 () => {
@@ -260,7 +261,10 @@ def main():
                 if n > 0 and n >= need:
                     break
             if n == 0:
-                problems.append(f"{name}: לא התקבלה טבלה עם תשואות")
+                if name in OPTIONAL:
+                    print(f"   אזהרה: {name} — לא התקבלה טבלה עם תשואות (אופציונלי)")
+                else:
+                    problems.append(f"{name}: לא התקבלה טבלה עם תשואות")
                 save_debug(page, dbg, name)
                 continue
             if n < need:
