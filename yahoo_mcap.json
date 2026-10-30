@@ -1,0 +1,41 @@
+{
+ "DLPR.TA": {
+  "last": [
+   [
+    "2026-10-23",
+    6750.0
+   ],
+   [
+    "2026-10-26",
+    6903.0
+   ],
+   [
+    "2026-10-28",
+    6800.0
+   ],
+   [
+    "2026-10-29",
+    6800.0
+   ],
+   [
+    "2026-10-30",
+    6750.0
+   ]
+  ],
+  "fast": {
+   "currency": "ILA",
+   "shares": 14856493,
+   "mcap": 100281327750.0,
+   "last_price": 6750.0
+  },
+  "info": {
+   "longName": "Delek Israel Properties (D.P.) Ltd.",
+   "shortName": "DELEK PROPS D.P",
+   "marketCap": 1002813248,
+   "sharesOutstanding": 14856493,
+   "currency": "ILA",
+   "regularMarketPrice": 6750.0,
+   "previousClose": 6800.0
+  }
+ }
+}
