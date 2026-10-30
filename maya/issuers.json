@@ -266,5 +266,13 @@
   "maya_id": 2387,
   "corp_folder": "516378643_דלק-נכסים",
   "maya_long_name": "דלק ישראל נכסים (ד.פ.) בע\"מ"
+ },
+ {
+  "key": "dorsel",
+  "name": "דורסל",
+  "maya_name": "דורסל",
+  "maya_id": 2397,
+  "corp_folder": "516597549_דורסל",
+  "maya_long_name": "דורסל בע\"מ"
  }
 ]
