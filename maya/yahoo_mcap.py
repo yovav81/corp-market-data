@@ -4,7 +4,7 @@ subprocess.run([sys.executable, "-m", "pip", "install", "-q", "yfinance"], check
 import yfinance as yf
 out = sys.argv[1] if len(sys.argv) > 1 else "probe_out"
 os.makedirs(out, exist_ok=True)
-SYMS = os.environ.get("SYMS", "MISH.TA").split(",")
+SYMS = os.environ.get("SYMS", "MSHR.TA,MISH.TA,MSOR.TA,MSRM.TA").split(",")
 res = {}
 for s in SYMS:
     try:
@@ -20,5 +20,9 @@ for s in SYMS:
         res[s] = r
     except Exception as e:
         res[s] = {"error": str(e)}
+try:
+    res["_search"] = [{k: q.get(k) for k in ("symbol","shortname","longname","exchange")} for q in yf.Search("Mishorim", max_results=10).quotes]
+except Exception as e:
+    res["_search_err"] = str(e)
 json.dump(res, open(os.path.join(out, "yahoo_mcap.json"), "w"), indent=1, default=str)
 print(json.dumps(res, indent=1, default=str))
