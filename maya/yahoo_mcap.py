@@ -4,7 +4,7 @@ subprocess.run([sys.executable, "-m", "pip", "install", "-q", "yfinance"], check
 import yfinance as yf
 out = sys.argv[1] if len(sys.argv) > 1 else "probe_out"
 os.makedirs(out, exist_ok=True)
-SYMS = os.environ.get("SYMS", "DLPR.TA").split(",")
+SYMS = os.environ.get("SYMS", "DORL.TA,DRSL.TA,DORS.TA,DRSA.TA,DSL.TA,DRSEL.TA,DRSL.TA").split(",")
 res = {}
 for s in SYMS:
     try:
