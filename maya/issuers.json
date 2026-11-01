@@ -330,5 +330,12 @@
   "maya_id": 2505,
   "corp_folder": "1001251204_פיקהיל",
   "maya_long_name": "פיקהיל הכנסה ממשכנתאות שותפות מוגבלת (Peakhill Mortgage Income LP)"
+ },
+ {
+  "key": "adama",
+  "name": "אדמה",
+  "maya_name": "אדמה פתרונות לחקלאות",
+  "maya_id": 1063,
+  "corp_folder": "520043605_אדמה"
  }
 ]
