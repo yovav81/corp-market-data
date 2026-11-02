@@ -353,5 +353,13 @@
   "maya_id": 759,
   "corp_folder": "520001736_גב-ים",
   "maya_long_name": "חברת גב ים לקרקעות בע\"מ"
+ },
+ {
+  "key": "reit1",
+  "name": "ריט 1",
+  "maya_name": "ריט 1 בע\"מ",
+  "maya_id": 1357,
+  "corp_folder": "513821488_ריט-1",
+  "maya_long_name": "ריט 1 בע\"מ"
  }
 ]
