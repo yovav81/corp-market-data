@@ -1,4 +1,8 @@
 {
- "run": "2026-11-02T23:13",
- "errors": {}
+ "run": "2026-11-03T12:20",
+ "errors": {
+  "EURIBOR3M": "HTTPError: HTTP Error 500: Internal Server Error",
+  "PLNILS": "TimeoutError: The read operation timed out",
+  "BRLILS": "HTTPError: HTTP Error 504: Gateway Time-out"
+ }
 }
