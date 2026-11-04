@@ -385,5 +385,47 @@
   "maya_id": 1794,
   "corp_folder": "516117181_ריט-אזורים",
   "maya_long_name": "ריט אזורים - ה.פ ליווינג בע\"מ"
+ },
+ {
+  "key": "acro",
+  "name": "אקרו",
+  "maya_name": "אקרו נדל",
+  "corp_folder": "511996803_אקרו"
+ },
+ {
+  "key": "tidhar",
+  "name": "תדהר",
+  "maya_name": "תדהר",
+  "corp_folder": "512728932_תדהר"
+ },
+ {
+  "key": "energix",
+  "name": "אנרג׳יקס",
+  "maya_name": "אנרג'יקס",
+  "corp_folder": "513901371_אנרגיקס"
+ },
+ {
+  "key": "nofar",
+  "name": "נופר אנרג׳י",
+  "maya_name": "נופר אנרג'י",
+  "corp_folder": "514599943_נופר-אנרגי"
+ },
+ {
+  "key": "afcon",
+  "name": "אפקון החזקות",
+  "maya_name": "אפקון החזקות",
+  "corp_folder": "520033473_אפקון-החזקות"
+ },
+ {
+  "key": "icanada",
+  "name": "ישראל קנדה",
+  "maya_name": "ישראל קנדה",
+  "corp_folder": "520039298_ישראל-קנדה"
+ },
+ {
+  "key": "kardanre",
+  "name": "קרדן נדל״ן",
+  "maya_name": "קרדן נדל",
+  "corp_folder": "520041005_קרדן-נדלן"
  }
 ]
