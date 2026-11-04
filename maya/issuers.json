@@ -396,36 +396,48 @@
   "key": "tidhar",
   "name": "תדהר",
   "maya_name": "תדהר",
-  "corp_folder": "512728932_תדהר"
+  "corp_folder": "512728932_תדהר",
+  "maya_id": 2557,
+  "maya_long_name": "קבוצת תדהר בע\"מ"
  },
  {
   "key": "energix",
   "name": "אנרג׳יקס",
   "maya_name": "אנרג'יקס",
-  "corp_folder": "513901371_אנרגיקס"
+  "corp_folder": "513901371_אנרגיקס",
+  "maya_id": 1581,
+  "maya_long_name": "אנרג'יקס-אנרגיות מתחדשות בע\"מ"
  },
  {
   "key": "nofar",
   "name": "נופר אנרג׳י",
   "maya_name": "נופר אנרג'י",
-  "corp_folder": "514599943_נופר-אנרגי"
+  "corp_folder": "514599943_נופר-אנרגי",
+  "maya_id": 1831,
+  "maya_long_name": "ע.י. נופר אנרג'י בע\"מ"
  },
  {
   "key": "afcon",
   "name": "אפקון החזקות",
   "maya_name": "אפקון החזקות",
-  "corp_folder": "520033473_אפקון-החזקות"
+  "corp_folder": "520033473_אפקון-החזקות",
+  "maya_id": 578,
+  "maya_long_name": "אפקון החזקות בע\"מ"
  },
  {
   "key": "icanada",
   "name": "ישראל קנדה",
   "maya_name": "ישראל קנדה",
-  "corp_folder": "520039298_ישראל-קנדה"
+  "corp_folder": "520039298_ישראל-קנדה",
+  "maya_id": 434,
+  "maya_long_name": "ישראל קנדה (ט.ר) בע\"מ"
  },
  {
   "key": "kardanre",
   "name": "קרדן נדל״ן",
   "maya_name": "קרדן נדל",
-  "corp_folder": "520041005_קרדן-נדלן"
+  "corp_folder": "520041005_קרדן-נדלן",
+  "maya_id": 1083,
+  "maya_long_name": "קרדן נדל\"ן יזום ופיתוח בע\"מ"
  }
 ]
