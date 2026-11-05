@@ -1,0 +1,147 @@
+{
+ "companyId": 2505,
+ "resolve": null,
+ "details": {
+  "companyId": 2505,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": true,
+  "isTaseup": false,
+  "name": "פיקהיל",
+  "longName": "פיקהיל הכנסה ממשכנתאות שותפות מוגבלת",
+  "logo": null,
+  "corporateNo": "1001251204",
+  "sector": "פיננסי",
+  "branch": "שרותים פיננסיים",
+  "subBranch": "אשראי חוץ בנקאי",
+  "incorporationPlace": "קנדה",
+  "address": "אצל גולדפרב, יגאל אלון 98",
+  "city": "תל אביב",
+  "zipCode": "6789141",
+  "site": null,
+  "email": "hod.mimun@goldfarb.com",
+  "phone": "03-6089802",
+  "fax": null,
+  "marketValue": 0,
+  "mainSecurityId": null,
+  "companyActivites": "שותפות המשקיעה בתיק משכנתאות והלוואות נדל\"ן",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": null,
+  "securityIndices": [
+   {
+    "securityId": 1228535,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.50998,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 1.90433,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 3.99525,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.51752,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.21529,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 725,
+    "name": "תל בונד-שקלי 3-5",
+    "shortName": "תל בונד-שקלי 3-5",
+    "weight": 1.82351,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 1.21685,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.13297,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.28778,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.10043,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228535,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 1.48702,
+    "factor": 0.95775
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1228535,
+    "isin": "IL0012285354",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "פקהל.ק1",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "פיקהיל    אגח א",
+    "issuedPaidUp": 863451000,
+    "tradableSecurities": 863451000.0,
+    "marketCap": 792.7,
+    "capitalPercent": null,
+    "votingPercent": null,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   }
+  ]
+ }
+}
