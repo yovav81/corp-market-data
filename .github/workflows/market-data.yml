@@ -58,6 +58,12 @@ jobs:
           python short/cpi_expected.py data || echo "::warning::cpi_expected failed"
           python short/short_yields.py data || echo "::warning::short_yields failed"
 
+      - name: Government v2 — תוואי המדדים (אחרי cpi_expected) והחלטות המודל (data/gov/cpi_path, decisions_*)
+        if: always()
+        run: |
+          python gov/gov_cpi.py data || echo "::warning::gov_cpi failed"
+          python gov/gov_decide.py data || echo "::warning::gov_decide failed"
+
       - name: Historical spread stats + alerts
         # סטטיסטיקה מול ההיסטוריה הרבעונית (data/hist) ואיתור מרווחים חריגים; ההודעה נכתבת ל-data/hist/alert_message.txt
         if: always()

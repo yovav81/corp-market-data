@@ -49,12 +49,19 @@ cp "$LAT" "$WORK/03_Market/data/daily_latest.csv"
 cp "$SP" "$WORK/03_Market/data/spreads_$YEAR.csv"
 # כל קבצי הממשלתי (data/gov/*.csv) → 03_Market/data/gov_<שם>.csv — מקור ה-Power Query של קובץ הממשלתי v2
 for f in data/gov/*.csv; do [ -f "$f" ] && cp "$f" "$WORK/03_Market/data/gov_$(basename "$f")"; done
-# קובץ הממשלתי — נבנה מחדש מ-data/gov (gov/gov_data.py רץ ב-market-data); הפרמטרים וההחזקות של יובב נשמרים (--settings על הקובץ הקיים)
-GOV="$WORK/00_Gov/ממשלתי.xlsx"; mkdir -p "$WORK/00_Gov/_build"
+# קובץ הממשלתי v2 — נבנה רק כשגרסת הבנייה (gov/VERSION) שונה מזו שב-corp-data/00_Gov/_build/VERSION או כשהקובץ חסר.
+# הנתונים זורמים ב-Power Query מקבצי gov_*.csv; הקלטים הידניים של יובב עוברים (--settings). הגרסה הקודמת → 00_Gov/_archive.
+GOV="$WORK/00_Gov/ממשלתי.xlsx"; mkdir -p "$WORK/00_Gov/_build" "$WORK/00_Gov/_archive"
 python3 -c "import pandas, numpy, openpyxl" 2>/dev/null || pip install -q --break-system-packages pandas numpy openpyxl 2>/dev/null || true
 if [ -f data/gov/bonds_latest.csv ]; then
-  if [ -f "$GOV" ]; then python3 gov/build_gov.py data "$GOV.new" --settings "$GOV" && mv -f "$GOV.new" "$GOV"; else python3 gov/build_gov.py data "$GOV"; fi \
-    && cp gov/build_gov.py gov/gov_data.py "$WORK/00_Gov/_build/" || echo "אזהרה: בניית קובץ הממשלתי נכשלה"
+  if [ ! -f "$GOV" ] || ! cmp -s gov/VERSION "$WORK/00_Gov/_build/VERSION"; then
+    echo "בניית קובץ הממשלתי v$(cat gov/VERSION) (קודם: $(cat "$WORK/00_Gov/_build/VERSION" 2>/dev/null || echo 'אין'))"
+    [ -f "$GOV" ] && cp "$GOV" "$WORK/00_Gov/_archive/ממשלתי_לפני_v$(cat gov/VERSION)_$(TZ=Asia/Jerusalem date +%F).xlsx"
+    if python3 gov/build_gov2.py data "$GOV.new" --settings "$GOV"; then
+      mv -f "$GOV.new" "$GOV"
+      cp gov/VERSION gov/build_gov2.py gov/build_gov.py gov/pq_gov.py gov/check_gov2.py gov/settings_default.json gov/gov_data.py gov/gov_decide.py gov/gov_history.py gov/gov_cpi.py gov/gov_foreign.py "$WORK/00_Gov/_build/"
+    else echo "אזהרה: בניית קובץ הממשלתי v2 נכשלה — הקובץ הקודם נשאר"; rm -f "$GOV.new"; fi
+  else echo "קובץ הממשלתי: גרסה $(cat gov/VERSION) כבר מותקנת — הנתונים מתעדכנים דרך Power Query"; fi
 fi
 cd "$WORK"; git add 03_Market/data 00_Gov
 if git diff --cached --quiet; then echo "no change"; else
