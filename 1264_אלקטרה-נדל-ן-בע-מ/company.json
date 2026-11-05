@@ -1,0 +1,450 @@
+{
+ "companyId": 1264,
+ "resolve": null,
+ "details": {
+  "companyId": 1264,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "אלקטרה נדל\"ן",
+  "longName": "אלקטרה נדל\"ן בע\"מ",
+  "logo": null,
+  "corporateNo": "510607328",
+  "sector": "ריאלי",
+  "branch": "נדל\"ן ובנייה",
+  "subBranch": "נדל\"ן מניב בחו\"ל",
+  "incorporationPlace": "ישראל",
+  "address": "יגאל אלון 98",
+  "city": "תל אביב",
+  "zipCode": "6789141",
+  "site": "www.electra-re.com",
+  "email": "corpsecretary@ere.co.il",
+  "phone": "03-7101700",
+  "fax": "03-7101720",
+  "marketValue": 1329687,
+  "mainSecurityId": 1094044,
+  "companyActivites": "החברה עוסקת בניהול קרנות ושותפויות להשקעה בנדל\"ן בארה\"ב כשותף מנהל עבור שותפים מוגבלים.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": [
+   "ת\"א 90",
+   "ת\"א 125",
+   "ת\"א-90 ו-SME60",
+   "ת\"א נדל\"ן",
+   "ת\"א-מניב חו\"ל",
+   "ת\"א 125-אקלים נקי",
+   "ת\"א-EW125",
+   "ת\"א 90 ובנקים",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א נדל\"ן- 35",
+   "ת\"א-200"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1094044,
+    "indexId": 143,
+    "name": "חברות במדד ת\"א 90",
+    "shortName": "ת\"א 90",
+    "weight": 0.28811,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 137,
+    "name": "חברות במדד ת\"א 125",
+    "shortName": "ת\"א 125",
+    "weight": 0.05226,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.42265,
+    "factor": 0.49206
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 149,
+    "name": "חברות במדד ת\"א נדל\"ן",
+    "shortName": "ת\"א נדל\"ן",
+    "weight": 0.72183,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 183,
+    "name": "חברות במדד ת\"א-מניב חו\"ל",
+    "shortName": "ת\"א-מניב חו\"ל",
+    "weight": 5.86272,
+    "factor": 0.08993
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 185,
+    "name": "ת\"א-125 אקלים ללא דלקים פוסיליים \r\n",
+    "shortName": "ת\"א 125-אקלים נקי",
+    "weight": 0.06692,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 189,
+    "name": "ת\"א-EW125",
+    "shortName": "ת\"א-EW125",
+    "weight": 0.40326,
+    "factor": 0.3074
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 196,
+    "name": "חברות במדד ת\"א 90 ובנקים",
+    "shortName": "ת\"א 90 ובנקים",
+    "weight": 0.16318,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.26228,
+    "factor": 0.37381
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 0.16439,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.19191,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.2318,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 0.86558,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 0.71661,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.23523,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.19475,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.09786,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.08101,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 0.55849,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 725,
+    "name": "תל בונד-שקלי 3-5",
+    "shortName": "תל בונד-שקלי 3-5",
+    "weight": 0.82884,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.5531,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 0.45791,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.51497,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.42634,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.13081,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.10829,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.03779,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.04565,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 208,
+    "name": "ת\"א נדל\"ן- 35",
+    "shortName": "ת\"א נדל\"ן- 35",
+    "weight": 0.67052,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1094044,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 0.17495,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 765,
+    "name": "תל בונד שקלי 60",
+    "shortName": "תל בונד שקלי 60",
+    "weight": 0.83362,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1203553,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.70571,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1174564,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.58426,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1094044,
+    "isin": "IL0010940448",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "אלקנד",
+    "securityType": "מניה רגילה",
+    "securityName": "אלקטרה נדלן",
+    "issuedPaidUp": 84837025,
+    "tradableSecurities": 83944898.0,
+    "marketCap": 1329.7,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1174564,
+    "isin": "IL0011745648",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלקנד.ק6",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אלקטרהנדלן אגחו",
+    "issuedPaidUp": 315106599,
+    "tradableSecurities": 315106599.0,
+    "marketCap": 298.3,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1203553,
+    "isin": "IL0012035536",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלקנד.ק7",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אלקטרהנדלן אגחז",
+    "issuedPaidUp": 367039200,
+    "tradableSecurities": 367039200.0,
+    "marketCap": 360.3,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1122241,
+    "isin": null,
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלקנד.רד",
+    "securityType": "מניה רדומה",
+    "securityName": "אלקטרהנדלן רדומ",
+    "issuedPaidUp": 892127,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1197193,
+    "isin": "IL0011971939",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלקטנד5/23",
+    "securityType": "אופציה עובדים",
+    "securityName": "אלקטרה נדלן עבד",
+    "issuedPaidUp": 1253865,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1245380,
+    "isin": "IL0012453804",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלקנ.אחר",
+    "securityType": "אופציה לאחרים",
+    "securityName": "אלקטרה נדלן אחר",
+    "issuedPaidUp": 2142870,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1225432,
+    "isin": "IL0012254327",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלקננע1ל",
+    "securityType": "ני\"ע מסחריים",
+    "securityName": "אלקט נדל נעמ1-ל",
+    "issuedPaidUp": 200000000,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
