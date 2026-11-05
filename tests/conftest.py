@@ -74,3 +74,18 @@ def tmp_data(tmp_path):
     # latest.csv = היום האחרון של ההיסטוריה
     h = history_rows(); h[h["date"] == DATES[-1]].to_csv(d / "latest.csv", index=False, encoding="utf-8-sig")
     return d
+
+
+def write_cpi_fixture(d, n_known=4, n_exp=18):
+    """data/short/cpi_expected.csv מלאכותי: n_known חודשים ידועים ו-n_exp צפויים עם עונתיות סביב 0.15 לחודש."""
+    rows = []; idx = 100.0
+    for i in range(n_known):
+        pct = [0.3, -0.2, 0.4, 0.5][i % 4]; idx = round(idx * (1 + pct / 100), 2)
+        rows.append({"ym": f"2026-{i+1:02d}", "pub_date": f"2026-{i+2:02d}-15", "kind": "ידוע", "index": idx, "monthly_pct": pct, "cum_factor": "", "source": "הלמ״ס", "as_of": "2026-11-05"})
+    cum = 1.0
+    for j in range(n_exp):
+        m = n_known + j; y, mo = 2026 + m // 12, m % 12 + 1
+        pct = round(0.15 + 0.25 * ((j % 4) - 1.5), 3); cum *= 1 + pct / 100
+        rows.append({"ym": f"{y}-{mo:02d}", "pub_date": "", "kind": "צפוי", "index": "", "monthly_pct": pct, "cum_factor": round(cum, 6), "source": "BEI+עונתיות", "as_of": "2026-11-05"})
+    (d / "short").mkdir(exist_ok=True)
+    pd.DataFrame(rows).to_csv(d / "short" / "cpi_expected.csv", index=False, encoding="utf-8-sig")

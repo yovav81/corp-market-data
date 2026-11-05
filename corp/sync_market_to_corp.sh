@@ -47,8 +47,8 @@ rm -rf "$WORK"; git clone -q --depth 1 "$REMOTE" "$WORK"
 mkdir -p "$WORK/03_Market/data"
 cp "$LAT" "$WORK/03_Market/data/daily_latest.csv"
 cp "$SP" "$WORK/03_Market/data/spreads_$YEAR.csv"
-[ -f data/gov/bonds_latest.csv ] && cp data/gov/bonds_latest.csv "$WORK/03_Market/data/gov_bonds_latest.csv"
-[ -f data/gov/curves_latest.csv ] && cp data/gov/curves_latest.csv "$WORK/03_Market/data/gov_curves_latest.csv"
+# כל קבצי הממשלתי (data/gov/*.csv) → 03_Market/data/gov_<שם>.csv — מקור ה-Power Query של קובץ הממשלתי v2
+for f in data/gov/*.csv; do [ -f "$f" ] && cp "$f" "$WORK/03_Market/data/gov_$(basename "$f")"; done
 # קובץ הממשלתי — נבנה מחדש מ-data/gov (gov/gov_data.py רץ ב-market-data); הפרמטרים וההחזקות של יובב נשמרים (--settings על הקובץ הקיים)
 GOV="$WORK/00_Gov/ממשלתי.xlsx"; mkdir -p "$WORK/00_Gov/_build"
 python3 -c "import pandas, numpy, openpyxl" 2>/dev/null || pip install -q --break-system-packages pandas numpy openpyxl 2>/dev/null || true

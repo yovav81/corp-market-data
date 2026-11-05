@@ -1,19 +1,6 @@
 import pandas as pd
 import gov_cpi
-
-
-def _cpi_fixture(d, n_known=4, n_exp=18):
-    rows = []; idx = 100.0
-    for i in range(n_known):
-        ym = f"2026-{i+1:02d}"; pct = [0.3, -0.2, 0.4, 0.5][i]; idx = round(idx * (1 + pct / 100), 2)
-        rows.append({"ym": ym, "pub_date": f"2026-{i+2:02d}-15", "kind": "ידוע", "index": idx, "monthly_pct": pct, "cum_factor": "", "source": "הלמ״ס", "as_of": "2026-11-05"})
-    cum = 1.0
-    for j in range(n_exp):
-        m = n_known + j; y, mo = 2026 + m // 12, m % 12 + 1
-        pct = round(0.15 + 0.25 * ((j % 4) - 1.5), 3)     # עונתיות מלאכותית סביב 0.15 לחודש
-        cum *= 1 + pct / 100
-        rows.append({"ym": f"{y}-{mo:02d}", "pub_date": "", "kind": "צפוי", "index": "", "monthly_pct": pct, "cum_factor": round(cum, 6), "source": "BEI+עונתיות", "as_of": "2026-11-05"})
-    pd.DataFrame(rows).to_csv(d / "short" / "cpi_expected.csv", index=False, encoding="utf-8-sig")
+from conftest import write_cpi_fixture as _cpi_fixture
 
 
 def test_season_sums_to_zero(tmp_data):
