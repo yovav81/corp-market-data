@@ -26,7 +26,10 @@ def bond_key(sid, name: str) -> str:
     return str(int(s)) if pd.notna(s) else str(name).strip()
 
 
-def build_bond_history(data: Path | str) -> pd.DataFrame:
+WINDOW_DAYS = 250     # חלון מתגלגל: ימי מסחר אחרונים (מתאים ל-Z ושומר את הטבלה בתוך טווחי הנוסחאות באקסל)
+
+
+def build_bond_history(data: Path | str, window_days: int | None = WINDOW_DAYS) -> pd.DataFrame:
     d = Path(data); rows = []
     sid_by_name = {}
     try:   # לממשלתיות בגלובס אין מס' ני"ע — המיפוי לפי שם מהמאגר הסטטי (כמו ב-gov_data)
@@ -62,6 +65,8 @@ def build_bond_history(data: Path | str) -> pd.DataFrame:
                              "spread_bp": round((float(y) - cy) * 100, 1) if (pd.notna(y) and not np.isnan(cy)) else np.nan})
     df = pd.DataFrame(rows, columns=COLS)
     if len(df): df["security_id"] = df["security_id"].astype("Int64")
+    if len(df) and window_days:
+        keep = sorted(df["date"].unique())[-int(window_days):]; df = df[df["date"].isin(keep)]
     return df.sort_values(["date", "kind", "ttm"]).reset_index(drop=True)
 
 

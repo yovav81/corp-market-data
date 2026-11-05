@@ -13,6 +13,8 @@ import numpy as np, pandas as pd
 TENORS = [0.25, 0.5, 1, 2, 3, 4, 5, 7, 10, 15, 20, 30]
 NOMINAL_KINDS = ("שקלי", "מק\"מ"); REAL_KINDS = ("מדד",)
 SOURCE_SERIES = {"ממוצע החזאים (ב״י)": "EXP_HAZ_MAD_AVG_01Y_MA", "ציפיות שוק ההון (ב״י)": "EXP_EXP_01Y_BI_MA", "חוזי אינפלציה (ב״י)": "EXP_EXP_ISSWIT1_01Y_MA"}
+NLIST = 30                                   # ניירות לאפיק בסריקת המבנים (כמו רשימת 06 באקסל) — הקצרים במח"מ
+STALE_DAYS = 7                               # נתון חו"ל ישן מ-7 ימים מיום הנתונים נחשב "ישן"
 DECISION_KEYS = ["linked_weight", "dur_nominal", "dur_real", "dur_weighted", "struct_nominal", "struct_real", "top5_nominal", "top5_real", "foreign_5y", "foreign_10y"]
 
 
@@ -20,8 +22,19 @@ def load_settings(path: Path | str | None = None, overrides: dict | None = None)
     p = Path(path) if path else Path(__file__).with_name("settings_default.json")
     s = {x["key"]: x["value"] for x in json.load(open(p, encoding="utf-8"))}
     for t in TENORS: s.setdefault(f"dw_{t:g}", 1 if t in (1, 2, 3, 5) else 0)
+    s.setdefault("exclude", set()); s.setdefault("infl_user", {})
     if overrides: s.update(overrides)
     return s
+
+
+def overrides_from_workbook(xlsx: Path | str) -> dict:
+    """ההגדרות של יובב מהחוברת (p_*, משקלי החלטה, תחזית לפי טווח, 'כלול בעקום?'=לא) כ-overrides ל-load_settings."""
+    import build_gov2   # ייבוא עצל — build_gov2 מייבא מודול זה
+    co = build_gov2.carry_over(xlsx); o = dict(co["params"])
+    for t, w in co["dw"].items(): o[f"dw_{float(t):g}"] = w
+    o["infl_user"] = {float(t): v for t, v in co["infl_user"].items()}
+    o["exclude"] = set(co["exclude"])
+    return o
 
 
 def _num(v, default=np.nan):
@@ -60,9 +73,9 @@ def linked_weight(gap_bp: float | None, bei_pct: float | None, s: dict) -> tuple
     return round(w, 4), why + f" → משקל צמוד {w:.0%}"
 
 
-def expected_12m(ytm_pct: float, roll_bp: float, dur: float, horizon: float = 1.0) -> float:
-    """תשואה צפויה לאופק (%) = carry + אפקט roll-down (מח"מ × ירידת התשואה על העקום)."""
-    return ytm_pct * horizon + dur * roll_bp / 100
+def expected_12m(ytm_pct: float, roll_bp: float, dur: float) -> float:
+    """תשואה צפויה ל-12 חודשים (%) = carry + אפקט roll-down (מח"מ × ירידת התשואה על העקום). האופק קבוע: שנה."""
+    return ytm_pct + dur * roll_bp / 100
 
 
 def linked_nominal_equiv(real_pct: float, infl_12m_pct: float, roll_bp: float, dur: float) -> float:
@@ -72,11 +85,11 @@ def linked_nominal_equiv(real_pct: float, infl_12m_pct: float, roll_bp: float, d
 # ---------- 5.2 מח"מ ----------
 def duration_table(curve: pd.DataFrame, vol: pd.DataFrame, kind: str, s: dict) -> pd.DataFrame:
     ycol, rcol, vcol = ("nominal", "roll_nominal_bp", "nominal_vol_bp") if kind == "nominal" else ("real", "roll_real_bp", "real_vol_bp")
-    c = curve.set_index("tenor"); v = vol.set_index("tenor"); h = float(s.get("horizon_years", 1) or 1)
+    c = curve.set_index("tenor"); v = vol.set_index("tenor")
     y1 = float(c.loc[1, ycol]); rows = []
     for t in TENORS:
         y = float(c.loc[t, ycol]); roll = float(c.loc[t, rcol]); d = par_duration(t, y)
-        e = expected_12m(y, roll, d, h); excess = (e - y1) * 100
+        e = expected_12m(y, roll, d); excess = (e - y1) * 100
         volbp = float(v.loc[t, vcol]) if t in v.index else interp(t, v.index, v[vcol])
         risk = d * volbp
         score = (excess - float(s["dur_friction_bp"])) / risk if risk > 0 else np.nan
@@ -114,14 +127,24 @@ def ensure_key(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _segment(bonds: pd.DataFrame, kind: str) -> pd.DataFrame:
+def _segment_all(bonds: pd.DataFrame, kind: str, exclude: set | None = None) -> pd.DataFrame:
     kinds = REAL_KINDS if kind in REAL_KINDS or kind == "real" else NOMINAL_KINDS
     b = bonds[bonds["kind"].isin(kinds)].copy()
     b = b[(b.get("in_curve", pd.Series("", index=b.index)).astype(str) != "לא")]
     for c in ("modified", "ytm_gross", "ttm", "convexity", "volume_k_nis"):
         b[c] = pd.to_numeric(b[c], errors="coerce")
     b = ensure_key(b)
+    if exclude: b = b[~b["key"].isin({str(k) for k in exclude})]
     return b.dropna(subset=["modified", "ytm_gross", "ttm"]).reset_index(drop=True)
+
+
+def _segment(bonds: pd.DataFrame, kind: str, exclude: set | None = None) -> pd.DataFrame:
+    """האפיק לסריקת מבנים — כמו רשימת 06 באקסל: עד NLIST ניירות, הקצרים במח"מ."""
+    return _segment_all(bonds, kind, exclude).sort_values("modified").head(NLIST).reset_index(drop=True)
+
+
+def segment_overflow(bonds: pd.DataFrame, kind: str, exclude: set | None = None) -> int:
+    return max(0, len(_segment_all(bonds, kind, exclude)) - NLIST)
 
 
 def pairs(bonds: pd.DataFrame, target: float) -> pd.DataFrame:
@@ -134,7 +157,7 @@ def pairs(bonds: pd.DataFrame, target: float) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["short_id", "long_id", "w_short", "w_long"])
 
 
-def _roll_bp(curve: pd.DataFrame, kind: str, ttm: float, h: float) -> float:
+def _roll_bp(curve: pd.DataFrame, kind: str, ttm: float, h: float = 1.0) -> float:
     """roll-down לנייר: אינטרפולציה של עמודת ה-roll-down של העקום (לפי טווח) בשנים לפדיון של הנייר — כמו עמודת Roll-down ב-02 באקסל."""
     col = "roll_real_bp" if kind in REAL_KINDS or kind == "real" else "roll_nominal_bp"
     if col in curve.columns: return interp(ttm, curve["tenor"], curve[col])
@@ -144,7 +167,7 @@ def _roll_bp(curve: pd.DataFrame, kind: str, ttm: float, h: float) -> float:
 
 def structure_metrics(bonds: pd.DataFrame, items: pd.DataFrame, curve: pd.DataFrame, s: dict, target: float) -> pd.DataFrame:
     """items: עמודות ids (רשימה), weights (רשימה). מחזיר מדדים לכל מבנה; P&L ב-% לתרחישים."""
-    b = bonds.assign(key=bonds["key"].astype(str)).set_index("key"); h = float(s.get("horizon_years", 1) or 1)
+    b = bonds.assign(key=bonds["key"].astype(str)).set_index("key"); h = 1.0
     shock = float(s["bb_shock_bp"]) / 100; twist = float(s["bb_twist_bp"]) / 100; span = float(s["bb_twist_span"])
     out = []
     for _, it in items.iterrows():
@@ -153,12 +176,12 @@ def structure_metrics(bonds: pd.DataFrame, items: pd.DataFrame, curve: pd.DataFr
         for sid, w in zip(ids, ws):
             r = b.loc[sid]; kind = r["kind"]; D = float(r["modified"]); C = _num(r.get("convexity"), 0.0); y = float(r["ytm_gross"]); ttm = float(r["ttm"])
             roll = _roll_bp(curve, kind, ttm, h)
-            ytm += w * y; conv += w * C; exp += w * expected_12m(y, roll, D, h); liq = min(liq, _num(r.get("volume_k_nis"), 0.0))
+            ytm += w * y; conv += w * C; exp += w * expected_12m(y, roll, D); liq = min(liq, _num(r.get("volume_k_nis"), 0.0))
             pnl = lambda dy: (-D * dy + 0.5 * C * dy * dy) * 100          # dy בשבר עשרוני → %
             up += w * pnl(shock / 100); dn += w * pnl(-shock / 100)
             tw = twist * (ttm - target) / span
             st += w * pnl(tw / 100); fl += w * pnl(-tw / 100)
-        rec.update(ytm=round(ytm, 4), convexity=round(conv, 3), roll_bp=round((exp - ytm * h) * 100 / max(1e-9, sum(ws[i] * float(b.loc[ids[i], "modified"]) for i in range(len(ids)))), 1),
+        rec.update(ytm=round(ytm, 4), convexity=round(conv, 3), roll_bp=round((exp - ytm) * 100 / max(1e-9, sum(ws[i] * float(b.loc[ids[i], "modified"]) for i in range(len(ids)))), 1),
                    liquidity=liq, exp_12m=round(exp, 4), pnl_up=round(up, 4), pnl_dn=round(dn, 4), pnl_steep=round(st, 4), pnl_flat=round(fl, 4))
         rec["score"] = round(np.mean([exp, exp + up, exp + dn, exp + st, exp + fl]), 4)
         rec["ok"] = bool(liq >= float(s["bb_min_volume_k"]))
@@ -167,7 +190,7 @@ def structure_metrics(bonds: pd.DataFrame, items: pd.DataFrame, curve: pd.DataFr
 
 
 def best_structure(bonds: pd.DataFrame, kind: str, target: float, curve: pd.DataFrame, s: dict) -> dict:
-    seg = _segment(bonds, kind)
+    seg = _segment(bonds, kind, s.get("exclude"))
     res = {"kind": "אין מבנה", "ids": [], "weights": [], "score": np.nan, "margin_bp": np.nan, "why": "אין ניירות באפיק", "pair": None, "bullet": None}
     if seg.empty or target is None or np.isnan(target): return res
     pr = pairs(seg, target)
@@ -195,7 +218,7 @@ def best_structure(bonds: pd.DataFrame, kind: str, target: float, curve: pd.Data
 
 # ---------- 5.4 סדרות ----------
 def series_rank(bonds: pd.DataFrame, bond_history: pd.DataFrame, kind: str, curve: pd.DataFrame, s: dict) -> pd.DataFrame:
-    seg = _segment(bonds, kind); h = float(s.get("horizon_years", 1) or 1)
+    seg = _segment_all(bonds, kind, s.get("exclude")); h = 1.0
     col = "real" if kind in REAL_KINDS or kind == "real" else "nominal"
     rows = []
     hist = bond_history[bond_history["kind"].isin(REAL_KINDS if col == "real" else NOMINAL_KINDS)] if len(bond_history) else bond_history
@@ -230,17 +253,25 @@ def switch_pairs(ranked: pd.DataFrame, s: dict) -> pd.DataFrame:
 
 
 # ---------- 5.5 חו"ל ----------
-def foreign_verdict(foreign: pd.DataFrame, curve: pd.DataFrame, s: dict) -> pd.DataFrame:
+def foreign_verdict(foreign: pd.DataFrame, curve: pd.DataFrame, s: dict, asof: str | None = None) -> pd.DataFrame:
+    """stale = הדגל מהמשיכה או תאריך ישן מ-STALE_DAYS לפני יום הנתונים. פסק דין לטווח: פחות מ-fx_min_markets שווקים טריים → 'נתון ישן';
+    אחרת 'חו״ל מגודר' אם לפחות fx_min_markets שווקים טריים עוברים את סף הפיקאפ, אחרת 'מקומי'."""
     il1 = interp(1, curve["tenor"], curve["nominal"]); rows = []
+    ref = pd.to_datetime(asof) if asof else (pd.to_datetime(curve["date"].iloc[0]) if "date" in curve else None)
     for _, r in foreign.iterrows():
         t = float(r["tenor"]); hedged = float(r["yield"]) - (float(r["rate_1y"]) - il1)
         il_t = interp(t, curve["tenor"], curve["nominal"])
-        rows.append({"tenor": t, "market": r["market"], "yield": float(r["yield"]), "hedged": round(hedged, 4), "pickup_bp": round((hedged - il_t) * 100, 1), "stale": int(_num(r.get("stale"), 0))})
+        stale = int(_num(r.get("stale"), 0))
+        try:
+            if ref is not None and pd.notna(r.get("date")) and (ref - pd.to_datetime(r["date"])).days > STALE_DAYS: stale = 1
+        except Exception: pass
+        rows.append({"tenor": t, "market": r["market"], "yield": float(r["yield"]), "hedged": round(hedged, 4), "pickup_bp": round((hedged - il_t) * 100, 1), "stale": stale})
     df = pd.DataFrame(rows)
     if df.empty: return df.assign(verdict=[])
     thr, mk = float(s["fx_pickup_bp"]), int(s["fx_min_markets"])
+    fresh = df[(df["stale"] == 0) & df["pickup_bp"].notna()].groupby("tenor")["market"].nunique()
     passing = df[(df["stale"] == 0) & (df["pickup_bp"] >= thr)].groupby("tenor")["market"].nunique()
-    df["verdict"] = df["tenor"].map(lambda t: "חו״ל מגודר" if passing.get(t, 0) >= mk else "מקומי")
+    df["verdict"] = df["tenor"].map(lambda t: "נתון ישן" if fresh.get(t, 0) < mk else ("חו״ל מגודר" if passing.get(t, 0) >= mk else "מקומי"))
     return df
 
 
@@ -270,12 +301,14 @@ def decide(data: Path | str, s: dict | None = None) -> dict:
     if vol.empty: vol = pd.DataFrame([{"tenor": t, "nominal_vol_bp": s["vol_floor_nominal_bp"], "real_vol_bp": s["vol_floor_real_bp"], "bei_vol_bp": 30, "n_daily": 0, "method": "floor"} for t in TENORS])
     out = {}; why = {}
     # 5.1
-    fc, fsrc = inflation_forecast(str(s.get("infl_source", "")), boi_exp, cpi, _num(s.get("infl_user_1y"), np.nan))
+    iu = {float(k): float(v) for k, v in (s.get("infl_user") or {}).items()}
+    fc, fsrc = inflation_forecast(str(s.get("infl_source", "")), boi_exp, cpi, iu.get(1.0, np.nan))
     c = curve.set_index("tenor")
     weights = {t: float(s.get(f"dw_{t:g}", 0) or 0) for t in TENORS}
     gap = None
     if fc is not None and sum(weights.values()) > 0:
-        gap = sum(weights[t] * (fc - float(c.loc[t, "bei"])) for t in TENORS) / sum(weights.values()) * 100
+        manual = str(s.get("infl_source", "")) == "תחזית מנהל השקעות" and iu
+        gap = sum(weights[t] * ((iu.get(float(t), fc) if manual else fc) - float(c.loc[t, "bei"])) for t in TENORS) / sum(weights.values()) * 100
     bei_pct = None
     if len(hist) and "bei_2" in hist:
         today_bei2 = float(c.loc[2, "bei"]); hb = pd.to_numeric(hist["bei_2"], errors="coerce").dropna()
@@ -306,7 +339,7 @@ def decide(data: Path | str, s: dict | None = None) -> dict:
         out[key] = "; ".join(str(x.key) for x in r.head(5).itertuples()); why[key] = "ציון = Z/3×0.4 + roll×0.3 + נזילות×0.3" if len(r) else "אין סדרות"
     # 5.5
     if len(foreign):
-        fv = foreign_verdict(foreign, curve, s)
+        fv = foreign_verdict(foreign, curve, s, asof=date)
         for t, key in ((5, "foreign_5y"), (10, "foreign_10y")):
             vt = fv[fv["tenor"] == t]
             out[key] = vt["verdict"].iloc[0] if len(vt) else "אין נתון"
@@ -324,5 +357,10 @@ def decide(data: Path | str, s: dict | None = None) -> dict:
 
 
 if __name__ == "__main__":
-    res = decide(sys.argv[1] if len(sys.argv) > 1 else "data")
+    a = sys.argv[1:]; data = a[0] if a and not a[0].startswith("--") else "data"
+    s = load_settings()
+    if "--settings" in a:   # ההגדרות של יובב מהחוברת (corp-data/00_Gov/ממשלתי.xlsx)
+        xl = a[a.index("--settings") + 1]
+        if Path(xl).exists(): s = load_settings(overrides=overrides_from_workbook(xl)); print("הגדרות מהחוברת:", xl)
+    res = decide(data, s)
     for k in DECISION_KEYS: print(f"{k}: {res.get(k)}")

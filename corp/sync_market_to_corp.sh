@@ -49,19 +49,23 @@ cp "$LAT" "$WORK/03_Market/data/daily_latest.csv"
 cp "$SP" "$WORK/03_Market/data/spreads_$YEAR.csv"
 # כל קבצי הממשלתי (data/gov/*.csv) → 03_Market/data/gov_<שם>.csv — מקור ה-Power Query של קובץ הממשלתי v2
 for f in data/gov/*.csv; do [ -f "$f" ] && cp "$f" "$WORK/03_Market/data/gov_$(basename "$f")"; done
-# קובץ הממשלתי v2 — נבנה רק כשגרסת הבנייה (gov/VERSION) שונה מזו שב-corp-data/00_Gov/_build/VERSION או כשהקובץ חסר.
-# הנתונים זורמים ב-Power Query מקבצי gov_*.csv; הקלטים הידניים של יובב עוברים (--settings). הגרסה הקודמת → 00_Gov/_archive.
-GOV="$WORK/00_Gov/ממשלתי.xlsx"; mkdir -p "$WORK/00_Gov/_build" "$WORK/00_Gov/_archive"
+# קובץ הממשלתי v2. הנתונים זורמים ב-Power Query מקבצי gov_*.csv; הקלטים הידניים של יובב עוברים (--settings).
+# בנייה מחדש: (א) כשגרסת gov/VERSION שונה מ-00_Gov/_build/VERSION או כשהקובץ חסר; (ב) כל ערב, כל עוד אין סימון 00_Gov/_build/PQ_OK
+#   (= יובב אישר שאקסל מרענן את השאילתות; עד אז הקובץ נבנה מחדש כמו v1 כדי שלא יקפא על ערכים סטטיים). הגרסה הקודמת → 00_Gov/_archive (רק בשינוי גרסה).
+GOV="$WORK/00_Gov/ממשלתי.xlsx"; BUILD="$WORK/00_Gov/_build"; mkdir -p "$BUILD" "$WORK/00_Gov/_archive"
 python3 -c "import pandas, numpy, openpyxl" 2>/dev/null || pip install -q --break-system-packages pandas numpy openpyxl 2>/dev/null || true
 if [ -f data/gov/bonds_latest.csv ]; then
-  if [ ! -f "$GOV" ] || ! cmp -s gov/VERSION "$WORK/00_Gov/_build/VERSION"; then
-    echo "בניית קובץ הממשלתי v$(cat gov/VERSION) (קודם: $(cat "$WORK/00_Gov/_build/VERSION" 2>/dev/null || echo 'אין'))"
-    [ -f "$GOV" ] && cp "$GOV" "$WORK/00_Gov/_archive/ממשלתי_לפני_v$(cat gov/VERSION)_$(TZ=Asia/Jerusalem date +%F).xlsx"
+  # החלטות המודל עם ההגדרות של יובב מהחוברת (p_*, משקלי החלטה, תחזית לפי טווח, 'כלול בעקום?') — מקור "אתמול" בדשבורד
+  if [ -f "$GOV" ]; then python3 gov/gov_decide.py data --settings "$GOV" >/dev/null 2>&1 && cp data/gov/decisions_latest.csv "$WORK/03_Market/data/gov_decisions_latest.csv" && cp data/gov/decisions_history.csv "$WORK/03_Market/data/gov_decisions_history.csv" || echo "אזהרה: decide עם הגדרות החוברת נכשל"; fi
+  NEWVER=0; cmp -s gov/VERSION "$BUILD/VERSION" || NEWVER=1
+  if [ ! -f "$GOV" ] || [ "$NEWVER" = 1 ] || [ ! -f "$BUILD/PQ_OK" ]; then
+    [ "$NEWVER" = 1 ] && echo "בניית קובץ הממשלתי v$(cat gov/VERSION) (קודם: $(cat "$BUILD/VERSION" 2>/dev/null || echo 'אין'))" || echo "בנייה לילית (אין סימון PQ_OK — Power Query טרם אושר באקסל)"
+    [ -f "$GOV" ] && [ "$NEWVER" = 1 ] && cp "$GOV" "$WORK/00_Gov/_archive/ממשלתי_לפני_v$(cat gov/VERSION)_$(TZ=Asia/Jerusalem date +%F).xlsx"
     if python3 gov/build_gov2.py data "$GOV.new" --settings "$GOV"; then
       mv -f "$GOV.new" "$GOV"
-      cp gov/VERSION gov/build_gov2.py gov/build_gov.py gov/pq_gov.py gov/check_gov2.py gov/settings_default.json gov/gov_data.py gov/gov_decide.py gov/gov_history.py gov/gov_cpi.py gov/gov_foreign.py "$WORK/00_Gov/_build/"
+      cp gov/VERSION gov/build_gov2.py gov/build_gov.py gov/pq_gov.py gov/check_gov2.py gov/settings_default.json gov/gov_data.py gov/gov_decide.py gov/gov_history.py gov/gov_cpi.py gov/gov_foreign.py gov/README.md "$BUILD/"
     else echo "אזהרה: בניית קובץ הממשלתי v2 נכשלה — הקובץ הקודם נשאר"; rm -f "$GOV.new"; fi
-  else echo "קובץ הממשלתי: גרסה $(cat gov/VERSION) כבר מותקנת — הנתונים מתעדכנים דרך Power Query"; fi
+  else echo "קובץ הממשלתי: גרסה $(cat gov/VERSION) מותקנת ו-PQ_OK קיים — הנתונים מתעדכנים דרך Power Query"; fi
 fi
 cd "$WORK"; git add 03_Market/data 00_Gov
 if git diff --cached --quiet; then echo "no change"; else

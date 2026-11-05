@@ -21,7 +21,7 @@ def test_settings_default_json():
               "dur_min_excess_bp", "dur_friction_bp", "dur_stability", "policy_adj_on", "policy_gap_bp", "vol_floor_nominal_bp", "vol_floor_real_bp",
               "bb_tol", "bb_friction_bp", "bb_shock_bp", "bb_twist_bp", "bb_twist_span", "bb_min_volume_k", "ser_w_z", "ser_w_roll", "ser_w_liq",
               "ser_min_obs", "switch_pickup_bp", "switch_dur_tol", "fx_pickup_bp", "fx_min_markets", "makam_min", "float_weight", "bench_dur",
-              "bench_linked", "scen_parallel_1", "scen_parallel_2", "scen_bei_bp", "scen_real_bp", "scen_infl_pct", "horizon_years"]:
+              "bench_linked", "scen_parallel_1", "scen_parallel_2", "scen_bei_bp", "scen_real_bp", "scen_infl_pct"]:
         assert k in keys, k
         assert all(f in keys[k] for f in ("value", "label", "note", "group", "fmt")), k
     assert keys["linked_neutral"]["value"] == 0.5 and keys["tilt_scale_bp"]["value"] == 50 and keys["tilt_max"]["value"] == 0.30
