@@ -66,7 +66,7 @@ def _ann_std(series: pd.Series, periods_per_year: float) -> float:
 
 def build_vol(curves_history: pd.DataFrame, floor_bp: dict[str, float]) -> pd.DataFrame:
     """תנודתיות שנתית (נ"ב) לכל טווח. n_daily ≥ 60 → סטיית התקן היומית × sqrt(250) ("daily");
-    אחרת max(אומדן יומי, רצפה) ("floor") — האומדן הרבעוני (16 נקודות, 2023–2026) רועש מדי לפי טווח ולכן מדווח רק לעיון (quarterly_vol_bp)."""
+    אחרת הרצפה מההגדרות ("floor") — מדגם יומי קצר והאומדן הרבעוני (16 נקודות) רועשים מדי לפי טווח; שניהם מדווחים לעיון (daily/quarterly_bp)."""
     h = curves_history.copy(); h["date"] = pd.to_datetime(h["date"]); h = h.sort_values("date")
     daily = h[h["src"].astype(str) == "גלובס"]; quarterly = h[h["src"].astype(str) != "גלובס"]
     n_daily = int(len(daily)); base = {}
@@ -78,9 +78,10 @@ def build_vol(curves_history: pd.DataFrame, floor_bp: dict[str, float]) -> pd.Da
             dv = _ann_std(daily[col], 250) if n_daily >= 3 else np.nan
             qv = _ann_std(quarterly[col], 4) if len(quarterly) >= 3 else np.nan
             if n_daily >= MIN_DAILY and not np.isnan(dv): v, method = dv, "daily"
-            else: v, method = max([x for x in (dv, fl) if not np.isnan(x)] or [np.nan]), "floor"
+            else: v, method = fl, "floor"          # מדגם קצר נותן אומדנים אבסורדיים לשני הכיוונים (למשל 300 נ"ב) — עד 60 ימים משתמשים ברצפה בלבד
             rec[f"{kind}_vol_bp"] = round(v, 1) if not np.isnan(v) else np.nan
             rec[f"{kind}_q_bp"] = round(qv, 1) if not np.isnan(qv) else np.nan
+            rec[f"{kind}_d_bp"] = round(dv, 1) if not np.isnan(dv) else np.nan
         rec["method"] = method; base[t] = rec
     xs = list(HIST_TENORS); out = []
     for t in TENORS:
@@ -88,11 +89,13 @@ def build_vol(curves_history: pd.DataFrame, floor_bp: dict[str, float]) -> pd.Da
         for k in ("nominal_vol_bp", "real_vol_bp", "bei_vol_bp"):
             row[k] = round(gov_data.interp(t, xs, [base[x][k] for x in xs]), 1)
         row["n_daily"] = n_daily; row["method"] = base[xs[0]]["method"]
-        for k in ("nominal_q_bp", "real_q_bp", "bei_q_bp"):
+        for k, name in (("nominal_q_bp", "nominal_quarterly_bp"), ("real_q_bp", "real_quarterly_bp"), ("bei_q_bp", "bei_quarterly_bp"),
+                        ("nominal_d_bp", "nominal_daily_bp"), ("real_d_bp", "real_daily_bp"), ("bei_d_bp", "bei_daily_bp")):
             vals = [base[x][k] for x in xs]
-            row[k.replace("_q_bp", "_quarterly_bp")] = round(gov_data.interp(t, xs, vals), 1) if not any(np.isnan(v) for v in vals) else np.nan
+            row[name] = round(gov_data.interp(t, xs, vals), 1) if not any(np.isnan(v) for v in vals) else np.nan
         out.append(row)
-    return pd.DataFrame(out, columns=["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method", "nominal_quarterly_bp", "real_quarterly_bp", "bei_quarterly_bp"])
+    return pd.DataFrame(out, columns=["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method", "nominal_quarterly_bp", "real_quarterly_bp", "bei_quarterly_bp",
+                                      "nominal_daily_bp", "real_daily_bp", "bei_daily_bp"])
 
 
 if __name__ == "__main__":

@@ -44,6 +44,27 @@ def parity_curves(xlsx_recalced: Path | str, data: Path | str) -> float:
     return round(worst, 3)
 
 
+def named_value(wb, name: str):
+    """ערך תא לפי שם מוגדר (חוברת מחושבת, data_only)."""
+    ref = wb.defined_names[name].attr_text
+    sh, cell = ref.rsplit("!", 1); ws = wb[sh.strip("'")]
+    return ws[cell.replace("$", "")].value
+
+
+def parity_decisions(xlsx_recalced: Path | str, data: Path | str, s: dict | None = None) -> dict:
+    """אקסל מול פייתון: משקל צמוד (±0.001), מח״מ שקלי/צמוד/משוקלל (±0.01). מחזיר {key: (excel, python, ok)}."""
+    import gov_decide
+    s = s or gov_decide.load_settings()
+    py = gov_decide.decide(data, s)
+    wb = openpyxl.load_workbook(xlsx_recalced, data_only=True); out = {}
+    def near(a, b, tol):
+        try: return abs(float(a) - float(b)) <= tol
+        except (TypeError, ValueError): return (a in (None, "")) and (b in (None, ""))
+    for key, nm, tol in (("linked_weight", "m_linked", 0.001), ("dur_nominal", "m_dur_nominal", 0.01), ("dur_real", "m_dur_real", 0.01), ("dur_weighted", "m_dur_weighted", 0.01)):
+        xl = named_value(wb, nm); out[key] = (xl, py.get(key), near(xl, py.get(key), tol))
+    return out
+
+
 def main(xlsx: str, data: str) -> int:
     rc = recalc(xlsx); errs = count_errors(rc); worst = parity_curves(rc, data)
     print("שגיאות נוסחה:", errs or "0"); print("זהות עקומים (מקס' נ״ב):", worst)

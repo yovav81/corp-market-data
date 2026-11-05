@@ -37,5 +37,5 @@ def test_vol_floor():
     vol = gov_history.build_vol(hist, {"nominal": 60.0, "real": 50.0})
     r2 = vol[vol["tenor"] == 2].iloc[0]
     assert r2["method"] == "floor"
-    assert r2["nominal_vol_bp"] >= 60.0 and r2["real_vol_bp"] >= 50.0
-    assert r2["nominal_quarterly_bp"] > 0      # האומדן הרבעוני מדווח לעיון בלבד
+    assert r2["nominal_vol_bp"] == 60.0 and r2["real_vol_bp"] == 50.0      # עד 60 ימים — הרצפה בלבד
+    assert r2["nominal_quarterly_bp"] > 0 and r2["nominal_daily_bp"] > 0    # האומדנים מדווחים לעיון בלבד

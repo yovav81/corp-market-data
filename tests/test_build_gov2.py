@@ -64,3 +64,28 @@ def test_recalc_zero_errors(real_build):
 @needs_soffice
 def test_parity_curves(real_build):
     assert check_gov2.parity_curves(real_build["recalc"], real_build["data"]) <= 0.5
+
+
+# ---------- Task 8: 04 שקלי_צמוד + 05 מחמ ----------
+@needs_soffice
+def test_parity_linked_and_duration(real_build):
+    import gov_decide
+    res = check_gov2.parity_decisions(real_build["recalc"], real_build["data"], gov_decide.load_settings())
+    assert set(res) >= {"linked_weight", "dur_nominal", "dur_real", "dur_weighted"}
+    for k, (xl, py, ok) in res.items(): assert ok, (k, xl, py)
+    wb = openpyxl.load_workbook(real_build["recalc"], data_only=True)
+    why = check_gov2.named_value(wb, "m_linked_why"); assert isinstance(why, str) and "משקל צמוד" in why
+    assert isinstance(check_gov2.named_value(wb, "m_dur_nominal_why"), str)
+
+
+@needs_soffice
+def test_sim_override(real_build, tmp_path):
+    wb = openpyxl.load_workbook(real_build["out"])
+    for nm, v in (("p_sim_linked", 0.6), ("p_sim_dur_nominal", 3.3)):
+        sh, cell = wb.defined_names[nm].attr_text.split("!"); wb[sh.strip("'")][cell.replace("$", "")].value = v
+    p = tmp_path / "sim.xlsx"; wb.save(p); rc = check_gov2.recalc(p)
+    wb2 = openpyxl.load_workbook(rc, data_only=True)
+    assert check_gov2.named_value(wb2, "u_linked") == pytest.approx(0.6)
+    assert check_gov2.named_value(wb2, "m_linked") == pytest.approx(check_gov2.named_value(openpyxl.load_workbook(real_build["recalc"], data_only=True), "m_linked"))
+    assert check_gov2.named_value(wb2, "u_dur_nominal") == pytest.approx(3.3)
+    assert sum(check_gov2.count_errors(rc).values()) == 0
