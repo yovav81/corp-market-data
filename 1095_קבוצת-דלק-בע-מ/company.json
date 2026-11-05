@@ -1,0 +1,642 @@
+{
+ "companyId": 1095,
+ "resolve": null,
+ "details": {
+  "companyId": 1095,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "דלק קבוצה",
+  "longName": "קבוצת דלק בע\"מ",
+  "logo": null,
+  "corporateNo": "520044322",
+  "sector": "ריאלי",
+  "branch": "אנרגיה וחיפושי נפט וגז",
+  "subBranch": "חיפושי נפט וגז",
+  "incorporationPlace": "ישראל",
+  "address": "אבא אבן 19",
+  "city": "הרצליה פיתוח",
+  "zipCode": "4612001",
+  "site": "www.delek-group.com",
+  "email": "leorapl@delek-group.com",
+  "phone": "09-8638444",
+  "fax": "09-8854955",
+  "marketValue": 14557362,
+  "mainSecurityId": 1084128,
+  "companyActivites": "החברה שולטת ב\"ניו-מד אנרג'י\",עוסקת בחיפושי נפט וגז בחו\"ל, מחזיקה ב\"דלק ישראל נכסים\" ושולטת ב\"ישראכרט\" וב\"מהדרין\"",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": [
+   "ת\"א 35",
+   "ת\"א 125",
+   "ת\"א סקטור-באלאנס",
+   "ת\"א-35 דולר",
+   "ת\"א-נפט וגז",
+   "תל-דיב",
+   "ת\"א-EW125",
+   "ת\"א-ערך 125",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א תשתיות",
+   "ת\"א-אנרגיה ישראל",
+   "תא35EW",
+   "ת\"א-50 ריאלי",
+   "ת\"א-200"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1084128,
+    "indexId": 142,
+    "name": "חברות במדד ת\"א 35",
+    "shortName": "ת\"א 35",
+    "weight": 0.94014,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 137,
+    "name": "חברות במדד ת\"א 125",
+    "shortName": "ת\"א 125",
+    "weight": 0.76638,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 177,
+    "name": "ת\"א סקטור-באלאנס",
+    "shortName": "ת\"א סקטור-באלאנס",
+    "weight": 1.59167,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 174,
+    "name": "חברות במדד ת\"א-35 דולר",
+    "shortName": "ת\"א-35 דולר",
+    "weight": 0.94014,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 170,
+    "name": "חברות במדד ת\"א-נפט וגז",
+    "shortName": "ת\"א-נפט וגז",
+    "weight": 15.42071,
+    "factor": 0.1882
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 166,
+    "name": "חברות במדד תל-דיב",
+    "shortName": "תל-דיב",
+    "weight": 1.18693,
+    "factor": 0.00851
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 189,
+    "name": "ת\"א-EW125",
+    "shortName": "ת\"א-EW125",
+    "weight": 0.90781,
+    "factor": 0.04719
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 195,
+    "name": "חברות במדד ת\"א ערך 125",
+    "shortName": "ת\"א-ערך 125",
+    "weight": 2.92171,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.59038,
+    "factor": 0.05738
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 1.13939,
+    "factor": 0.47264
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 1.21811,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 1.273,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.65673,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 1.57399,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 3.05099,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 2.91945,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 4.7535,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 4.54856,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 718,
+    "name": "מדד תל בונד תשואות שקלי",
+    "shortName": "תל בונד-תשואות שקלי",
+    "weight": 2.4523,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.66643,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 1.2918,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 1.23611,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.50531,
+    "factor": 0.98267
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.50448,
+    "factor": 0.93875
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.27724,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 726,
+    "name": "תל בונד-שקלי 5-15",
+    "shortName": "תל בונד-שקלי 5-15",
+    "weight": 2.05445,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 726,
+    "name": "תל בונד-שקלי 5-15",
+    "shortName": "תל בונד-שקלי 5-15",
+    "weight": 3.9823,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 726,
+    "name": "תל בונד-שקלי 5-15",
+    "shortName": "תל בונד-שקלי 5-15",
+    "weight": 3.81061,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 2.9065,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 3.03746,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 1.56701,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 748,
+    "name": "תל בונד שקלי 5-10",
+    "shortName": "תל בונד שקלי 5-10",
+    "weight": 4.19168,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 748,
+    "name": "תל בונד שקלי 5-10",
+    "shortName": "תל בונד שקלי 5-10",
+    "weight": 2.16246,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 748,
+    "name": "תל בונד שקלי 5-10",
+    "shortName": "תל בונד שקלי 5-10",
+    "weight": 4.01095,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 1.82128,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 0.98192,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 1.90334,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.68165,
+    "factor": 0.59463
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 0.86755,
+    "factor": 0.59463
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.60914,
+    "factor": 0.59463
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.68738,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.37059,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.71835,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.12932,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.25068,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.23987,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 752,
+    "name": "מדד תל בונד 125 ערך שקלי",
+    "shortName": "תל בונד 125 ערך שקלי",
+    "weight": 2.89694,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 752,
+    "name": "מדד תל בונד 125 ערך שקלי",
+    "shortName": "תל בונד 125 ערך שקלי",
+    "weight": 1.56185,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 752,
+    "name": "מדד תל בונד 125 ערך שקלי",
+    "shortName": "תל בונד 125 ערך שקלי",
+    "weight": 3.01112,
+    "factor": 0.9946
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 759,
+    "name": "חיסכון לא צמודות דירוג כפול",
+    "shortName": "חיסכון לא צמודות דירוג כפול",
+    "weight": 2.36076,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 206,
+    "name": "ת\"א תשתיות",
+    "shortName": "ת\"א תשתיות",
+    "weight": 4.99448,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 210,
+    "name": "ת\"א-אנרגיה ישראל",
+    "shortName": "ת\"א-אנרגיה ישראל",
+    "weight": 7.982,
+    "factor": 0.72099
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 211,
+    "name": "ת\"א-35 משקל שווה",
+    "shortName": "תא35EW",
+    "weight": 3.05751,
+    "factor": 0.45236
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 198,
+    "name": "ת\"א-50 ריאלי",
+    "shortName": "ת\"א-50 ריאלי",
+    "weight": 1.91234,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1084128,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 1.13264,
+    "factor": 0.4415
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 765,
+    "name": "תל בונד שקלי 60",
+    "shortName": "תל בונד שקלי 60",
+    "weight": 2.00649,
+    "factor": 0.43829
+   },
+   {
+    "securityId": 1228618,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.61463,
+    "factor": 0.15859
+   },
+   {
+    "securityId": 1238633,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.31708,
+    "factor": 0.15859
+   },
+   {
+    "securityId": 1217389,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.58813,
+    "factor": 0.15859
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1084128,
+    "isin": "IL0010841281",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "דלקקב",
+    "securityType": "מניה רגילה",
+    "securityName": "דלק קבוצה",
+    "issuedPaidUp": 182881430,
+    "tradableSecurities": 182881430.0,
+    "marketCap": 14557.4,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1217389,
+    "isin": "IL0012173899",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "דלקב.ק40",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "דלק קב   אגח  מ",
+    "issuedPaidUp": 1809857000,
+    "tradableSecurities": 1809857000.0,
+    "marketCap": 1893.5,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1228618,
+    "isin": "IL0012286188",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "דלקב.ק41",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "דלק קב   אגח מא",
+    "issuedPaidUp": 1915945000,
+    "tradableSecurities": 1915945000.0,
+    "marketCap": 1978.8,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1238633,
+    "isin": "IL0012386335",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "דלקב.ק42",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "דלק קב   אגח מב",
+    "issuedPaidUp": 1021049000,
+    "tradableSecurities": 1021049000.0,
+    "marketCap": 1020.8,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1088426,
+    "isin": null,
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "דלקקב.רדב",
+    "securityType": "מניה ללא הצבעה",
+    "securityName": "דלק קב רדומ-בת",
+    "issuedPaidUp": 1312810,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.71,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1231752,
+    "isin": "IL0012317520",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "דלקב.עבד",
+    "securityType": "אופציה עובדים",
+    "securityName": "דלק קב   עובדים",
+    "issuedPaidUp": 16815,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
