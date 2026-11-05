@@ -240,6 +240,7 @@ def main(data="data"):
                      "pv_check": round(a["pv"] * (L or 1), 2) if a else None,
                      "in_curve": "" if kind in ("מק\"מ", "שקלי", "מדד") and a else "לא"})
     bonds = pd.DataFrame(rows).sort_values(["kind", "ttm"])
+    bonds.insert(2, "key", [str(int(s)) if pd.notna(pd.to_numeric(s, errors="coerce")) else str(n) for s, n in zip(bonds["security_id"], bonds["name"])])
     bonds.to_csv(out / "bonds_latest.csv", index=False, encoding="utf-8-sig")
     # עקום נוכחי
     nom, real = curve_inputs(g, val)
@@ -278,6 +279,31 @@ def main(data="data"):
     try:
         cv, ex = fetch_boi(); cv.to_csv(out / "boi_curves.csv", index=False, encoding="utf-8-sig"); ex.to_csv(out / "boi_expectations.csv", index=False, encoding="utf-8-sig")
     except Exception as e: print("אזהרה: בנק ישראל —", e)
+    # ---------- v2: היסטוריית סדרות, תנודתיות, תוואי מדדים, חו"ל, מדיניות ----------
+    import json, gov_history, gov_cpi, gov_foreign
+    settings = {x["key"]: x["value"] for x in json.load(open(Path(__file__).with_name("settings_default.json"), encoding="utf-8"))}
+    try:
+        bh = gov_history.build_bond_history(d); bh.to_csv(out / "bond_history.csv", index=False, encoding="utf-8-sig")
+        ch = pd.read_csv(out / "curves_history.csv", encoding="utf-8-sig")
+        gov_history.build_vol(ch, {"nominal": float(settings["vol_floor_nominal_bp"]), "real": float(settings["vol_floor_real_bp"])}).to_csv(out / "vol.csv", index=False, encoding="utf-8-sig")
+    except Exception as e: print("אזהרה: bond_history/vol —", e)
+    try: gov_cpi.build_cpi_path(d).to_csv(out / "cpi_path.csv", index=False, encoding="utf-8-sig")
+    except Exception as e: print("אזהרה: cpi_path —", e)
+    try:
+        ff = out / "foreign_latest.csv"; prev = pd.read_csv(ff, encoding="utf-8-sig") if ff.exists() else None
+        gov_foreign.build_foreign(d, prev).to_csv(ff, index=False, encoding="utf-8-sig")
+    except Exception as e: print("אזהרה: foreign —", e)
+    try:
+        pol = pd.read_csv(Path(__file__).with_name("boi_policy_manual.csv"), encoding="utf-8-sig", dtype=str).fillna("")
+        il1 = cur.loc[cur.tenor == 1, "nominal"].iloc[0]
+        pol = pd.concat([pol, pd.DataFrame([{"item": "il_1y", "value": f"{il1:.4f}", "as_of": date.isoformat(), "source": "העקום השקלי שלנו (גלובס), טווח שנה"}])], ignore_index=True)
+        pol.to_csv(out / "boi_policy.csv", index=False, encoding="utf-8-sig")
+    except Exception as e: print("אזהרה: boi_policy —", e)
+    try:
+        import gov_decide
+        dec = gov_decide.decide(d)
+        print("החלטות המודל:", {k: dec.get(k) for k in ("linked_weight", "dur_nominal", "dur_real", "dur_weighted")})
+    except Exception as e: print("אזהרה: decide —", e)
     b1 = cur.loc[cur.tenor == 1].iloc[0]
     print(f"{date}: {len(bonds)} ממשלתיות ({bonds.kind.value_counts().to_dict()}); עקום 1y: שקלי {b1.nominal:.2f} ריאלי {b1.real:.2f} BEI {b1.bei:.2f}; "
           f"היסטוריה {len(hist)} תאריכים")
