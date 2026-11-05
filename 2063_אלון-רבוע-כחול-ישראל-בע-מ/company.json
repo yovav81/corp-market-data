@@ -1,0 +1,356 @@
+{
+ "companyId": 2063,
+ "resolve": null,
+ "details": {
+  "companyId": 2063,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": true,
+  "isTaseup": false,
+  "name": "אלון רבוע כחול",
+  "longName": "אלון רבוע כחול ישראל בע\"מ",
+  "logo": null,
+  "corporateNo": "520042847",
+  "sector": "ריאלי",
+  "branch": "השקעה ואחזקות",
+  "subBranch": "השקעה ואחזקות",
+  "incorporationPlace": "ישראל",
+  "address": "עזריאלי,מנחם בגין 132,ק18",
+  "city": "תל אביב",
+  "zipCode": "6702101",
+  "site": null,
+  "email": "absi@bsi.co.il",
+  "phone": "03-9284201",
+  "fax": "03-9284218",
+  "marketValue": 0,
+  "mainSecurityId": null,
+  "companyActivites": "החברה שולטת ב\"דור אלון\",\"רבוע נדל\"ן\" ו\"ג'י.פי. גלובל פאוור\" ועוסקת בקמעונאות ותחבורה ציבורית.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": null,
+  "securityIndices": [
+   {
+    "securityId": 1197284,
+    "indexId": 708,
+    "name": "חברות במדד תל בונד 40",
+    "shortName": "תל בונד 40",
+    "weight": 1.69146,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 709,
+    "name": "חברות במדד תל בונד 60",
+    "shortName": "תל בונד 60",
+    "weight": 0.88709,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 1.00314,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 2.40421,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 712,
+    "name": "מדד תל בונד צמודות-יתר",
+    "shortName": "תל בונד צמודות-יתר",
+    "weight": 0.43056,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 1.01795,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 0.52894,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 0.16965,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.1284,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.42347,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.40034,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 721,
+    "name": "תל בונד-צמודות 0-3",
+    "shortName": "תל בונד-צמוד 0-3",
+    "weight": 1.64171,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 721,
+    "name": "תל בונד-צמודות 0-3",
+    "shortName": "תל בונד-צמוד 0-3",
+    "weight": 0.52655,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 2.91927,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 736,
+    "name": "תל בונד-צמודות AA-AAA",
+    "shortName": "בונד צמוד AA-AAA",
+    "weight": 0.203,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 736,
+    "name": "תל בונד-צמודות AA-AAA",
+    "shortName": "בונד צמוד AA-AAA",
+    "weight": 0.63291,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 738,
+    "name": "תל בונד-שקלי AA-AAA",
+    "shortName": "בונד שקלי AA",
+    "weight": 1.80059,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 1.49985,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 743,
+    "name": "תל בונד 100",
+    "shortName": "תל בונד 100",
+    "weight": 0.69838,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.56607,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.11461,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.35732,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.18675,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.0599,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.19754,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 762,
+    "name": "מדד תל-בונד בולט 2029 ישראל",
+    "shortName": "תל-בונד בולט 2029 ישראל",
+    "weight": 1.55535,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 765,
+    "name": "תל בונד שקלי 60",
+    "shortName": "תל בונד שקלי 60",
+    "weight": 2.01523,
+    "factor": 0.55862
+   },
+   {
+    "securityId": 1197276,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 1.11768,
+    "factor": 0.71168
+   },
+   {
+    "securityId": 1183979,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 0.33889,
+    "factor": 0.71168
+   },
+   {
+    "securityId": 1197284,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 1.05662,
+    "factor": 0.71168
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1183979,
+    "isin": "IL0011839797",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלרכ.ק7",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אלון רבוע אגח ז",
+    "issuedPaidUp": 419819841,
+    "tradableSecurities": 419819841.0,
+    "marketCap": 472.8,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1197276,
+    "isin": "IL0011972762",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלרכ.ק8",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אלון רבוע אגח ח",
+    "issuedPaidUp": 1501064518,
+    "tradableSecurities": 1501064518.0,
+    "marketCap": 1559.3,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1197284,
+    "isin": "IL0011972846",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אלרכ.ק9",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אלון רבוע אגח ט",
+    "issuedPaidUp": 1328628889,
+    "tradableSecurities": 1328628889.0,
+    "marketCap": 1474.1,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1082551,
+    "isin": "IL0010825516",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "אלרכ",
+    "securityType": "מניה רגילה",
+    "securityName": "אלון רבוע כחול",
+    "issuedPaidUp": 66261860,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
