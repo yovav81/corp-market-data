@@ -299,6 +299,11 @@ def main(data="data"):
         pol = pd.concat([pol, pd.DataFrame([{"item": "il_1y", "value": f"{il1:.4f}", "as_of": date.isoformat(), "source": "העקום השקלי שלנו (גלובס), טווח שנה"}])], ignore_index=True)
         pol.to_csv(out / "boi_policy.csv", index=False, encoding="utf-8-sig")
     except Exception as e: print("אזהרה: boi_policy —", e)
+    try:
+        import gov_decide
+        dec = gov_decide.decide(d)
+        print("החלטות המודל:", {k: dec.get(k) for k in ("linked_weight", "dur_nominal", "dur_real", "dur_weighted")})
+    except Exception as e: print("אזהרה: decide —", e)
     b1 = cur.loc[cur.tenor == 1].iloc[0]
     print(f"{date}: {len(bonds)} ממשלתיות ({bonds.kind.value_counts().to_dict()}); עקום 1y: שקלי {b1.nominal:.2f} ריאלי {b1.real:.2f} BEI {b1.bei:.2f}; "
           f"היסטוריה {len(hist)} תאריכים")

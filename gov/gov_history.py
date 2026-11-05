@@ -65,22 +65,22 @@ def _ann_std(series: pd.Series, periods_per_year: float) -> float:
 
 
 def build_vol(curves_history: pd.DataFrame, floor_bp: dict[str, float]) -> pd.DataFrame:
+    """תנודתיות שנתית (נ"ב) לכל טווח. n_daily ≥ 60 → סטיית התקן היומית × sqrt(250) ("daily");
+    אחרת max(אומדן יומי, רצפה) ("floor") — האומדן הרבעוני (16 נקודות, 2023–2026) רועש מדי לפי טווח ולכן מדווח רק לעיון (quarterly_vol_bp)."""
     h = curves_history.copy(); h["date"] = pd.to_datetime(h["date"]); h = h.sort_values("date")
     daily = h[h["src"].astype(str) == "גלובס"]; quarterly = h[h["src"].astype(str) != "גלובס"]
     n_daily = int(len(daily)); base = {}
+    floors = {"nominal": floor_bp.get("nominal", 0.0), "real": floor_bp.get("real", 0.0), "bei": min(floor_bp.get("nominal", 0.0), floor_bp.get("real", 0.0))}
     for t in HIST_TENORS:
         rec = {"n_daily": n_daily}
-        for kind, fl in (("nominal", floor_bp.get("nominal", 0.0)), ("real", floor_bp.get("real", 0.0)), ("bei", min(floor_bp.get("nominal", 0.0), floor_bp.get("real", 0.0)))):
+        for kind, fl in floors.items():
             col = {"nominal": "nom", "real": "real", "bei": "bei"}[kind] + f"_{t}"
             dv = _ann_std(daily[col], 250) if n_daily >= 3 else np.nan
-            if n_daily >= MIN_DAILY and not np.isnan(dv):
-                v, method = dv, "daily"
-            else:
-                qv = _ann_std(quarterly[col], 4) if len(quarterly) >= 3 else np.nan
-                cands = [x for x in (dv, qv, fl) if x is not None and not np.isnan(x)]
-                v = max(cands) if cands else np.nan
-                method = "quarterly+floor" if (not np.isnan(dv) or not np.isnan(qv)) else "floor"
+            qv = _ann_std(quarterly[col], 4) if len(quarterly) >= 3 else np.nan
+            if n_daily >= MIN_DAILY and not np.isnan(dv): v, method = dv, "daily"
+            else: v, method = max([x for x in (dv, fl) if not np.isnan(x)] or [np.nan]), "floor"
             rec[f"{kind}_vol_bp"] = round(v, 1) if not np.isnan(v) else np.nan
+            rec[f"{kind}_q_bp"] = round(qv, 1) if not np.isnan(qv) else np.nan
         rec["method"] = method; base[t] = rec
     xs = list(HIST_TENORS); out = []
     for t in TENORS:
@@ -88,8 +88,11 @@ def build_vol(curves_history: pd.DataFrame, floor_bp: dict[str, float]) -> pd.Da
         for k in ("nominal_vol_bp", "real_vol_bp", "bei_vol_bp"):
             row[k] = round(gov_data.interp(t, xs, [base[x][k] for x in xs]), 1)
         row["n_daily"] = n_daily; row["method"] = base[xs[0]]["method"]
+        for k in ("nominal_q_bp", "real_q_bp", "bei_q_bp"):
+            vals = [base[x][k] for x in xs]
+            row[k.replace("_q_bp", "_quarterly_bp")] = round(gov_data.interp(t, xs, vals), 1) if not any(np.isnan(v) for v in vals) else np.nan
         out.append(row)
-    return pd.DataFrame(out, columns=["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method"])
+    return pd.DataFrame(out, columns=["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method", "nominal_quarterly_bp", "real_quarterly_bp", "bei_quarterly_bp"])
 
 
 if __name__ == "__main__":

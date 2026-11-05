@@ -25,7 +25,7 @@ def test_bond_history_perturbed_bond_is_cheap(tmp_data):
 def test_vol_daily_method():
     hist = curves_history_rows(70)
     vol = gov_history.build_vol(hist, {"nominal": 60.0, "real": 50.0})
-    assert list(vol.columns) == ["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method"]
+    assert list(vol.columns)[:6] == ["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method"]
     r2 = vol[vol["tenor"] == 2].iloc[0]
     assert r2["method"] == "daily" and r2["n_daily"] == 70
     assert r2["nominal_vol_bp"] > 0 and r2["real_vol_bp"] > 0
@@ -36,5 +36,6 @@ def test_vol_floor():
     hist = curves_history_rows(5)
     vol = gov_history.build_vol(hist, {"nominal": 60.0, "real": 50.0})
     r2 = vol[vol["tenor"] == 2].iloc[0]
-    assert r2["method"] == "quarterly+floor"
+    assert r2["method"] == "floor"
     assert r2["nominal_vol_bp"] >= 60.0 and r2["real_vol_bp"] >= 50.0
+    assert r2["nominal_quarterly_bp"] > 0      # האומדן הרבעוני מדווח לעיון בלבד

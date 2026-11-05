@@ -34,10 +34,11 @@ def test_gov_data_outputs(monkeypatch, tmp_data):
     g = tmp_data / "gov"
     bonds = pd.read_csv(g / "bonds_latest.csv", encoding="utf-8-sig"); assert "key" in bonds.columns and bonds["key"].notna().all()
     assert set(pd.read_csv(g / "bond_history.csv", encoding="utf-8-sig").columns) >= {"date", "key", "spread_bp"}
-    vol = pd.read_csv(g / "vol.csv", encoding="utf-8-sig"); assert list(vol.columns) == ["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method"]
+    vol = pd.read_csv(g / "vol.csv", encoding="utf-8-sig"); assert list(vol.columns)[:6] == ["tenor", "nominal_vol_bp", "real_vol_bp", "bei_vol_bp", "n_daily", "method"]
     assert "season_pct" in pd.read_csv(g / "cpi_path.csv", encoding="utf-8-sig").columns
     fo = pd.read_csv(g / "foreign_latest.csv", encoding="utf-8-sig"); assert set(fo["market"]) == {"US", "EUR", "GBP"}
     pol = pd.read_csv(g / "boi_policy.csv", encoding="utf-8-sig")
     assert list(pol.columns) == ["item", "value", "as_of", "source"] and (pol["item"] == "il_1y").any()
     assert pd.to_numeric(pol.loc[pol["item"] == "il_1y", "value"]).iloc[0] > 0
     assert (pol["item"] == "rate_current").any()
+    assert (g / "decisions_latest.csv").exists() and (g / "decisions_history.csv").exists()
