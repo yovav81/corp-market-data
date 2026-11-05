@@ -1,0 +1,259 @@
+{
+ "companyId": 2450,
+ "resolve": null,
+ "details": {
+  "companyId": 2450,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "בלדי",
+  "longName": "בלדי בע\"מ",
+  "logo": null,
+  "corporateNo": "511226136",
+  "sector": "ריאלי",
+  "branch": "מסחר ושרותים",
+  "subBranch": "מסחר",
+  "incorporationPlace": "ישראל",
+  "address": "אזור התעשיה 24",
+  "city": "קרית מלאכי",
+  "zipCode": "7986000",
+  "site": null,
+  "email": "irena@baladi.co.il",
+  "phone": "073-2113700",
+  "fax": null,
+  "marketValue": 2080153,
+  "mainSecurityId": 1212539,
+  "companyActivites": "החברה עוסקת בייצור, עיבוד, יבוא ושיווק של מגוון מוצרי מזון",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": [
+   "ת\"א SME60",
+   "ת\"א-90 ו-SME60",
+   "ת\"א-פמילי",
+   "צריכה",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "מזון",
+   "פועלים חוסן",
+   "ת\"א-200"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1212539,
+    "indexId": 147,
+    "name": "חברות במדד ת\"א SME60",
+    "shortName": "ת\"א SME60",
+    "weight": 1.10724,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.34637,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 179,
+    "name": "ת\"א-פמילי",
+    "shortName": "ת\"א-פמילי",
+    "weight": 0.27122,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 188,
+    "name": "ת\"א-צריכה",
+    "shortName": "צריכה",
+    "weight": 2.47474,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.28294,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 0.06629,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 714,
+    "name": "מדד תל בונד תשואות",
+    "shortName": "תל בונד-תשואות",
+    "weight": 1.08674,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 712,
+    "name": "מדד תל בונד צמודות-יתר",
+    "shortName": "תל בונד צמודות-יתר",
+    "weight": 0.30057,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 0.11843,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.08964,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 721,
+    "name": "תל בונד-צמודות 0-3",
+    "shortName": "תל בונד-צמוד 0-3",
+    "weight": 0.36758,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 735,
+    "name": "תל בונד-צמודות A",
+    "shortName": "בונד צמוד A",
+    "weight": 0.78446,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 745,
+    "name": "תל בונד תשואות–פיזור רחב",
+    "shortName": "תל בונד תשואות–פיזור רחב",
+    "weight": 2.01995,
+    "factor": 0.98157
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.08001,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.04181,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 212,
+    "name": "ת\"א-מזון",
+    "shortName": "מזון",
+    "weight": 4.54885,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 216,
+    "name": "פועלים חוסן",
+    "shortName": "פועלים חוסן",
+    "weight": 2.59658,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212539,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 0.07055,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1212455,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.64644,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1212539,
+    "isin": "IL0012125394",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "בלדי",
+    "securityType": "מניה רגילה",
+    "securityName": "בלדי",
+    "issuedPaidUp": 38956157,
+    "tradableSecurities": 38956157.0,
+    "marketCap": 1998.1,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1216662,
+    "isin": "IL0012166620",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "בלדי.א1",
+    "securityType": "אופציה למניה",
+    "securityName": "בלדי       אפ 1",
+    "issuedPaidUp": 3043843,
+    "tradableSecurities": 3043843.0,
+    "marketCap": 82.1,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1212455,
+    "isin": "IL0012124553",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "בלדי.ק1",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "בלדי      אגח 1",
+    "issuedPaidUp": 300000000,
+    "tradableSecurities": 300000000.0,
+    "marketCap": 330.1,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   }
+  ]
+ }
+}
