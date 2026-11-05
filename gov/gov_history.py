@@ -28,6 +28,11 @@ def bond_key(sid, name: str) -> str:
 
 def build_bond_history(data: Path | str) -> pd.DataFrame:
     d = Path(data); rows = []
+    sid_by_name = {}
+    try:   # לממשלתיות בגלובס אין מס' ני"ע — המיפוי לפי שם מהמאגר הסטטי (כמו ב-gov_data)
+        st = pd.read_csv(d / "hist" / "bond_static.csv", encoding="utf-8-sig")
+        sid_by_name = {str(n).strip(): int(x) for n, x in zip(st["name"], st["security_id"]) if pd.notna(x)}
+    except Exception: pass
     for f in sorted((d / "history").glob("*.csv")):
         h = pd.read_csv(f, encoding="utf-8-sig")
         h = h[h["source"].astype(str).str.startswith("gov")]
@@ -47,7 +52,9 @@ def build_bond_history(data: Path | str) -> pd.DataFrame:
                 ttm = (mat - val).days / 365.0 if mat else np.nan
                 col = "real" if kind == "מדד" else "nominal"
                 cy = gov_data.interp(ttm, cur["tenor"], cur[col]) if (kind in ("מק\"מ", "שקלי", "מדד") and not np.isnan(ttm)) else np.nan
-                rows.append({"date": dte, "security_id": pd.to_numeric(r.get("security_id"), errors="coerce"), "key": bond_key(r.get("security_id"), name),
+                sid = pd.to_numeric(r.get("security_id"), errors="coerce")
+                if pd.isna(sid): sid = sid_by_name.get(name, np.nan)
+                rows.append({"date": dte, "security_id": sid, "key": bond_key(sid, name),
                              "name": name, "kind": kind, "ttm": round(ttm, 4) if not np.isnan(ttm) else np.nan,
                              "ytm": float(y) if pd.notna(y) else np.nan, "duration": pd.to_numeric(r.get("duration"), errors="coerce"),
                              "volume_k_nis": pd.to_numeric(r.get("volume_k_nis"), errors="coerce"),

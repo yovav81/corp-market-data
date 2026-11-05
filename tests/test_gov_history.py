@@ -15,6 +15,14 @@ def test_bond_history_rows(tmp_data):
     assert core["spread_bp"].abs().max() < 10
 
 
+def test_bond_history_key_from_static_when_id_missing(tmp_data):
+    h = history_rows(); h["security_id"] = None            # כמו בגלובס: בלי מס' ני"ע
+    h.to_csv(tmp_data / "history" / "2026.csv", index=False, encoding="utf-8-sig")
+    df = gov_history.build_bond_history(tmp_data)
+    assert (df.loc[df["name"] == "ממשל שקלית 0330", "key"] == "1160985").all()     # מהמאגר הסטטי
+    assert df["security_id"].notna().all()
+
+
 def test_bond_history_perturbed_bond_is_cheap(tmp_data):
     history_rows(perturb={"ממשל שקלית 0335": 0.20}).to_csv(tmp_data / "history" / "2026.csv", index=False, encoding="utf-8-sig")
     df = gov_history.build_bond_history(tmp_data)

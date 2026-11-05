@@ -621,7 +621,7 @@ def sheet_series(ctx: Ctx):
     # --- מובילות ---
     put(ws, "A5", "5 הסדרות המובילות", BOLD)
     hdr(ws, 6, ["דירוג", "שקלי — מפתח", "שם", "ציון", "", "צמוד — מפתח", "שם", "ציון"])
-    T0 = 30; T1 = T0 + NB - 1                      # טבלת הסדרות המלאה
+    T0 = 34; T1 = T0 + NB - 1                      # טבלת הסדרות המלאה (אחרי 16 שורות ההחלפה)
     SEG, KEY, NAME, SC, RK = (f"$A${T0}:$A${T1}", f"$B${T0}:$B${T1}", f"$C${T0}:$C${T1}", f"$O${T0}:$O${T1}", f"$P${T0}:$P${T1}")
     for i in range(5):
         r = 7 + i; put(ws, f"A{r}", i + 1, BASE, None, "0", BOX)
@@ -641,11 +641,12 @@ def sheet_series(ctx: Ctx):
         arr(ws, f"B{r}", f'=IFERROR(INDEX({KEY},MATCH(1,({SEG}="{seg}")*({RK}={rank}),0)),"")')
         put(ws, f"C{r}", f'=IF(B{r}="","",INDEX(b_name,MATCH(B{r},b_key,0)))', BASE, None, None, BOX)
         bd = f"INDEX({DUR},MATCH(B{r},{KEY},0))"; bs = f"INDEX({SPR},MATCH(B{r},{KEY},0))"
-        arr(ws, f"D{r}", f'=IF(B{r}="","",IFERROR(MAX(IF(({SEG}="{seg}")*({KEY}<>B{r})*(ABS({DUR}-{bd})<=p_switch_dur_tol),{bs}-{SPR},-9999)),""))')
-        arr(ws, f"E{r}", f'=IF(OR(B{r}="",D{r}="",D{r}=-9999),"",IFERROR(INDEX({KEY},MATCH(1,({SEG}="{seg}")*({KEY}<>B{r})*(ABS({DUR}-{bd})<=p_switch_dur_tol)*(ABS(({bs}-{SPR})-D{r})<0.0001),0)),""))')
+        cond = f'({SEG}="{seg}")*({KEY}<>B{r})*(IFERROR(ABS({DUR}-{bd}),999)<=p_switch_dur_tol)'
+        arr(ws, f"D{r}", f'=IF(B{r}="","",IFERROR(IF(MAX(IF({cond},IFERROR({bs}-{SPR},-9999),-9999))=-9999,"",MAX(IF({cond},IFERROR({bs}-{SPR},-9999),-9999))),""))')
+        arr(ws, f"E{r}", f'=IF(OR(B{r}="",D{r}="",D{r}=-9999),"",IFERROR(INDEX({KEY},MATCH(1,{cond}*(IFERROR(ABS(({bs}-{SPR})-D{r}),9)<0.0001),0)),""))')
         put(ws, f"F{r}", f'=IF(E{r}="","",INDEX(b_name,MATCH(E{r},b_key,0)))', BASE, None, None, BOX)
         put(ws, f"G{r}", f'=IF(E{r}="","",ABS(INDEX({DUR},MATCH(E{r},{KEY},0))-{bd}))', BASE, None, "0.00", BOX)
-        put(ws, f"H{r}", f'=IF(OR(D{r}="",D{r}=-9999),"",IF(D{r}>=p_switch_pickup_bp,"כן","לא"))', BASE, None, None, BOX)
+        put(ws, f"H{r}", f'=IF(D{r}="","",IF(D{r}>=p_switch_pickup_bp,"כן","לא"))', BASE, None, None, BOX)
         for col in "BDE": ws[f"{col}{r}"].border = BOX; ws[f"{col}{r}"].number_format = "0.0" if col == "D" else "@"
     # --- הטבלה המלאה ---
     put(ws, f"A{T0 - 2}", "כל הסדרות", BOLD)
