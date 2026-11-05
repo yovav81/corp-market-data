@@ -175,3 +175,66 @@ def test_dashboard_keys(real_build):
     assert len(rows) == 6
     for r in rows: assert ws[f"B{r}"].value not in (None, ""), ws[f"A{r}"].value
     assert sum(check_gov2.count_errors(real_build["recalc"]).values()) == 0
+
+
+# ---------- Task 11: carry-over, Power Query, static snapshot ----------
+def _v1_file(tmp_data, monkeypatch):
+    """בונה קובץ v1 עם build_gov.main על tmp_data ומוסיף קלטים ידניים (החזקה, 'כלול בעקום?'=לא, תחזית)."""
+    import sys as _sys, build_gov
+    write_cpi_fixture(tmp_data)
+    import gov_data
+    from test_gov_data_outputs import _patch_network
+    _patch_network(monkeypatch); gov_data.main(str(tmp_data))
+    v1 = tmp_data / "v1.xlsx"
+    monkeypatch.setattr(_sys, "argv", ["build_gov.py", str(tmp_data), str(v1)]); build_gov.main()
+    wb = openpyxl.load_workbook(v1); ws = wb["02_קלט_אגח"]
+    hm = {ws.cell(5, c).value: c for c in range(1, ws.max_column + 1)}
+    for r in range(6, 126):
+        if ws.cell(r, 3).value == "ממשל שקלית 0330": ws.cell(r, hm["כמות נקובה מוחזקת"]).value = 1_000_000
+        if ws.cell(r, 3).value == "ממשל צמודה 0545": ws.cell(r, hm["כלול בעקום?"]).value = "לא"
+    wb["01_הגדרות"]["E7"].value = 0.027          # תחזית לטווח שנה (עשרוני ב-v1) → 2.7%
+    wb["01_הגדרות"]["B14"].value = 0.25          # משקל צמוד מינימום
+    wb.save(v1); return v1
+
+
+def test_carry_over_from_v1(tmp_data, monkeypatch):
+    v1 = _v1_file(tmp_data, monkeypatch)
+    co = build_gov2.carry_over(v1)
+    assert co["holdings"] == {"1160985": 1_000_000} and co["exclude"] == {"1134865": "לא"}
+    assert co["infl_user"][1.0] == pytest.approx(2.7) and co["params"]["linked_min"] == 0.25
+    out = tmp_data / "v2.xlsx"; build_gov2.build(tmp_data, out, v1, pq=False)
+    wb = openpyxl.load_workbook(out); ws = wb["09_תיק_ותרחישים"]
+    assert ws["A5"].value == "1160985" and ws["B5"].value == 1_000_000 and ws["F5"].value == "1134865" and ws["G5"].value == "לא"
+    sh, cell = wb.defined_names["p_linked_min"].attr_text.split("!"); assert wb[sh.strip("'")][cell.replace("$", "")].value == 0.25
+    sh, cell = wb.defined_names["p_infl_user_1y"].attr_text.split("!"); assert wb[sh.strip("'")][cell.replace("$", "")].value == pytest.approx(2.7)
+
+
+def test_carry_over_roundtrip_v2(tmp_data, monkeypatch):
+    v1 = _v1_file(tmp_data, monkeypatch)
+    a = tmp_data / "a.xlsx"; build_gov2.build(tmp_data, a, v1, pq=False)
+    wb = openpyxl.load_workbook(a)
+    sh, cell = wb.defined_names["p_sim_linked"].attr_text.split("!"); wb[sh.strip("'")][cell.replace("$", "")].value = 0.65
+    wb["09_תיק_ותרחישים"]["B79"].value = "1160985"; wb["09_תיק_ותרחישים"]["E79"].value = 0.4
+    wb.save(a)
+    b = tmp_data / "b.xlsx"; build_gov2.build(tmp_data, b, a, pq=False)
+    wb2 = openpyxl.load_workbook(b)
+    sh, cell = wb2.defined_names["p_sim_linked"].attr_text.split("!"); assert wb2[sh.strip("'")][cell.replace("$", "")].value == 0.65
+    assert wb2["09_תיק_ותרחישים"]["A5"].value == "1160985" and wb2["09_תיק_ותרחישים"]["B79"].value == "1160985" and wb2["09_תיק_ותרחישים"]["E79"].value == 0.4
+
+
+def test_static_snapshot_present(real_build):
+    wb = openpyxl.load_workbook(real_build["out"]); ws = wb["נתוני_אגח"]
+    assert ws["A2"].value is not None and ws["C2"].value not in (None, "")      # ערכים סטטיים מהבנייה
+    wb2 = openpyxl.load_workbook(real_build["recalc"], data_only=True)
+    d = check_gov2.named_value(wb2, "d_asof")
+    assert str(d)[:10] == real_build["res"]["date"]
+
+
+@needs_soffice
+def test_pq_injected_zero_errors(real_build, tmp_path):
+    import zipfile
+    out = tmp_path / "pq.xlsx"; build_gov2.build(real_build["data"], out, None, pq=True)
+    names = zipfile.ZipFile(out).namelist()
+    assert "xl/connections.xml" in names and sum(n.startswith("xl/queryTables/queryTable") for n in names) >= 11
+    rc = check_gov2.recalc(out)
+    assert sum(check_gov2.count_errors(rc).values()) == 0

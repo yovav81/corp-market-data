@@ -125,6 +125,7 @@ def sheet_settings(ctx: Ctx):
     ws = ctx.sheet("01_הגדרות")
     put(ws, "A1", "הגדרות — כל ספי ההחלטה והקלטים הידניים של קובץ הממשלתי", TITLE)
     put(ws, "A2", '="תאריך הנתונים: "&TEXT(d_asof,"dd/mm/yyyy")&"   |   גרסת בנייה ' + VERSION + '"', NOTE)
+    put(ws, "C2", "תאריך הנתונים (מהמאגר):", GREY); put(ws, "D2", "=MAX('נתוני_אגח'!$A$2:$A$500)", GREY, None, "dd/mm/yyyy"); ctx.name("d_asof", "'01_הגדרות'!$D$2")
     hdr(ws, 4, ["פרמטר", "ערך", "הסבר", "מפתח"]); r = 5
     prev = ctx.prev.get("params", {})
     by_group = {}
@@ -224,7 +225,6 @@ def sheet_input(ctx: Ctx):
                     ("b_mv", CC["mv"]), ("b_w", CC["w"]), ("b_xn", CC["xn"]), ("b_xr", CC["xr"]), ("b_dn", CC["dn"]), ("b_dr", CC["dr"]), ("b_bucket", CC["bucket"]),
                     ("b_wdur", CC["wdur"]), ("b_wconv", CC["wconv"]), ("b_wytm", CC["wytm"]), ("b_wdt", CC["wdt"]), ("b_wdreal", CC["wdreal"]), ("b_wreal", CC["wreal"]), ("b_wnomeq", CC["wnomeq"])]:
         ctx.name(nm, Q02(col))
-    ctx.name("d_asof", f"MAX('נתוני_אגח'!$A$2:$A$500)")
 
 
 # ---------------------------------------------------------------- 03_עקומים
@@ -715,7 +715,7 @@ def sheet_foreign(ctx: Ctx):
     for t in F_TENORS:
         put(ws, f"A{r}", t, BASE, None, "0", BOX)
         put(ws, f"B{r}", f'=COUNTIFS($B${FR0}:$B${FR1},A{r},$M${FR0}:$M${FR1},"כן")', BASE, None, "0", BOX)
-        put(ws, f"C{r}", f'=IF(COUNTIFS($B${FR0}:$B${FR1},A{r},$J${FR0}:$J${FR1},"<>")=0,"אין נתון",IF(B{r}>=p_fx_min_markets,"חו״ל מגודר","מקומי"))', BOLD, None, None, BOX)
+        put(ws, f"C{r}", f'=IF(SUMPRODUCT(($B${FR0}:$B${FR1}=A{r})*ISNUMBER($J${FR0}:$J${FR1}))=0,"אין נתון",IF(B{r}>=p_fx_min_markets,"חו״ל מגודר","מקומי"))', BOLD, None, None, BOX)
         why = []
         for i, (m, heb, fx) in enumerate(MARKETS):
             rr = FR0 + i * len(F_TENORS) + F_TENORS.index(t)
