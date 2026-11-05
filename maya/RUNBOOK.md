@@ -66,6 +66,10 @@ Then push all issuers' files at once:
 `python cmd/maya/push_deliver.py deliver_root https://github.com/yovav81/corp-data <YYYY-MM-DD>-<watch run id>`
 The PC copies `deliver/*` into its דוחות folders when it is on and deletes the branches — never delete them here.
 Keep `deliver_root` for step 4: the models are updated from these files.
+**New issuer too (lesson 2026-11-05):** a new-issuer build must also run steps 3.1–3.5 and push to deliver/* —
+Zorim, Reit 1, Sella, Azrieli and Gav-Yam were built from cloud files that never reached the PC (766 files re-delivered).
+Check after the PC syncs: every `דוחות/...` row in `maya_manifest.csv` (except cover pages/txt) is in `reports_index.csv`.
+Never write `reports_index.csv` from the cloud — only the PC writes it.
 
 ## 4. Update the issuer model (draft) in `cd/02_Issuers/<corp_folder>/`
 Take the newest `<corp_folder>_*.xlsx` (not `_מקומי`), archive a copy first. By report type:
