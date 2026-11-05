@@ -1,12 +1,12 @@
 ﻿series,name,date,value,chg_1m_bp,chg_3m_bp,source
-DFF,ריבית הפד (אפקטיבית),2026-11-03,3.88,0.0,25.0,FRED (St. Louis Fed)
-DGS3MO,UST 3 חודשים,2026-11-03,4.21,2.0,32.0,FRED (St. Louis Fed)
-DGS1,UST שנה,2026-11-03,4.4,-6.0,36.0,FRED (St. Louis Fed)
-DGS2,UST 2 שנים,2026-11-03,4.61,-22.0,41.0,FRED (St. Louis Fed)
-DGS5,UST 5 שנים,2026-11-03,4.74,-32.0,41.0,FRED (St. Louis Fed)
-DGS10,UST 10 שנים,2026-11-03,4.95,-33.0,32.0,FRED (St. Louis Fed)
-DGS30,UST 30 שנים,2026-11-03,5.32,-31.0,14.0,FRED (St. Louis Fed)
-DFII5,TIPS 5 שנים (ריאלי),2026-11-03,2.35,-34.0,21.0,FRED (St. Louis Fed)
-DFII10,TIPS 10 שנים (ריאלי),2026-11-03,2.65,-27.0,25.0,FRED (St. Louis Fed)
-T5YIE,Breakeven 5 שנים,2026-11-04,2.3,-6.0,12.0,FRED (St. Louis Fed)
-T10YIE,Breakeven 10 שנים,2026-11-04,2.26,-10.0,4.0,FRED (St. Louis Fed)
+DFF,ריבית הפד (אפקטיבית),,,,,שגיאה: The read operation timed out
+DGS3MO,UST 3 חודשים,,,,,שגיאה: The read operation timed out
+DGS1,UST שנה,,,,,שגיאה: The read operation timed out
+DGS2,UST 2 שנים,,,,,שגיאה: The read operation timed out
+DGS5,UST 5 שנים,,,,,שגיאה: The read operation timed out
+DGS10,UST 10 שנים,,,,,שגיאה: The read operation timed out
+DGS30,UST 30 שנים,,,,,שגיאה: The read operation timed out
+DFII5,TIPS 5 שנים (ריאלי),,,,,שגיאה: The read operation timed out
+DFII10,TIPS 10 שנים (ריאלי),,,,,שגיאה: The read operation timed out
+T5YIE,Breakeven 5 שנים,,,,,שגיאה: The read operation timed out
+T10YIE,Breakeven 10 שנים,,,,,שגיאה: The read operation timed out
