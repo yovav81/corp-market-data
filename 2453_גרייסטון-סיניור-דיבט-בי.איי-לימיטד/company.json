@@ -1,0 +1,150 @@
+{
+ "companyId": 2453,
+ "resolve": null,
+ "details": {
+  "companyId": 2453,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": true,
+  "isTaseup": false,
+  "name": "גרייסטון",
+  "longName": "גרייסטון סיניור דיבט בי.איי לימיטד",
+  "logo": null,
+  "corporateNo": "2149898",
+  "sector": "פיננסי",
+  "branch": "שרותים פיננסיים",
+  "subBranch": "אשראי חוץ בנקאי",
+  "incorporationPlace": "איי הבתולה הבריטיים",
+  "address": "יגאל אלון 98",
+  "city": "תל אביב",
+  "zipCode": "6114101",
+  "site": null,
+  "email": "ghazi.jaljoly@goldfarb.com",
+  "phone": "054-4216701",
+  "fax": null,
+  "marketValue": 0,
+  "mainSecurityId": null,
+  "companyActivites": "החברה עוסקת במימון ומתן הלוואות בתחום הנדל\"ן בארה\"ב",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": null,
+  "securityIndices": [
+   {
+    "securityId": 1213834,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.73883,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 719,
+    "name": "מדד תל בונד גלובל",
+    "shortName": "תל בונד-גלובל",
+    "weight": 5.78808,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.74975,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.3119,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 2.15011,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 738,
+    "name": "תל בונד-שקלי AA-AAA",
+    "shortName": "בונד שקלי AA",
+    "weight": 1.32618,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.41692,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.14549,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1213834,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 1.1567,
+    "factor": 1.0
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1213834,
+    "isin": "IL0012138348",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "גרסט.ק1",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "גרייסטון  אגח א",
+    "issuedPaidUp": 1167261000,
+    "tradableSecurities": 1167261000.0,
+    "marketCap": 1148.5,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1213842,
+    "isin": "IL0012138421",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "גרסט",
+    "securityType": "מניה רגילה",
+    "securityName": "גרייסטון",
+    "issuedPaidUp": 100,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
