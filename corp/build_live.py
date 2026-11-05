@@ -145,7 +145,9 @@ def _is_mashup(b):
     return b"DataMashup" in b or b"D\x00a\x00t\x00a\x00M\x00a\x00s\x00h\x00u\x00p" in b
 
 
-def inject_pq(xlsx_in, xlsx_out, mashup, props, connections):
+def inject_pq(xlsx_in, xlsx_out, mashup, props, connections, queries=None):
+    """queries: גיליון → (שם שאילתה, מזהה חיבור ברירת מחדל); ברירת מחדל — QUERIES של המאסטר. קובץ הממשלתי מעביר מפה משלו (gov/pq_gov.py)."""
+    queries = queries or QUERIES
     zin = zipfile.ZipFile(xlsx_in); files = {n: zin.read(n) for n in zin.namelist()}
     wb = ET.fromstring(files["xl/workbook.xml"])
     wbrels = ET.fromstring(files["xl/_rels/workbook.xml.rels"])
@@ -155,8 +157,8 @@ def inject_pq(xlsx_in, xlsx_out, mashup, props, connections):
     conn_ids = {c.get("name").split("- ", 1)[-1].strip(): c.get("id") for c in ET.fromstring(connections)}  # "שאילתה - Issuers" → "1"
     qt_n = 0; new_defined = []
     for idx, (sname, target) in enumerate(sheet_list):
-        if sname not in QUERIES: continue
-        qname, default_cid = QUERIES[sname]; cid = conn_ids.get(qname, str(default_cid))
+        if sname not in queries: continue
+        qname, default_cid = queries[sname]; cid = conn_ids.get(qname, str(default_cid))
         spath = "xl/" + target.lstrip("/").replace("xl/", "", 1) if not target.startswith("/") else target.lstrip("/")
         srels_path = spath.replace("worksheets/", "worksheets/_rels/") + ".rels"
         srels = ET.fromstring(files[srels_path])
