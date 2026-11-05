@@ -1,0 +1,193 @@
+{
+ "companyId": 1063,
+ "resolve": null,
+ "details": {
+  "companyId": 1063,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": true,
+  "isTaseup": false,
+  "name": "אדמה",
+  "longName": "אדמה פתרונות לחקלאות בע\"מ",
+  "logo": null,
+  "corporateNo": "520043605",
+  "sector": "ריאלי",
+  "branch": "תעשיה",
+  "subBranch": "כימיה, גומי ופלסטיק",
+  "incorporationPlace": "ישראל",
+  "address": "גולן, ת\"ד 298",
+  "city": "קרית שדה התעופה",
+  "zipCode": "7015103",
+  "site": "www.adama.com",
+  "email": "ruby.newman@adama.com",
+  "phone": "073-2321000",
+  "fax": "073-2321937",
+  "marketValue": 0,
+  "mainSecurityId": null,
+  "companyActivites": "החברה עוסקת בייצור ושיווק מוצרים להגנת הצומח.",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": null,
+  "securityIndices": [
+   {
+    "securityId": 1110915,
+    "indexId": 707,
+    "name": "חברות במדד תל בונד 20",
+    "shortName": "תל בונד 20",
+    "weight": 3.44788,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 709,
+    "name": "חברות במדד תל בונד 60",
+    "shortName": "תל בונד 60",
+    "weight": 1.69067,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 1.00807,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.50703,
+    "factor": 0.66454
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 723,
+    "name": "תל בונד-צמודות 5-15",
+    "shortName": "תל בונד-צמוד  5-15",
+    "weight": 4.15284,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 749,
+    "name": "תל בונד צמודות 5-10",
+    "shortName": "תל בונד-צמוד 5-10",
+    "weight": 4.99439,
+    "factor": 0.86491
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 736,
+    "name": "תל בונד-צמודות AA-AAA",
+    "shortName": "בונד צמוד AA-AAA",
+    "weight": 1.20623,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 731,
+    "name": "תל בונד-צמודות מעלה",
+    "shortName": "תל בונד-צמודות מעלה",
+    "weight": 2.14441,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 743,
+    "name": "תל בונד 100",
+    "shortName": "תל בונד 100",
+    "weight": 1.331,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.681,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.35591,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1110915,
+    "indexId": 767,
+    "name": "תל בונד פיזור AA מנפיקים",
+    "shortName": "תל בונד פיזור AA מנפיקים",
+    "weight": 2.51127,
+    "factor": 0.88751
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1110915,
+    "isin": "IL0011109159",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אדמה.ק2",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "אדמה אגח ב",
+    "issuedPaidUp": 1715145101,
+    "tradableSecurities": 1715145101.0,
+    "marketCap": 2739.3,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1081819,
+    "isin": "IL0010818198",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אדמה",
+    "securityType": "מניה רגילה",
+    "securityName": "אדמה",
+    "issuedPaidUp": 137990881,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1229178,
+    "isin": "IL0012291782",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "אדמנע3ל",
+    "securityType": "ני\"ע מסחריים",
+    "securityName": "אדמה נעמ$3-ל",
+    "issuedPaidUp": 40000000,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
