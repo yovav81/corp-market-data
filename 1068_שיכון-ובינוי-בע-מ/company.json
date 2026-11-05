@@ -1,0 +1,715 @@
+{
+ "companyId": 1068,
+ "resolve": null,
+ "details": {
+  "companyId": 1068,
+  "isDeleted": false,
+  "isCandidate": false,
+  "isSuspended": false,
+  "isMaintainance": false,
+  "isDual": false,
+  "isNonListed": false,
+  "isBond": false,
+  "isTaseup": false,
+  "name": "שיכון ובינוי",
+  "longName": "שיכון ובינוי בע\"מ",
+  "logo": null,
+  "corporateNo": "520036104",
+  "sector": "ריאלי",
+  "branch": "נדל\"ן ובנייה",
+  "subBranch": "בנייה",
+  "incorporationPlace": "ישראל",
+  "address": "הירדן 1א",
+  "city": "איירפורט סיטי",
+  "zipCode": "70100",
+  "site": "www.shikunbinui.com/he",
+  "email": "hilat@shikunbinui.com",
+  "phone": "03-6301111",
+  "fax": "03-6301595",
+  "marketValue": 9786750,
+  "mainSecurityId": 1081942,
+  "companyActivites": "החברה עוסקת בתשתיות,בנייה,יזמות נדל\"ן וזכיינות פרוייקטים בארץ ובחו\"ל ושולטת ב\"שיכון ובינוי אנרגיה\".",
+  "smallCorporation": false,
+  "securitiesValidityDate": "2026-11-04",
+  "indices": [
+   "ת\"א 90",
+   "ת\"א 125",
+   "ת\"א-90 ו-SME60",
+   "ת\"א סקטור-באלאנס",
+   "ת\"א נדל\"ן",
+   "ת\"א-בנייה",
+   "ת\"א-EW125",
+   "ת\"א 90 ובנקים",
+   "ת\"א All-Share",
+   "ת\"א רימון",
+   "ת\"א תשתיות",
+   "ת\"א נדל\"ן- 35",
+   "ת\"א-50 ריאלי",
+   "ת\"א-200",
+   "תא90רוח"
+  ],
+  "securityIndices": [
+   {
+    "securityId": 1081942,
+    "indexId": 143,
+    "name": "חברות במדד ת\"א 90",
+    "shortName": "ת\"א 90",
+    "weight": 2.06654,
+    "factor": 0.58451
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 137,
+    "name": "חברות במדד ת\"א 125",
+    "shortName": "ת\"א 125",
+    "weight": 0.64132,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 176,
+    "name": "ת\"א-90 ו-CAP 2% SME60",
+    "shortName": "ת\"א-90 ו-SME60",
+    "weight": 0.85555,
+    "factor": 0.08117
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 177,
+    "name": "ת\"א סקטור-באלאנס",
+    "shortName": "ת\"א סקטור-באלאנס",
+    "weight": 0.9846,
+    "factor": 0.73923
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 149,
+    "name": "חברות במדד ת\"א נדל\"ן",
+    "shortName": "ת\"א נדל\"ן",
+    "weight": 5.37976,
+    "factor": 0.60735
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 181,
+    "name": "חברות במדד ת\"א-בנייה",
+    "shortName": "ת\"א-בנייה",
+    "weight": 11.60221,
+    "factor": 0.34537
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 189,
+    "name": "ת\"א-EW125",
+    "shortName": "ת\"א-EW125",
+    "weight": 0.81633,
+    "factor": 0.05071
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 196,
+    "name": "חברות במדד ת\"א 90 ובנקים",
+    "shortName": "ת\"א 90 ובנקים",
+    "weight": 1.97814,
+    "factor": 0.98785
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 168,
+    "name": "חברות במדד ת\"א All-Share",
+    "shortName": "ת\"א All-Share",
+    "weight": 0.53097,
+    "factor": 0.06167
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 175,
+    "name": "חברות במדד ת\"א רימון",
+    "shortName": "ת\"א רימון",
+    "weight": 1.02461,
+    "factor": 0.50791
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.77279,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 710,
+    "name": "חברות במדד תל בונד שקלי",
+    "shortName": "תל בונד שקלי",
+    "weight": 0.97076,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 1.85214,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 720,
+    "name": "חברות במדד תל בונד שקלי-50",
+    "shortName": "תל בונד שקלי-50",
+    "weight": 1.16331,
+    "factor": 0.5
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 712,
+    "name": "מדד תל בונד צמודות-יתר",
+    "shortName": "תל בונד צמודות-יתר",
+    "weight": 1.15666,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 712,
+    "name": "מדד תל בונד צמודות-יתר",
+    "shortName": "תל בונד צמודות-יתר",
+    "weight": 0.34137,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.7842,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 717,
+    "name": "מדד תל בונד-לא צמודות",
+    "shortName": "תל בונד-לא צמודות",
+    "weight": 0.9851,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 0.13451,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 711,
+    "name": "מדד תל בונד צמודות",
+    "shortName": "תל בונד צמודות",
+    "weight": 0.45574,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.1018,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.34494,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.32623,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 715,
+    "name": "חברות במדד תל בונד-מאגר",
+    "shortName": "תל בונד-מאגר",
+    "weight": 0.40981,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 721,
+    "name": "תל בונד-צמודות 0-3",
+    "shortName": "תל בונד-צמוד 0-3",
+    "weight": 1.41453,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 722,
+    "name": "תל בונד-צמודות 3-5",
+    "shortName": "תל בונד-צמוד 3-5",
+    "weight": 0.36194,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 724,
+    "name": "תל בונד-שקלי 0-3",
+    "shortName": "תל בונד-שקלי 0-3",
+    "weight": 2.24892,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 726,
+    "name": "תל בונד-שקלי 5-15",
+    "shortName": "תל בונד-שקלי 5-15",
+    "weight": 3.03681,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 734,
+    "name": "תל בונד צמודות-נדל\"ן",
+    "shortName": "בונד צמוד נדל\"ן",
+    "weight": 0.29501,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 734,
+    "name": "תל בונד צמודות-נדל\"ן",
+    "shortName": "בונד צמוד נדל\"ן",
+    "weight": 0.99955,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 735,
+    "name": "תל בונד-צמודות A",
+    "shortName": "בונד צמוד A",
+    "weight": 2.98528,
+    "factor": 0.98892
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 735,
+    "name": "תל בונד-צמודות A",
+    "shortName": "בונד צמוד A",
+    "weight": 0.89094,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 2.31629,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 737,
+    "name": "תל בונד-שקלי A",
+    "shortName": "בונד שקלי A",
+    "weight": 1.84392,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 748,
+    "name": "תל בונד שקלי 5-10",
+    "shortName": "תל בונד שקלי 5-10",
+    "weight": 3.19647,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 1.45144,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 742,
+    "name": "תל בונד-שקלי 100",
+    "shortName": "תל בונד-שקלי 100",
+    "weight": 1.15545,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 743,
+    "name": "תל בונד 100",
+    "shortName": "תל בונד 100",
+    "weight": 0.60174,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 745,
+    "name": "תל בונד תשואות–פיזור רחב",
+    "shortName": "תל בונד תשואות–פיזור רחב",
+    "weight": 1.991,
+    "factor": 0.25142
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 745,
+    "name": "תל בונד תשואות–פיזור רחב",
+    "shortName": "תל בונד תשואות–פיזור רחב",
+    "weight": 0.91022,
+    "factor": 0.38945
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 1.71681,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 746,
+    "name": "תל בונד תשואות שקלי–פיזור רחב",
+    "shortName": "תל בונד תשואות שקלי–פיזור רחב",
+    "weight": 2.08361,
+    "factor": 0.96615
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.5478,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 740,
+    "name": "All-Bond שקלי",
+    "shortName": "All-Bond שקלי",
+    "weight": 0.43608,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.30788,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 604,
+    "name": "All-Bond צמודות",
+    "shortName": "All-Bond צמודות",
+    "weight": 0.09087,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.04749,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.1609,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.15218,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 601,
+    "name": "All-Bond כללי",
+    "shortName": "All-Bond כללי",
+    "weight": 0.19116,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 206,
+    "name": "ת\"א תשתיות",
+    "shortName": "ת\"א תשתיות",
+    "weight": 4.17945,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 208,
+    "name": "ת\"א נדל\"ן- 35",
+    "shortName": "ת\"א נדל\"ן- 35",
+    "weight": 7.46875,
+    "factor": 0.90771
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 198,
+    "name": "ת\"א-50 ריאלי",
+    "shortName": "ת\"א-50 ריאלי",
+    "weight": 1.60027,
+    "factor": 1.0
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 199,
+    "name": "ת\"א-200",
+    "shortName": "ת\"א-200",
+    "weight": 1.01855,
+    "factor": 0.47445
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 762,
+    "name": "מדד תל-בונד בולט 2029 ישראל",
+    "shortName": "תל-בונד בולט 2029 ישראל",
+    "weight": 2.96377,
+    "factor": 0.70933
+   },
+   {
+    "securityId": 1081942,
+    "indexId": 202,
+    "name": "ת\"א-90 חברות רווחיות משקל שווה",
+    "shortName": "תא90רוח",
+    "weight": 1.339,
+    "factor": 0.05071
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 765,
+    "name": "תל בונד שקלי 60",
+    "shortName": "תל בונד שקלי 60",
+    "weight": 2.01288,
+    "factor": 0.57658
+   },
+   {
+    "securityId": 1228766,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.52367,
+    "factor": 0.17719
+   },
+   {
+    "securityId": 1175132,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.41688,
+    "factor": 0.17719
+   },
+   {
+    "securityId": 1135888,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.44078,
+    "factor": 0.17719
+   },
+   {
+    "securityId": 1167386,
+    "indexId": 766,
+    "name": "תל בונד פיזור A מנפיקים",
+    "shortName": "תל בונד פיזור A מנפיקים",
+    "weight": 0.13009,
+    "factor": 0.17719
+   }
+  ],
+  "secrities": [
+   {
+    "securityId": 1081942,
+    "isin": "IL0010819428",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": true,
+    "isParticipationUnit": false,
+    "symbol": "שוב",
+    "securityType": "מניה רגילה",
+    "securityName": "שיכון ובינוי",
+    "issuedPaidUp": 589643050,
+    "tradableSecurities": 582891618.0,
+    "marketCap": 9786.8,
+    "capitalPercent": 100.0,
+    "votingPercent": 100.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1135888,
+    "isin": "IL0011358889",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.ק8",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "שכון ובי אגח  8",
+    "issuedPaidUp": 1035231692,
+    "tradableSecurities": 1035231692.0,
+    "marketCap": 1270.1,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1167386,
+    "isin": "IL0011673865",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.ק9",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "שכון ובי אגח  9",
+    "issuedPaidUp": 307792930,
+    "tradableSecurities": 307792930.0,
+    "marketCap": 374.9,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1175132,
+    "isin": "IL0011751323",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.ק10",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "שכון ובי אגח 10",
+    "issuedPaidUp": 1246623200,
+    "tradableSecurities": 1246623200.0,
+    "marketCap": 1201.2,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1228766,
+    "isin": "IL0012287665",
+    "isDeleted": false,
+    "isTradable": true,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.ק11",
+    "securityType": "אג\"ח קונצרני",
+    "securityName": "שכון ובי אגח 11",
+    "issuedPaidUp": 1474330000,
+    "tradableSecurities": 1474330000.0,
+    "marketCap": 1509.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": true,
+    "isIncludeInIndices": true
+   },
+   {
+    "securityId": 1130830,
+    "isin": null,
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.רד",
+    "securityType": "מניה רדומה",
+    "securityName": "שיכון ובינוי רד",
+    "issuedPaidUp": 6751432,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1158542,
+    "isin": "IL0011585424",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב אפ5/19",
+    "securityType": "אופציה עובדים",
+    "securityName": "שיכון ובינ עובד",
+    "issuedPaidUp": 2793856,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1226356,
+    "isin": "IL0012263567",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.חסמ",
+    "securityType": "אופציה עובדים",
+    "securityName": "שיכון ובינ  RSU",
+    "issuedPaidUp": 391518,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   },
+   {
+    "securityId": 1245224,
+    "isin": "IL0012452244",
+    "isDeleted": false,
+    "isTradable": false,
+    "isTaseUp": false,
+    "isMarketMaker": false,
+    "isParticipationUnit": false,
+    "symbol": "שוב.אחר",
+    "securityType": "אופציה לאחרים",
+    "securityName": "שיכון ובינ  אחר",
+    "issuedPaidUp": 275769,
+    "tradableSecurities": 0.0,
+    "marketCap": 0.0,
+    "capitalPercent": 0.0,
+    "votingPercent": 0.0,
+    "isHeldByFunds": false,
+    "isIncludeInIndices": false
+   }
+  ]
+ }
+}
