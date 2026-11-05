@@ -97,6 +97,30 @@ def parity_top5(xlsx_recalced: Path | str, data: Path | str, s: dict | None = No
     return out
 
 
+def scenario_table(wb) -> dict:
+    """{(scenario_key, portfolio): value} מהשמות scen_<key>_<port> בחוברת מחושבת."""
+    out = {}
+    for nm in wb.defined_names:
+        if nm.startswith("scen_"):
+            body = nm[5:]; port = body.rsplit("_", 1)[1]; key = body[: -(len(port) + 1)]
+            out[(key, port)] = named_value(wb, nm)
+    return out
+
+
+def parity_foreign(xlsx_recalced: Path | str, data: Path | str, s: dict | None = None) -> dict:
+    import gov_decide
+    s = s or gov_decide.load_settings(); g = Path(data) / "gov"
+    curve = pd.read_csv(g / "curves_latest.csv", encoding="utf-8-sig")
+    fo = pd.read_csv(g / "foreign_latest.csv", encoding="utf-8-sig") if (g / "foreign_latest.csv").exists() else pd.DataFrame()
+    wb = openpyxl.load_workbook(xlsx_recalced, data_only=True); out = {}
+    fv = gov_decide.foreign_verdict(fo, curve, s) if len(fo) else pd.DataFrame()
+    for t, key in ((5, "foreign_5y"), (10, "foreign_10y")):
+        xl = named_value(wb, f"f_verdict_{t}y")
+        py = fv[fv["tenor"] == t]["verdict"].iloc[0] if len(fv) and (fv["tenor"] == t).any() else "אין נתון"
+        out[key] = (xl, py, xl == py)
+    return out
+
+
 def main(xlsx: str, data: str) -> int:
     rc = recalc(xlsx); errs = count_errors(rc); worst = parity_curves(rc, data)
     print("שגיאות נוסחה:", errs or "0"); print("זהות עקומים (מקס' נ״ב):", worst)

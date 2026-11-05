@@ -17,6 +17,10 @@ def real_build(tmp_path_factory):
     gov_history.build_bond_history(data).to_csv(data / "gov" / "bond_history.csv", index=False, encoding="utf-8-sig")
     gov_history.build_vol(pd.read_csv(data / "gov" / "curves_history.csv", encoding="utf-8-sig"), {"nominal": 60, "real": 50}).to_csv(data / "gov" / "vol.csv", index=False, encoding="utf-8-sig")
     gov_cpi.build_cpi_path(data).to_csv(data / "gov" / "cpi_path.csv", index=False, encoding="utf-8-sig")
+    # חו״ל סינתטי (אין רשת בבדיקות) + החזקה אחת ו-"כלול בעקום?" אחד — דרך קובץ v2 קודם מדומה
+    import gov_foreign
+    pd.DataFrame([{"market": m, "tenor": t, "yield": y0 + 0.08 * t, "rate_1y": y0 + 0.08, "date": "2026-11-04", "source": "בדיקה", "as_of": "2026-11-05", "stale": 0}
+                  for m, y0 in (("US", 4.3), ("EUR", 2.0), ("GBP", 3.9)) for t in gov_foreign.TENORS]).to_csv(data / "gov" / "foreign_latest.csv", index=False, encoding="utf-8-sig")
     import gov_decide; gov_decide.decide(data)
     res = build_gov2.build(data, out, None, pq=False)
     rc = check_gov2.recalc(out) if shutil.which("soffice") else None
@@ -126,3 +130,48 @@ def test_scan_no_long_bond_excel(real_build, tmp_path):
     wb2 = openpyxl.load_workbook(rc, data_only=True)
     assert str(check_gov2.named_value(wb2, "m_struct_real")).startswith("אין זוג מתאים")
     assert sum(check_gov2.count_errors(rc).values()) == 0
+
+
+
+# ---------- Task 10: 08 חו״ל, 09 תיק ותרחישים, 00 דשבורד ----------
+@needs_soffice
+def test_holding_not_found(real_build, tmp_path):
+    wb = openpyxl.load_workbook(real_build["out"]); ws = wb["09_תיק_ותרחישים"]
+    ws["A5"] = "1194802"; ws["B5"] = 1_000_000          # ממשל שקלית 0229
+    ws["A6"] = "999"; ws["B6"] = 500_000                  # לא קיים
+    p = tmp_path / "hold.xlsx"; wb.save(p); rc = check_gov2.recalc(p)
+    assert sum(check_gov2.count_errors(rc).values()) == 0
+    wb2 = openpyxl.load_workbook(rc, data_only=True)
+    assert wb2["09_תיק_ותרחישים"]["D6"].value == "לא נמצא" and check_gov2.named_value(wb2, "n_not_found") == 1
+    assert check_gov2.named_value(wb2, "cur_w_linked") == pytest.approx(0.0)        # ההחזקה היחידה שנמצאה היא שקלית
+    assert abs(check_gov2.named_value(wb2, "cur_dur") - check_gov2.named_value(wb2, "cur_dur")) < 1e-9 and check_gov2.named_value(wb2, "cur_dur") > 1
+    assert check_gov2.named_value(wb2, "cur_mv") == pytest.approx(1_000_000 * wb2["02_קלט_אגח"][f"{build_gov2.BC['last_price']}{[r for r in range(6, 126) if wb2['02_קלט_אגח'][f'C{r}'].value == '1194802'][0]}"].value / 100, rel=1e-6)
+
+
+@needs_soffice
+def test_scenarios_sign(real_build, tmp_path):
+    wb = openpyxl.load_workbook(real_build["out"]); ws = wb["09_תיק_ותרחישים"]
+    ws["A5"] = "1194802"; ws["B5"] = 1_000_000; ws["A6"] = "1220722"; ws["B6"] = 1_000_000
+    p = tmp_path / "scen.xlsx"; wb.save(p); rc = check_gov2.recalc(p)
+    wb2 = openpyxl.load_workbook(rc, data_only=True)
+    sc = check_gov2.scenario_table(wb2)
+    for port in ("current", "model"):
+        assert sc[("parallel_up_2", port)] < 0 < sc[("parallel_dn_2", port)]
+        assert sc[("parallel_up_1", port)] < 0 < sc[("parallel_dn_1", port)]
+    assert sc[("infl_up", "current")] > 0 > sc[("infl_dn", "current")]       # יש צמוד בתיק הנוכחי
+
+
+@needs_soffice
+def test_parity_foreign(real_build):
+    res = check_gov2.parity_foreign(real_build["recalc"], real_build["data"])
+    assert set(res) == {"foreign_5y", "foreign_10y"}
+    for k, (xl, py, ok) in res.items(): assert ok, (k, xl, py)
+
+
+@needs_soffice
+def test_dashboard_keys(real_build):
+    wb = openpyxl.load_workbook(real_build["recalc"], data_only=True); ws = wb["00_דשבורד"]
+    rows = [r for r in range(1, 13) if ws[f"A{r}"].value in ("שקלי / צמוד", "מח״מ", "סינתטי / בולט", "סדרות מובילות", "חו״ל", "סיכון")]
+    assert len(rows) == 6
+    for r in rows: assert ws[f"B{r}"].value not in (None, ""), ws[f"A{r}"].value
+    assert sum(check_gov2.count_errors(real_build["recalc"]).values()) == 0
