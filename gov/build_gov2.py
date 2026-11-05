@@ -47,7 +47,7 @@ BOND_HEB = ["תאריך נתונים", "מס׳ ני״ע", "מפתח", "שם אג
             "מח״מ גלובס", "מחזור (אלפי ₪)", "שנים לפדיון", "ריבית צבורה", "מחיר נקי", "מח״מ Macaulay", "מח״מ מתואם", "קמירות", "מקדם הצמדה L", "מחיר תיאורטי", "כלול בעקום? (מאגר)"]
 CALC_COLS = [("incl", "כלול (אפקטיבי)"), ("bucket", "Bucket"), ("lo", "lo"), ("frac", "frac"), ("ycurve", "YTM עקום %"), ("spread", "פער מול העקום (נ״ב)"),
              ("bei", "BEI בטווח %"), ("roll", "Roll-down (נ״ב)"), ("exp12", "תשואה צפויה 12 ח׳ %"), ("nomeq", "שקול נומינלי 12 ח׳ %"), ("hold", "כמות נקובה מוחזקת"),
-             ("mv", "שווי שוק"), ("w", "משקל בתיק"), ("wdur", "תרומת מח״מ"), ("wytm", "תרומת תשואה"), ("wconv", "תרומת קמירות"), ("xn", "x שקלי"), ("xr", "x צמוד"), ("status", "סטטוס")]
+             ("mv", "שווי שוק"), ("w", "משקל בתיק"), ("wdur", "תרומת מח״מ"), ("wytm", "תרומת תשואה"), ("wconv", "תרומת קמירות"), ("xn", "x שקלי"), ("xr", "x צמוד"), ("dn", "D שקלי"), ("dr", "D צמוד"), ("status", "סטטוס")]
 BC = {h: L(i + 1) for i, h in enumerate(BOND_COLS)}
 CC = {k: L(len(BOND_COLS) + i + 1) for i, (k, _) in enumerate(CALC_COLS)}
 Q02 = lambda c: f"'02_קלט_אגח'!${c}${R0}:${c}${R1}"          # טווח עמודה ב-02
@@ -209,15 +209,17 @@ def sheet_input(ctx: Ctx):
         put(ws, C["wconv"], f'=IFERROR({C["w"]}*{conv},0)', BASE, None, "0.00", BOX)
         put(ws, C["xn"], f'=IF(AND({C["incl"]}="כן",{isnom},ISNUMBER({ttm}),ISNUMBER({ytm})),{ttm},"")', GREY, None, "0.00")
         put(ws, C["xr"], f'=IF(AND({C["incl"]}="כן",{kind}="מדד",ISNUMBER({ttm}),ISNUMBER({ytm})),{ttm},"")', GREY, None, "0.00")
+        put(ws, C["dn"], f'=IF(AND({C["incl"]}="כן",{isnom},ISNUMBER({mod}),ISNUMBER({ytm}),ISNUMBER({ttm})),{mod},"")', GREY, None, "0.000")
+        put(ws, C["dr"], f'=IF(AND({C["incl"]}="כן",{kind}="מדד",ISNUMBER({mod}),ISNUMBER({ytm}),ISNUMBER({ttm})),{mod},"")', GREY, None, "0.000")
         put(ws, C["status"], f'=IF({key}="","",IF({ytm}="","אין תשואה",IF({mod}="","אין מח״מ","")))', BASE, None, None, BOX)
-    widths = [10, 10, 10, 20, 7, 12, 11, 8, 9, 9, 9, 9, 8, 10, 8, 8, 8, 8, 8, 8, 8, 8, 8] + [8, 7, 4, 5, 9, 9, 8, 9, 10, 10, 12, 11, 8, 8, 8, 8, 6, 6, 10]
+    widths = [10, 10, 10, 20, 7, 12, 11, 8, 9, 9, 9, 9, 8, 10, 8, 8, 8, 8, 8, 8, 8, 8, 8] + [8, 7, 4, 5, 9, 9, 8, 9, 10, 10, 12, 11, 8, 8, 8, 8, 6, 6, 6, 6, 10]
     for i, w in enumerate(widths): ws.column_dimensions[L(i + 1)].width = w
-    ws.column_dimensions.group(CC["lo"], CC["frac"], outline_level=1, hidden=True); ws.column_dimensions.group(CC["xn"], CC["xr"], outline_level=1, hidden=True)
+    ws.column_dimensions.group(CC["lo"], CC["frac"], outline_level=1, hidden=True); ws.column_dimensions.group(CC["xn"], CC["dr"], outline_level=1, hidden=True)
     ws.freeze_panes = f"E{R0}"; ws.auto_filter.ref = f"A5:{CC['status']}{R1}"
     for nm, col in [("b_key", BC["key"]), ("b_name", BC["name"]), ("b_kind", BC["kind"]), ("b_ttm", BC["ttm"]), ("b_ytm", BC["ytm_gross"]), ("b_mod", BC["modified"]),
                     ("b_conv", BC["convexity"]), ("b_vol", BC["volume_k_nis"]), ("b_price", BC["last_price"]), ("b_sid", BC["security_id"]), ("b_incl", CC["incl"]),
                     ("b_ycurve", CC["ycurve"]), ("b_spread", CC["spread"]), ("b_roll", CC["roll"]), ("b_exp12", CC["exp12"]), ("b_nomeq", CC["nomeq"]), ("b_hold", CC["hold"]),
-                    ("b_mv", CC["mv"]), ("b_w", CC["w"]), ("b_xn", CC["xn"]), ("b_xr", CC["xr"]), ("b_bucket", CC["bucket"])]:
+                    ("b_mv", CC["mv"]), ("b_w", CC["w"]), ("b_xn", CC["xn"]), ("b_xr", CC["xr"]), ("b_dn", CC["dn"]), ("b_dr", CC["dr"]), ("b_bucket", CC["bucket"])]:
         ctx.name(nm, Q02(col))
     ctx.name("d_asof", f"MAX('נתוני_אגח'!$A$2:$A$500)")
 
@@ -458,6 +460,222 @@ def sheet_duration(ctx: Ctx):
     ws.freeze_panes = "A5"
 
 
+# ---------------------------------------------------------------- 06_סינטטי_בולט
+NLIST = 30                                   # ניירות לאפיק ברשימה (ממוינים לפי מח״מ)
+PAIRS = [(i, j) for i in range(1, NLIST + 1) for j in range(i + 1, NLIST + 1)]
+NPAIRS = len(PAIRS)                          # 435
+STRUCT_BLOCKS: dict = {}
+
+
+def _struct_block(ctx: Ctx, ws, r0: int, kind: str) -> int:
+    """בלוק לאפיק: רשימת ניירות, טבלת זוגות, בולטים, המודל והסימולציה. מחזיר את השורה הבאה הפנויה."""
+    heb = "שקלי" if kind == "nominal" else "צמוד"; dcolname = "b_dn" if kind == "nominal" else "b_dr"
+    tgt = f"u_dur_{kind}"
+    put(ws, f"A{r0}", f"אפיק {heb}", Font(name="Arial", size=12, bold=True)); put(ws, f"C{r0}", "מח״מ יעד (בשימוש, 05):", BOLD); put(ws, f"D{r0}", f"={tgt}", GREEN, GRN, "0.00", BOX)
+    ctx.name(f"t_{kind}", f"'06_סינטטי_בולט'!$D${r0}")
+    # --- רשימת ניירות (ממוינת לפי מח״מ) ---
+    lr = r0 + 2
+    hdr(ws, lr, ["#", "מח״מ", "מפתח", "שם", "שנים לפדיון", "תשואה %", "קמירות", "מחזור", "Roll-down (נ״ב)", "תשואה 12 ח׳ %"], 1, 30)
+    for i in range(NLIST):
+        r = lr + 1 + i
+        put(ws, f"A{r}", i + 1, GREY, None, "0"); put(ws, f"B{r}", f'=IFERROR(SMALL({dcolname},{i + 1}),"")', BASE, None, "0.000", BOX)
+        put(ws, f"C{r}", f'=IF(B{r}="","",INDEX(b_key,MATCH(B{r},{dcolname},0)))', BASE, None, None, BOX)
+        for col, nm, fmt in (("D", "b_name", None), ("E", "b_ttm", "0.00"), ("F", "b_ytm", "0.00"), ("G", "b_conv", "0.0"), ("H", "b_vol", "#,##0"), ("I", "b_roll", "0.0"), ("J", "b_exp12", "0.00")):
+            put(ws, f"{col}{r}", f'=IF(C{r}="","",INDEX({nm},MATCH(B{r},{dcolname},0)))', BASE, None, fmt, BOX)
+    LST = {k: f"$'{c}'${lr + 1}:${c}${lr + NLIST}".replace("'", "") for k, c in (("d", "B"), ("key", "C"), ("ttm", "E"), ("ytm", "F"), ("conv", "G"), ("vol", "H"), ("roll", "I"), ("exp", "J"))}
+    # --- זוגות ---
+    pr = lr + NLIST + 2
+    put(ws, f"A{pr}", "סריקת כל הזוגות (קצר מהיעד + ארוך מהיעד)", BOLD)
+    cols = ["i", "j", "מח״מ קצר", "מח״מ ארוך", "תקין?", "משקל קצר", "משקל ארוך", "תשואה %", "קמירות", "מחזור מינ׳", "תשואה 12 ח׳ %", "P&L +מקבילי", "P&L −מקבילי", "P&L התללה", "P&L השתטחות", "ציון", "נזיל?", "ציון תקין"]
+    hdr(ws, pr + 1, cols, 1, 30)
+    c = {k: L(n + 1) for n, k in enumerate(["i", "j", "di", "dj", "valid", "wi", "wj", "ytm", "conv", "liq", "exp", "up", "dn", "steep", "flat", "score", "ok", "sc_ok"])}
+    p0 = pr + 2
+    def leg(idx, w):   # P&L לרגל: (−D·dy + ½C·dy²)·100 ; dy בשבר עשרוני
+        D = f"INDEX({LST['d']},{idx})"; C_ = f"INDEX({LST['conv']},{idx})"; T_ = f"INDEX({LST['ttm']},{idx})"
+        dy = "(p_bb_shock_bp/10000)"; tw = f"(p_bb_twist_bp/10000*({T_}-$D${r0})/p_bb_twist_span)"
+        return {"up": f"{w}*(-{D}*{dy}+0.5*{C_}*{dy}^2)*100", "dn": f"{w}*({D}*{dy}+0.5*{C_}*{dy}^2)*100",
+                "steep": f"{w}*(-{D}*{tw}+0.5*{C_}*{tw}^2)*100", "flat": f"{w}*({D}*{tw}+0.5*{C_}*{tw}^2)*100"}
+    for n, (i, j) in enumerate(PAIRS):
+        r = p0 + n
+        put(ws, f"{c['i']}{r}", i, GREY, None, "0"); put(ws, f"{c['j']}{r}", j, GREY, None, "0")
+        put(ws, f"{c['di']}{r}", f'=INDEX({LST["d"]},{i})', GREY, None, "0.000"); put(ws, f"{c['dj']}{r}", f'=INDEX({LST["d"]},{j})', GREY, None, "0.000")
+        di, dj = f"{c['di']}{r}", f"{c['dj']}{r}"
+        put(ws, f"{c['valid']}{r}", f'=IF(AND(ISNUMBER({di}),ISNUMBER({dj}),ISNUMBER($D${r0})),IF(AND({di}<$D${r0},{dj}>$D${r0}),"כן","לא"),"לא")', GREY)
+        v = f"{c['valid']}{r}"
+        put(ws, f"{c['wi']}{r}", f'=IF({v}="כן",({dj}-$D${r0})/({dj}-{di}),"")', BASE, None, "0.000"); put(ws, f"{c['wj']}{r}", f'=IF({v}="כן",1-{c["wi"]}{r},"")', BASE, None, "0.000")
+        wi, wj = f"{c['wi']}{r}", f"{c['wj']}{r}"
+        put(ws, f"{c['ytm']}{r}", f'=IF({v}="כן",{wi}*INDEX({LST["ytm"]},{i})+{wj}*INDEX({LST["ytm"]},{j}),"")', BASE, None, "0.00")
+        put(ws, f"{c['conv']}{r}", f'=IF({v}="כן",{wi}*INDEX({LST["conv"]},{i})+{wj}*INDEX({LST["conv"]},{j}),"")', BASE, None, "0.0")
+        put(ws, f"{c['liq']}{r}", f'=IF({v}="כן",MIN(INDEX({LST["vol"]},{i}),INDEX({LST["vol"]},{j})),"")', BASE, None, "#,##0")
+        put(ws, f"{c['exp']}{r}", f'=IF({v}="כן",{wi}*INDEX({LST["exp"]},{i})+{wj}*INDEX({LST["exp"]},{j}),"")', BASE, None, "0.00")
+        li, lj = leg(i, wi), leg(j, wj)
+        for k in ("up", "dn", "steep", "flat"):
+            put(ws, f"{c[k]}{r}", f'=IF({v}="כן",{li[k]}+{lj[k]},"")', BASE, None, "0.00")
+        put(ws, f"{c['score']}{r}", f'=IF({v}="כן",{c["exp"]}{r}+({c["up"]}{r}+{c["dn"]}{r}+{c["steep"]}{r}+{c["flat"]}{r})/5,"")', BASE, None, "0.000")
+        put(ws, f"{c['ok']}{r}", f'=IF({v}="כן",IF({c["liq"]}{r}>=p_bb_min_volume_k,"כן","לא"),"לא")', GREY)
+        put(ws, f"{c['sc_ok']}{r}", f'=IF({c["ok"]}{r}="כן",{c["score"]}{r},-9999)', GREY, None, "0.000")
+    PR = {k: f"${c[k]}${p0}:${c[k]}${p0 + NPAIRS - 1}" for k in c}
+    # --- בולטים ---
+    br = p0 + NPAIRS + 1
+    put(ws, f"A{br}", "בולטים סביב היעד (|מח״מ − יעד| ≤ סטייה מותרת)", BOLD)
+    hdr(ws, br + 1, ["#", "מח״מ", "מפתח", "מתאים?", "תשואה %", "קמירות", "מחזור", "תשואה 12 ח׳ %", "P&L +מקבילי", "P&L −מקבילי", "P&L התללה", "P&L השתטחות", "ציון", "נזיל?", "ציון תקין"], 1, 30)
+    b0 = br + 2
+    bc = {k: L(n + 1) for n, k in enumerate(["i", "d", "key", "fit", "ytm", "conv", "liq", "exp", "up", "dn", "steep", "flat", "score", "ok", "sc_ok"])}
+    for i in range(1, NLIST + 1):
+        r = b0 + i - 1
+        put(ws, f"A{r}", i, GREY, None, "0"); put(ws, f"B{r}", f'=INDEX({LST["d"]},{i})', GREY, None, "0.000"); put(ws, f"C{r}", f'=INDEX({LST["key"]},{i})', BASE)
+        put(ws, f"D{r}", f'=IF(AND(ISNUMBER(B{r}),ISNUMBER($D${r0})),IF(ABS(B{r}-$D${r0})<=p_bb_tol,"כן","לא"),"לא")', GREY)
+        fit = f"D{r}"
+        for k, src, fmt in (("ytm", "ytm", "0.00"), ("conv", "conv", "0.0"), ("liq", "vol", "#,##0"), ("exp", "exp", "0.00")):
+            put(ws, f"{bc[k]}{r}", f'=IF({fit}="כן",INDEX({LST[src]},{i}),"")', BASE, None, fmt)
+        lg = leg(i, "1")
+        for k in ("up", "dn", "steep", "flat"):
+            put(ws, f"{bc[k]}{r}", f'=IF({fit}="כן",{lg[k]},"")', BASE, None, "0.00")
+        put(ws, f"{bc['score']}{r}", f'=IF({fit}="כן",{bc["exp"]}{r}+({bc["up"]}{r}+{bc["dn"]}{r}+{bc["steep"]}{r}+{bc["flat"]}{r})/5,"")', BASE, None, "0.000")
+        put(ws, f"{bc['ok']}{r}", f'=IF({fit}="כן",IF({bc["liq"]}{r}>=p_bb_min_volume_k,"כן","לא"),"לא")', GREY)
+        put(ws, f"{bc['sc_ok']}{r}", f'=IF({bc["ok"]}{r}="כן",{bc["score"]}{r},-9999)', GREY, None, "0.000")
+    BR = {k: f"${bc[k]}${b0}:${bc[k]}${b0 + NLIST - 1}" for k in bc}
+    # --- המודל ---
+    mr = b0 + NLIST + 1
+    put(ws, f"A{mr}", f"החלטת המודל — {heb}", BOLD); hdr(ws, mr + 1, ["רכיב", "ערך", "ערך 2", "הסבר"])
+    bp = f"MATCH(MAX({PR['sc_ok']}),{PR['sc_ok']},0)"; bb = f"MATCH(MAX({BR['sc_ok']}),{BR['sc_ok']},0)"
+    has_p = f"MAX({PR['sc_ok']})>-9999"; has_b = f"MAX({BR['sc_ok']})>-9999"
+    rows = [("ציון הזוג הטוב ביותר", f'=IF({has_p},MAX({PR["sc_ok"]}),"")', "", "ממוצע תשואה 12 ח׳ על 5 תרחישים (בסיס, ±מקבילי, התללה, השתטחות); רק זוגות נזילים", "0.000"),
+            ("הזוג: מפתח קצר / משקל", f'=IF({has_p},INDEX({LST["key"]},INDEX({PR["i"]},{bp})),"")', f'=IF({has_p},INDEX({PR["wi"]},{bp}),"")', "", "0.000"),
+            ("הזוג: מפתח ארוך / משקל", f'=IF({has_p},INDEX({LST["key"]},INDEX({PR["j"]},{bp})),"")', f'=IF({has_p},INDEX({PR["wj"]},{bp}),"")', "", "0.000"),
+            ("ציון הבולט הטוב ביותר", f'=IF({has_b},MAX({BR["sc_ok"]}),"")', "", "", "0.000"),
+            ("הבולט: מפתח", f'=IF({has_b},INDEX({BR["key"]},{bb}),"")', "", "", None),
+            ("פער סינתטי−בולט (נ״ב)", f'=IF(OR(B{mr + 2}="",B{mr + 5}=""),"",(B{mr + 2}-B{mr + 5})*100)', "", "חיובי = יתרון לסינתטי", "0"),
+            ("פסק דין", f'=IF(AND(B{mr + 2}="",B{mr + 5}=""),"אין זוג מתאים",IF(B{mr + 2}="","אין זוג מתאים",IF(B{mr + 5}="","סינתטי",IF(B{mr + 7}>p_bb_friction_bp,"סינתטי",IF(B{mr + 7}<-p_bb_friction_bp,"בולט","דומה")))))', "", "סינתטי רק אם היתרון גדול מהחיכוך; 'דומה' → בולט (פשוט יותר)", None)]
+    for n, (a, b, c2, d, f) in enumerate(rows):
+        r = mr + 2 + n
+        put(ws, f"A{r}", a, BOLD if n == 6 else BASE, None, None, BOX); put(ws, f"B{r}", b, BOLD if n == 6 else BASE, GRN if n == 6 else None, f, BOX)
+        put(ws, f"C{r}", c2, BASE, None, f, BOX); put(ws, f"D{r}", d, NOTE)
+    verdict = f"B{mr + 8}"
+    # רכיבי המבנה שנבחר (לתיק המודל): עד 2 מפתחות ומשקלים
+    put(ws, f"A{mr + 9}", "מבנה נבחר — מפתח 1 / משקל", BASE, None, None, BOX)
+    put(ws, f"B{mr + 9}", f'=IF({verdict}="סינתטי",B{mr + 3},IF(B{mr + 6}<>"",B{mr + 6},""))', BASE, None, None, BOX)
+    put(ws, f"C{mr + 9}", f'=IF({verdict}="סינתטי",C{mr + 3},IF(B{mr + 6}<>"",1,""))', BASE, None, "0.000", BOX)
+    put(ws, f"A{mr + 10}", "מבנה נבחר — מפתח 2 / משקל", BASE, None, None, BOX)
+    put(ws, f"B{mr + 10}", f'=IF({verdict}="סינתטי",B{mr + 4},"")', BASE, None, None, BOX); put(ws, f"C{mr + 10}", f'=IF({verdict}="סינתטי",C{mr + 4},"")', BASE, None, "0.000", BOX)
+    put(ws, f"A{mr + 11}", "תיאור", BASE, None, None, BOX)
+    put(ws, f"B{mr + 11}", f'={verdict}&IF(B{mr + 9}<>""," "&B{mr + 9}&"×"&TEXT(C{mr + 9},"0%")&IF(B{mr + 10}<>"","+"&B{mr + 10}&"×"&TEXT(C{mr + 10},"0%"),""),"")', BOLD, None, None, BOX)
+    put(ws, f"A{mr + 12}", "למה", BASE, None, None, BOX)
+    put(ws, f"B{mr + 12}", f'=IF(B{mr + 2}="",IF(B{mr + 5}="","אין נייר ארוך וקצר סביב היעד ואין בולט נזיל","אין נייר ארוך/קצר מהיעד; הבולט "&B{mr + 6}&" משמש כמבנה"),IF(B{mr + 5}="","אין בולט בטווח הסטייה; הזוג הטוב ביותר נבחר","ממוצע 5 תרחישים: סינתטי "&TEXT(B{mr + 2},"0.00")&"% מול בולט "&TEXT(B{mr + 5},"0.00")&"% (פער "&TEXT(B{mr + 7},"+0;-0")&" נ״ב, חיכוך "&TEXT(p_bb_friction_bp,"0")&")"))', BASE)
+    ctx.name(f"m_struct_{kind}", f"'06_סינטטי_בולט'!$B${mr + 11}"); ctx.name(f"m_struct_{kind}_why", f"'06_סינטטי_בולט'!$B${mr + 12}"); ctx.name(f"m_struct_{kind}_verdict", f"'06_סינטטי_בולט'!$B${mr + 8}")
+    for n in (1, 2):
+        ctx.name(f"s_{kind}_id{n}", f"'06_סינטטי_בולט'!$B${mr + 8 + n}"); ctx.name(f"s_{kind}_w{n}", f"'06_סינטטי_בולט'!$C${mr + 8 + n}")
+    # --- סימולציה ---
+    sr = mr + 14
+    put(ws, f"A{sr}", f"סימולציה — {heb} (מפתחות ידניים ב-01 → סימולציה)", BOLD)
+    hdr(ws, sr + 1, ["רכיב", "מפתח", "מח״מ", "משקל", "תשואה %", "קמירות", "מחזור", "תשואה 12 ח׳ %", "P&L +מקבילי", "P&L −מקבילי", "P&L התללה", "P&L השתטחות", "ציון"], 1, 30)
+    def sim_leg(r, w, keycell):
+        kk = f"MATCH(TEXT({keycell},\"0\"),b_key,0)"; D = f"INDEX(b_mod,{kk})"; C_ = f"INDEX(b_conv,{kk})"; T_ = f"INDEX(b_ttm,{kk})"
+        dy = "(p_bb_shock_bp/10000)"; tw = f"(p_bb_twist_bp/10000*({T_}-$D${r0})/p_bb_twist_span)"
+        put(ws, f"C{r}", f'=IF({keycell}="","",IFERROR({D},"לא נמצא"))', BASE, None, "0.000", BOX)
+        put(ws, f"E{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*INDEX(b_ytm,{kk}),""))', BASE, None, "0.00", BOX)
+        put(ws, f"F{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*{C_},""))', BASE, None, "0.0", BOX)
+        put(ws, f"G{r}", f'=IF({keycell}="","",IFERROR(INDEX(b_vol,{kk}),""))', BASE, None, "#,##0", BOX)
+        put(ws, f"H{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*INDEX(b_exp12,{kk}),""))', BASE, None, "0.00", BOX)
+        put(ws, f"I{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*(-{D}*{dy}+0.5*{C_}*{dy}^2)*100,""))', BASE, None, "0.00", BOX)
+        put(ws, f"J{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*({D}*{dy}+0.5*{C_}*{dy}^2)*100,""))', BASE, None, "0.00", BOX)
+        put(ws, f"K{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*(-{D}*{tw}+0.5*{C_}*{tw}^2)*100,""))', BASE, None, "0.00", BOX)
+        put(ws, f"L{r}", f'=IF(OR({keycell}="",{w}=""),"",IFERROR({w}*({D}*{tw}+0.5*{C_}*{tw}^2)*100,""))', BASE, None, "0.00", BOX)
+    s1, s2, s3 = sr + 2, sr + 3, sr + 4
+    put(ws, f"A{s1}", "קצר", BASE, None, None, BOX); put(ws, f"B{s1}", f'=IF(p_sim_short_{kind}="","",p_sim_short_{kind})', BLUE, None, "0", BOX)
+    put(ws, f"A{s2}", "ארוך", BASE, None, None, BOX); put(ws, f"B{s2}", f'=IF(p_sim_long_{kind}="","",p_sim_long_{kind})', BLUE, None, "0", BOX)
+    put(ws, f"A{s3}", "בולט", BASE, None, None, BOX); put(ws, f"B{s3}", f'=IF(p_sim_bullet_{kind}="","",p_sim_bullet_{kind})', BLUE, None, "0", BOX)
+    put(ws, f"D{s1}", f'=IF(OR(C{s1}="",C{s2}="",NOT(ISNUMBER(C{s1})),NOT(ISNUMBER(C{s2})),C{s1}=C{s2}),"",(C{s2}-$D${r0})/(C{s2}-C{s1}))', BASE, None, "0.000", BOX)
+    put(ws, f"D{s2}", f'=IF(D{s1}="","",1-D{s1})', BASE, None, "0.000", BOX); put(ws, f"D{s3}", f'=IF(C{s3}="","",1)', BASE, None, "0.000", BOX)
+    sim_leg(s1, f"D{s1}", f"B{s1}"); sim_leg(s2, f"D{s2}", f"B{s2}"); sim_leg(s3, f"D{s3}", f"B{s3}")
+    put(ws, f"A{s3 + 1}", "סינתטי (קצר+ארוך)", BOLD, None, None, BOX)
+    for col in "EFHIJKL": put(ws, f"{col}{s3 + 1}", f'=IF(OR({col}{s1}="",{col}{s2}=""),"",{col}{s1}+{col}{s2})', BOLD, None, "0.00", BOX)
+    put(ws, f"G{s3 + 1}", f'=IF(OR(G{s1}="",G{s2}=""),"",MIN(G{s1},G{s2}))', BOLD, None, "#,##0", BOX)
+    put(ws, f"M{s3 + 1}", f'=IF(H{s3 + 1}="","",H{s3 + 1}+(I{s3 + 1}+J{s3 + 1}+K{s3 + 1}+L{s3 + 1})/5)', BOLD, None, "0.000", BOX)
+    put(ws, f"M{s3}", f'=IF(H{s3}="","",H{s3}+(I{s3}+J{s3}+K{s3}+L{s3})/5)', BOLD, None, "0.000", BOX)
+    put(ws, f"A{s3 + 2}", "פסק דין — סימולציה", BOLD, None, None, BOX)
+    put(ws, f"B{s3 + 2}", f'=IF(AND(M{s3 + 1}="",M{s3}=""),"",IF(M{s3 + 1}="","בולט",IF(M{s3}="","סינתטי",IF((M{s3 + 1}-M{s3})*100>p_bb_friction_bp,"סינתטי עדיף",IF((M{s3 + 1}-M{s3})*100<-p_bb_friction_bp,"בולט עדיף","דומה")))))', BOLD, None, None, BOX)
+    put(ws, f"C{s3 + 2}", f'=IF(D{s1}="","",IF(ABS(D{s1}*C{s1}+D{s2}*C{s2}-$D${r0})<=0.01,"מח״מ הסינתטי = היעד","סטיית מח״מ"))', NOTE)
+    ctx.name(f"sim_struct_{kind}", f"'06_סינטטי_בולט'!$B${s3 + 2}")
+    STRUCT_BLOCKS[kind] = {"r0": r0, "list_r0": lr + 1, "pairs_r0": p0, "bullets_r0": b0, "model_r0": mr, "c": c, "bc": bc}
+    return s3 + 4
+
+
+def sheet_structure(ctx: Ctx):
+    ws = ctx.sheet("06_סינטטי_בולט")
+    put(ws, "A1", "סינתטי מול בולט — סריקת כל הזוגות סביב מח״מ היעד מול כל בולט קרוב, ב-5 תרחישים", TITLE)
+    put(ws, "A3", "לכל זוג (קצר<יעד<ארוך): משקלים שמביאים למח״מ היעד; תשואה, קמירות, roll-down, נזילות (מחזור מינימלי) ו-P&L במקבילי ±, התללה והשתטחות (Δתשואה(טווח) = ±נ״ב × (שנים לפדיון − יעד)/טווח הנרמול). ציון = ממוצע התשואה ל-12 ח׳ על 5 התרחישים.", NOTE)
+    nxt = _struct_block(ctx, ws, 5, "nominal")
+    _struct_block(ctx, ws, nxt + 1, "real")
+    for col, w in zip("ABCDEFGHIJKLMNOPQR", (28, 12, 14, 24, 12, 10, 10, 10, 10, 11, 12, 11, 11, 11, 11, 10, 7, 10)): ws.column_dimensions[col].width = w
+    ws.freeze_panes = "A5"
+
+
+# ---------------------------------------------------------------- 07_סדרות
+def sheet_series(ctx: Ctx):
+    ws = ctx.sheet("07_סדרות")
+    put(ws, "A1", "סדרות — זול/יקר מול העקום ביחס להיסטוריה של הסדרה (Z), roll-down, נזילות; 5 מובילות לכל אפיק; זוגות החלפה", TITLE)
+    put(ws, "A3", "ציון = 0.4×Z/3 + 0.3×(2×אחוזון roll−1) + 0.3×(2×אחוזון נזילות−1); בלי היסטוריה (פחות תצפיות מהמינימום) המשקלים מנורמלים על roll ונזילות. אחוזונים בתוך האפיק. החלפה: אותו אפיק, |Δמח״מ| ≤ מותר, פיקאפ ≥ מינימום.", NOTE)
+    hist = ctx.frames["נתוני_סדרות_היסט"]; has_hist = len(hist.columns) > 0
+    HK = dcol(ctx, "נתוני_סדרות_היסט", "key") if has_hist else None; HS = dcol(ctx, "נתוני_סדרות_היסט", "spread_bp") if has_hist else None
+    # --- מובילות ---
+    put(ws, "A5", "5 הסדרות המובילות", BOLD)
+    hdr(ws, 6, ["דירוג", "שקלי — מפתח", "שם", "ציון", "", "צמוד — מפתח", "שם", "ציון"])
+    T0 = 30; T1 = T0 + NB - 1                      # טבלת הסדרות המלאה
+    SEG, KEY, NAME, SC, RK = (f"$A${T0}:$A${T1}", f"$B${T0}:$B${T1}", f"$C${T0}:$C${T1}", f"$O${T0}:$O${T1}", f"$P${T0}:$P${T1}")
+    for i in range(5):
+        r = 7 + i; put(ws, f"A{r}", i + 1, BASE, None, "0", BOX)
+        for seg, kc, nc, sc in (("N", "B", "C", "D"), ("R", "F", "G", "H")):
+            arr(ws, f"{kc}{r}", f'=IFERROR(INDEX({KEY},MATCH(1,({SEG}="{seg}")*({RK}={i + 1}),0)),"")')
+            put(ws, f"{nc}{r}", f'=IF({kc}{r}="","",INDEX(b_name,MATCH({kc}{r},b_key,0)))', BASE, None, None, BOX)
+            put(ws, f"{sc}{r}", f'=IF({kc}{r}="","",INDEX({SC},MATCH({kc}{r},{KEY},0)))', BASE, None, "0.000", BOX)
+            ws[f"{kc}{r}"].border = BOX
+    ctx.name("top5_nominal", f"'07_סדרות'!$B$7:$B$11"); ctx.name("top5_real", f"'07_סדרות'!$F$7:$F$11")
+    # --- החלפות ---
+    put(ws, "A13", "זוגות החלפה (לכל אחת מ-8 המובילות באפיק — הנייר הקרוב במח״מ שמולו הפיקאפ הגבוה ביותר)", BOLD)
+    hdr(ws, 14, ["אפיק", "לקנות (מפתח)", "שם", "פיקאפ (נ״ב)", "למכור (מפתח)", "שם", "Δמח״מ", "מוצג?"])
+    DUR, SPR = f"$F${T0}:$F${T1}", f"$G${T0}:$G${T1}"
+    for n in range(16):
+        r = 15 + n; seg = "N" if n < 8 else "R"; rank = n % 8 + 1
+        put(ws, f"A{r}", "שקלי" if seg == "N" else "צמוד", BASE, None, None, BOX)
+        arr(ws, f"B{r}", f'=IFERROR(INDEX({KEY},MATCH(1,({SEG}="{seg}")*({RK}={rank}),0)),"")')
+        put(ws, f"C{r}", f'=IF(B{r}="","",INDEX(b_name,MATCH(B{r},b_key,0)))', BASE, None, None, BOX)
+        bd = f"INDEX({DUR},MATCH(B{r},{KEY},0))"; bs = f"INDEX({SPR},MATCH(B{r},{KEY},0))"
+        arr(ws, f"D{r}", f'=IF(B{r}="","",IFERROR(MAX(IF(({SEG}="{seg}")*({KEY}<>B{r})*(ABS({DUR}-{bd})<=p_switch_dur_tol),{bs}-{SPR},-9999)),""))')
+        arr(ws, f"E{r}", f'=IF(OR(B{r}="",D{r}="",D{r}=-9999),"",IFERROR(INDEX({KEY},MATCH(1,({SEG}="{seg}")*({KEY}<>B{r})*(ABS({DUR}-{bd})<=p_switch_dur_tol)*(ABS(({bs}-{SPR})-D{r})<0.0001),0)),""))')
+        put(ws, f"F{r}", f'=IF(E{r}="","",INDEX(b_name,MATCH(E{r},b_key,0)))', BASE, None, None, BOX)
+        put(ws, f"G{r}", f'=IF(E{r}="","",ABS(INDEX({DUR},MATCH(E{r},{KEY},0))-{bd}))', BASE, None, "0.00", BOX)
+        put(ws, f"H{r}", f'=IF(OR(D{r}="",D{r}=-9999),"",IF(D{r}>=p_switch_pickup_bp,"כן","לא"))', BASE, None, None, BOX)
+        for col in "BDE": ws[f"{col}{r}"].border = BOX; ws[f"{col}{r}"].number_format = "0.0" if col == "D" else "@"
+    # --- הטבלה המלאה ---
+    put(ws, f"A{T0 - 2}", "כל הסדרות", BOLD)
+    hdr(ws, T0 - 1, ["אפיק (N/R)", "מפתח", "שם", "סוג", "שנים לפדיון", "מח״מ", "פער מול העקום (נ״ב)", "תצפיות היסטוריה", "ממוצע היסטורי", "סטיית תקן", "Z", "אחוזון roll", "אחוזון נזילות", "Roll-down (נ״ב)", "ציון", "דירוג באפיק", "מחזור", "שורה"], 1, 40)
+    for k in range(NB):
+        r = T0 + k; src = R0 + k
+        key, kind, ttm, mod, spread, roll, vol, incl, name = (f"'02_קלט_אגח'!{c}{src}" for c in (BC["key"], BC["kind"], BC["ttm"], BC["modified"], CC["spread"], CC["roll"], BC["volume_k_nis"], CC["incl"], BC["name"]))
+        put(ws, f"A{r}", f'=IF(OR({key}="",{incl}<>"כן",{spread}="",{mod}=""),"",IF(OR({kind}="שקלי",{kind}="מק""מ"),"N",IF({kind}="מדד","R","")))', GREY)
+        put(ws, f"B{r}", f'=IF({key}="","",{key})', BASE, None, "@", BOX); put(ws, f"C{r}", f'=IF({key}="","",{name})', BASE, None, None, BOX)
+        put(ws, f"D{r}", f'=IF({key}="","",{kind})', BASE, None, None, BOX); put(ws, f"E{r}", f'=IF({key}="","",{ttm})', BASE, None, "0.00", BOX)
+        put(ws, f"F{r}", f'=IF({key}="","",{mod})', BASE, None, "0.000", BOX); put(ws, f"G{r}", f'=IF(A{r}="","",{spread})', BASE, None, "0.0", BOX)
+        if has_hist:
+            put(ws, f"H{r}", f'=IF(A{r}="","",COUNTIFS({HK},B{r}))', BASE, None, "0", BOX)
+            put(ws, f"I{r}", f'=IF(OR(A{r}="",H{r}=0),"",AVERAGEIFS({HS},{HK},B{r}))', BASE, None, "0.0", BOX)
+            arr(ws, f"J{r}", f'=IF(OR(A{r}="",H{r}<2),"",STDEV(IF({HK}=B{r},{HS})))')
+        else:
+            put(ws, f"H{r}", f'=IF(A{r}="","",0)', BASE, None, "0", BOX); put(ws, f"I{r}", "", BASE); put(ws, f"J{r}", "", BASE)
+        put(ws, f"K{r}", f'=IF(A{r}="","",IF(OR(H{r}<p_ser_min_obs,J{r}="",J{r}=0),"אין היסטוריה",(G{r}-I{r})/J{r}))', BASE, None, "0.00", BOX)
+        put(ws, f"N{r}", f'=IF(A{r}="","",{roll})', BASE, None, "0.0", BOX); put(ws, f"Q{r}", f'=IF(A{r}="","",{vol})', BASE, None, "#,##0", BOX)
+        put(ws, f"L{r}", f'=IF(A{r}="","",(COUNTIFS($A${T0}:$A${T1},A{r},$N${T0}:$N${T1},"<"&N{r})+1)/COUNTIF($A${T0}:$A${T1},A{r}))', BASE, None, "0.00", BOX)
+        put(ws, f"M{r}", f'=IF(A{r}="","",(COUNTIFS($A${T0}:$A${T1},A{r},$Q${T0}:$Q${T1},"<"&Q{r})+1)/COUNTIF($A${T0}:$A${T1},A{r}))', BASE, None, "0.00", BOX)
+        put(ws, f"O{r}", f'=IF(A{r}="","",IF(ISNUMBER(K{r}),(p_ser_w_z*MAX(-3,MIN(3,K{r}))/3+p_ser_w_roll*(2*L{r}-1)+p_ser_w_liq*(2*M{r}-1))/(p_ser_w_z+p_ser_w_roll+p_ser_w_liq),(p_ser_w_roll*(2*L{r}-1)+p_ser_w_liq*(2*M{r}-1))/(p_ser_w_roll+p_ser_w_liq)))', BASE, None, "0.000", BOX)
+        put(ws, f"R{r}", f"=ROW()", GREY, None, "0")
+        put(ws, f"P{r}", f'=IF(A{r}="","",COUNTIFS($A${T0}:$A${T1},A{r},$O${T0}:$O${T1},">"&O{r})+COUNTIFS($A${T0}:$A${T1},A{r},$O${T0}:$O${T1},O{r},$R${T0}:$R${T1},"<"&R{r})+1)', BASE, None, "0", BOX)
+        for col in "HIJ": ws[f"{col}{r}"].border = BOX
+    for col, w in zip("ABCDEFGHIJKLMNOPQ", (9, 11, 22, 7, 9, 9, 12, 9, 10, 9, 9, 9, 9, 10, 9, 8, 10)): ws.column_dimensions[col].width = w
+    ws.freeze_panes = f"A{T0}"; ws.auto_filter.ref = f"A{T0 - 1}:Q{T1}"
+    ctx.name("ser_seg", f"'07_סדרות'!$A${T0}:$A${T1}"); ctx.name("ser_key", f"'07_סדרות'!$B${T0}:$B${T1}"); ctx.name("ser_rank", f"'07_סדרות'!$P${T0}:$P${T1}"); ctx.name("ser_score", f"'07_סדרות'!$O${T0}:$O${T1}")
+
+
 # ---------------------------------------------------------------- מקומות שמורים לגיליונות הבאים (Tasks 8–10)
 def sheet_placeholder(ctx: Ctx, title: str, text: str):
     ws = ctx.sheet(title); put(ws, "A1", text, TITLE); return ws
@@ -544,7 +762,7 @@ def carry_over(prev_path: Path | str | None) -> dict:
 def build(data: Path | str, out: Path | str, prev: Path | str | None = None, base_dir: str = r"C:\CORP\03_Market\data", pq: bool = True, write_version: bool = False) -> dict:
     ctx = Ctx(Path(data), carry_over(prev), base_dir)
     for sheet, q, f, nmax in DATA_SHEETS: sheet_data(ctx, sheet, q, ctx.frames[sheet], nmax)
-    sheet_settings(ctx); sheet_input(ctx); sheet_curves(ctx); manual_tables_stub(ctx); sheet_split(ctx); sheet_duration(ctx); names_stub(ctx)
+    sheet_settings(ctx); sheet_input(ctx); sheet_curves(ctx); manual_tables_stub(ctx); sheet_split(ctx); sheet_duration(ctx); sheet_structure(ctx); sheet_series(ctx); names_stub(ctx)
     for t in ORDER:
         if t not in ctx.wb.sheetnames: sheet_placeholder(ctx, t, t)
     ctx.wb._sheets = [ctx.wb[t] for t in ORDER]

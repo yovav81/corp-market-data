@@ -89,3 +89,40 @@ def test_sim_override(real_build, tmp_path):
     assert check_gov2.named_value(wb2, "m_linked") == pytest.approx(check_gov2.named_value(openpyxl.load_workbook(real_build["recalc"], data_only=True), "m_linked"))
     assert check_gov2.named_value(wb2, "u_dur_nominal") == pytest.approx(3.3)
     assert sum(check_gov2.count_errors(rc).values()) == 0
+
+
+# ---------- Task 9: 06 סינטטי_בולט + 07 סדרות ----------
+@needs_soffice
+def test_pairs_table_weights(real_build):
+    wb = openpyxl.load_workbook(real_build["recalc"], data_only=True); ws = wb["06_סינטטי_בולט"]
+    checked = 0
+    for kind in ("nominal", "real"):
+        blk = build_gov2.STRUCT_BLOCKS[kind]; target = check_gov2.named_value(wb, f"u_dur_{kind}")
+        for r in range(blk["pairs_r0"], blk["pairs_r0"] + build_gov2.NPAIRS):
+            if ws[f"{blk['c']['valid']}{r}"].value == "כן":
+                wi, wj = ws[f"{blk['c']['wi']}{r}"].value, ws[f"{blk['c']['wj']}{r}"].value
+                di, dj = ws[f"{blk['c']['di']}{r}"].value, ws[f"{blk['c']['dj']}{r}"].value
+                assert abs(wi + wj - 1) < 1e-9 and abs(wi * di + wj * dj - target) <= 0.01; checked += 1
+    assert checked > 10
+
+
+@needs_soffice
+def test_parity_structures(real_build):
+    res = check_gov2.parity_structures(real_build["recalc"], real_build["data"])
+    for k, (xl, py, ok) in res.items(): assert ok, (k, xl, py)
+
+
+@needs_soffice
+def test_parity_top5(real_build):
+    res = check_gov2.parity_top5(real_build["recalc"], real_build["data"])
+    for k, (xl, py, ok) in res.items(): assert ok, (k, xl, py)
+
+
+@needs_soffice
+def test_scan_no_long_bond_excel(real_build, tmp_path):
+    wb = openpyxl.load_workbook(real_build["out"])
+    sh, cell = wb.defined_names["p_sim_dur_real"].attr_text.split("!"); wb[sh.strip("'")][cell.replace("$", "")].value = 25   # הצמודה הארוכה ביותר במח״מ ~21
+    p = tmp_path / "nolong.xlsx"; wb.save(p); rc = check_gov2.recalc(p)
+    wb2 = openpyxl.load_workbook(rc, data_only=True)
+    assert str(check_gov2.named_value(wb2, "m_struct_real")).startswith("אין זוג מתאים")
+    assert sum(check_gov2.count_errors(rc).values()) == 0

@@ -135,8 +135,11 @@ def pairs(bonds: pd.DataFrame, target: float) -> pd.DataFrame:
 
 
 def _roll_bp(curve: pd.DataFrame, kind: str, ttm: float, h: float) -> float:
-    col = "real" if kind in REAL_KINDS or kind == "real" else "nominal"
-    return (interp(ttm, curve["tenor"], curve[col]) - interp(max(ttm - h, TENORS[0]), curve["tenor"], curve[col])) * 100
+    """roll-down לנייר: אינטרפולציה של עמודת ה-roll-down של העקום (לפי טווח) בשנים לפדיון של הנייר — כמו עמודת Roll-down ב-02 באקסל."""
+    col = "roll_real_bp" if kind in REAL_KINDS or kind == "real" else "roll_nominal_bp"
+    if col in curve.columns: return interp(ttm, curve["tenor"], curve[col])
+    ycol = "real" if col == "roll_real_bp" else "nominal"
+    return (interp(ttm, curve["tenor"], curve[ycol]) - interp(max(ttm - h, TENORS[0]), curve["tenor"], curve[ycol])) * 100
 
 
 def structure_metrics(bonds: pd.DataFrame, items: pd.DataFrame, curve: pd.DataFrame, s: dict, target: float) -> pd.DataFrame:

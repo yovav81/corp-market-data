@@ -65,6 +65,38 @@ def parity_decisions(xlsx_recalced: Path | str, data: Path | str, s: dict | None
     return out
 
 
+def parity_structures(xlsx_recalced: Path | str, data: Path | str, s: dict | None = None) -> dict:
+    """אקסל מול פייתון: סוג המבנה, המפתחות והמשקלים (±0.005) לשני האפיקים, ביעד המח״מ שבאקסל."""
+    import gov_decide
+    s = s or gov_decide.load_settings(); g = Path(data) / "gov"
+    bonds = pd.read_csv(g / "bonds_latest.csv", encoding="utf-8-sig"); curve = pd.read_csv(g / "curves_latest.csv", encoding="utf-8-sig")
+    wb = openpyxl.load_workbook(xlsx_recalced, data_only=True); out = {}
+    for kind in ("nominal", "real"):
+        tgt = named_value(wb, f"u_dur_{kind}")
+        py = gov_decide.best_structure(bonds, kind, float(tgt), curve, s)
+        xl_kind = named_value(wb, f"m_struct_{kind}_verdict")
+        ids = [str(named_value(wb, f"s_{kind}_id{n}")) for n in (1, 2) if named_value(wb, f"s_{kind}_id{n}") not in (None, "")]
+        ws_ = [float(named_value(wb, f"s_{kind}_w{n}")) for n in (1, 2) if named_value(wb, f"s_{kind}_w{n}") not in (None, "")]
+        py_ids = [str(i) for i in py["ids"]]; py_w = [float(w) for w in py["weights"]]
+        ok = xl_kind == py["kind"] and ids == py_ids and len(ws_) == len(py_w) and all(abs(a - b) <= 0.005 for a, b in zip(ws_, py_w))
+        out[f"struct_{kind}"] = ((xl_kind, ids, ws_), (py["kind"], py_ids, py_w), ok)
+    return out
+
+
+def parity_top5(xlsx_recalced: Path | str, data: Path | str, s: dict | None = None) -> dict:
+    import gov_decide
+    s = s or gov_decide.load_settings(); g = Path(data) / "gov"
+    bonds = pd.read_csv(g / "bonds_latest.csv", encoding="utf-8-sig"); curve = pd.read_csv(g / "curves_latest.csv", encoding="utf-8-sig")
+    bh = pd.read_csv(g / "bond_history.csv", encoding="utf-8-sig") if (g / "bond_history.csv").exists() else pd.DataFrame(columns=["key", "kind", "spread_bp"])
+    wb = openpyxl.load_workbook(xlsx_recalced, data_only=True); out = {}
+    for kind in ("nominal", "real"):
+        ref = wb.defined_names[f"top5_{kind}"].attr_text; sh, rng = ref.rsplit("!", 1); ws = wb[sh.strip("'")]
+        xl = [str(c[0].value) for c in ws[rng.replace("$", "")] if c[0].value not in (None, "")]
+        py = [str(k) for k in gov_decide.series_rank(bonds, bh, kind, curve, s).head(5)["key"]]
+        out[f"top5_{kind}"] = (xl, py, xl == py)
+    return out
+
+
 def main(xlsx: str, data: str) -> int:
     rc = recalc(xlsx); errs = count_errors(rc); worst = parity_curves(rc, data)
     print("שגיאות נוסחה:", errs or "0"); print("זהות עקומים (מקס' נ״ב):", worst)
