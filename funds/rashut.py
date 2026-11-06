@@ -187,14 +187,42 @@ class Market:
 
 
 # ------------------------------------------------------------------ נרמול
+CANON = {"מספרקרן": "מספר קרן", "שםקרן": "שם קרן", "שםנכס": "שם נכס", "סוגנכס": "סוג נכס", "מספרמזהה": "מספר מזהה", "סוגמזהה": "סוג מזהה",
+         "כמות": "כמות", "שוויבשקלים": "שווי בשקלים", "מחיר": "מחיר", "שוויבמטבעמסחר": "שווי במטבע מסחר", "שוויבמטבעהמסחר": "שווי במטבע מסחר",
+         "%חשיפה": "מקרן%", "חשיפה%": "מקרן%", "מקרן%": "מקרן%", "כמותשהושאלה": "כמות שהושאלה", "סוגמחיר": "סוג מחיר", "מקוםמסחר": "מקום מסחר",
+         "שוקמסחר": "שוק מסחר", "מטבע": "מטבע", "שערהמטבע": "שער המטבע", "שערמטבע": "שער המטבע", "כמותאגחלפדיון": "כמות אגח לפדיון",
+         "ריביתשנצברה": "ריבית שנצברה", "TICKER": "TICKER", "לפימדיניות": "לפי מדיניות", "דרגתאגח": "דרגת אגח", "קודמדרגת": "קוד מדרגת",
+         "קודבנק": "קוד בנק", "קודהבנק": "קוד בנק", "תאריךדוח": "תאריך דוח", "מס.רשומה": "מס. רשומה", "מסרשומה": "מס. רשומה",
+         "סהכרשומות": "סהכ רשומות", "מס.מנהלברשם": "מס. מנהל ברשם", "מסמנהלברשם": "מס. מנהל ברשם"}
+
+
+def _canon_columns(df):
+    """שמות העמודות משתנים בין מנהלים (רווחים, ׳קוד הבנק׳, ׳מס.רשומה׳, ׳% חשיפה׳...) — מנרמלים לשמות אחידים."""
+    ren, drop = {}, []
+    for c in df.columns:
+        k = re.sub(r"\s+", "", str(c)).upper() if str(c).strip().upper() == "TICKER" else re.sub(r"\s+", "", str(c))
+        if not k or k.startswith("Unnamed"):
+            drop.append(c)
+        elif k in CANON:
+            ren[c] = CANON[k]
+    df = df.drop(columns=drop).rename(columns=ren)
+    for c in ("מס. רשומה", "סהכ רשומות", "מס. מנהל ברשם", "קוד בנק", "לפי מדיניות", "כמות שהושאלה", "ריבית שנצברה", "כמות אגח לפדיון", "TICKER"):
+        if c not in df.columns:
+            df[c] = 0 if c != "TICKER" else ""
+    missing = [c for c in ("מספר קרן", "שם קרן", "שם נכס", "סוג נכס", "מספר מזהה", "שווי בשקלים", "מקרן%", "מקום מסחר", "מטבע", "תאריך דוח") if c not in df.columns]
+    if missing:
+        raise ValueError(f"עמודות חסרות בדוח: {missing}; עמודות בקובץ: {list(df.columns)}")
+    return df
+
+
 def read_report(path):
-    """קורא דוח רשות: xlsx (הייצוא הפנימי של המנהל) או txt/csv מופרד-טאבים כפי שמתפרסם במאיה (טופס ק203)."""
+    """קורא דוח רשות: xlsx (הייצוא הפנימי של המנהל) או txt/csv מופרד-טאבים כפי שמתפרסם במאיה (טופס ק203).
+    מחזיר (DataFrame, maya_mode): בקובץ ממאיה ׳תאריך דוח׳ הוא תאריך האחזקות עצמו."""
     dt_ = {"מספר קרן": str, "מספר מזהה": str, "תאריך דוח": str}
     if str(path).lower().endswith((".txt", ".csv", ".tsv", ".txt.gz", ".csv.gz")):
-        raw = pd.read_csv(path, sep="\t", dtype=dt_, encoding="utf-8-sig", keep_default_na=False, na_values=[""],
+        raw = pd.read_csv(path, sep="\t", dtype=str, encoding="utf-8-sig", keep_default_na=False, na_values=[""],
                           compression="gzip" if str(path).lower().endswith(".gz") else None)
-        raw.columns = [c.strip() for c in raw.columns]
-        raw = raw.rename(columns={"%חשיפה": "מקרן%"})
+        raw = _canon_columns(raw)
         for c in raw.columns:
             if pd.api.types.is_string_dtype(raw[c]) or raw[c].dtype == object:
                 raw[c] = raw[c].astype(str).str.strip().replace({"nan": "", "<NA>": ""})
@@ -203,13 +231,14 @@ def read_report(path):
         for c in ("כמות", "שווי בשקלים", "מחיר", "שווי במטבע מסחר", "מקרן%", "כמות שהושאלה", "שער המטבע", "כמות אגח לפדיון", "ריבית שנצברה"):
             raw[c] = pd.to_numeric(raw[c], errors="coerce")
         raw["מספר קרן"] = raw["מספר קרן"].str.zfill(8)
-    else:
-        raw = pd.read_excel(path, dtype=dt_)
-    return raw
+        return raw, True
+    raw = pd.read_excel(path, dtype=dt_)
+    raw = _canon_columns(raw)
+    return raw, False
 
 
 def normalize(path, cmd, master_xlsx=None, index_members_csv=None, mkt=None):
-    raw = read_report(path)
+    raw, maya_file = read_report(path)
     for c in ("שם קרן", "שם נכס", "TICKER"):
         raw[c] = raw[c].astype(str).str.strip()
     raw["מספר מזהה"] = raw["מספר מזהה"].astype(str).str.strip().str.replace(r"\.0$", "", regex=True)
@@ -217,12 +246,12 @@ def normalize(path, cmd, master_xlsx=None, index_members_csv=None, mkt=None):
 
     # --- נתוני קרן (300+) ---
     info = raw[raw["סוג נכס"] >= 300]
-    piv = info.pivot_table(index="מספר קרן", columns="סוג נכס", values="שווי בשקלים", aggfunc="first")
-    units = info[info["סוג נכס"] == 301].set_index("מספר קרן")["כמות"]
-    dur_rep = info[info["סוג נכס"] == 325].set_index("מספר קרן")["כמות"]
+    piv = info.pivot_table(index="מספר קרן", columns="סוג נכס", values="שווי בשקלים", aggfunc="last")
+    units = info[info["סוג נכס"] == 301].groupby("מספר קרן")["כמות"].last()
+    dur_rep = info[info["סוג נכס"] == 325].groupby("מספר קרן")["כמות"].last()
     first = raw.drop_duplicates("מספר קרן").set_index("מספר קרן")
     dates = pd.to_datetime(first["תאריך דוח"].astype(str).str.zfill(8), format="%d%m%Y", errors="coerce").dropna()
-    maya_mode = dates.map(_is_month_end).mean() > 0.5 if len(dates) else False
+    maya_mode = maya_file or (dates.map(_is_month_end).mean() > 0.5 if len(dates) else False)
     funds = []
     for fid in piv.index:
         nav = float(piv.loc[fid].get(300, np.nan) or 0)
