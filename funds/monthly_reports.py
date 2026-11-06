@@ -45,13 +45,12 @@ def month_from_title(title):
 def list_monthly(m, frm, to):
     out, off = [], 0
     while True:
-        page = m.api("/api/v1/reports/mutual-funds", {"pageNumber": 1, "limit": 50, "offset": off, "eventsIds": [EVENT_MONTHLY],
+        page = m.api("/api/v1/reports/mutual-funds", {"pageNumber": 1, "limit": 30, "offset": off, "eventsIds": [EVENT_MONTHLY],
                                                       "fromDate": frm.isoformat(), "toDate": to.isoformat()})
-        page = [r for r in page if (r.get("formId") == "ק203") or ("דוח חודשי" in (r.get("title") or ""))]
-        out.extend(page)
-        if len(page) < 50 or off > 2000:
+        out.extend(r for r in page if (r.get("formId") == "ק203") or ("דוח חודשי" in (r.get("title") or "")))
+        if len(page) < 30 or off > 3000:
             return out
-        off += 50
+        off += 30
 
 
 def main():
