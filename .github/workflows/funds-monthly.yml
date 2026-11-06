@@ -1,0 +1,60 @@
+name: funds-monthly
+
+# דוחות האחזקות החודשיים של כל מנהלי הקרנות (מאיה, טופס ק203) → data/funds/<YYYY-MM>/ + latest_*.
+# רץ פעם בשבוע (המנהלים מפרסמים כחודשיים אחרי סוף החודש, כל אחד במועד אחר); מוריד רק דיווחים חדשים.
+on:
+  schedule:
+    - cron: "33 2 * * 1"     # שני 04:33 שעון ישראל (חורף)
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "חלון חיפוש אחורה (ימים)"
+        default: "45"
+      managers:
+        description: "רק מנהלים אלה (מזהי מאיה מופרדים בפסיק); ריק = כולם"
+        default: ""
+      force:
+        description: "true = לקלוט מחדש גם דיווחים שכבר נקלטו"
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: funds-monthly
+  cancel-in-progress: false
+
+jobs:
+  funds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Monthly fund reports from Maya
+        env:
+          DAYS: ${{ inputs.days || '45' }}
+          MANAGERS: ${{ inputs.managers }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          ARGS=(data --days "$DAYS")
+          [ -n "$MANAGERS" ] && ARGS+=(--managers "$MANAGERS")
+          [ "$FORCE" = "true" ] && ARGS+=(--force)
+          python funds/monthly_reports.py "${ARGS[@]}"
+      - name: Commit data
+        if: always()
+        run: |
+          git config user.name "funds-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/funds
+          if ! git diff --cached --quiet; then
+            git commit -m "fund holdings reports $(TZ=Asia/Jerusalem date +%F)"
+            for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          fi
