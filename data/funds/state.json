@@ -1,0 +1,46 @@
+{
+ "managers": {
+  "10083": {
+   "2026-07": {
+    "report_id": 1763892,
+    "published": "2026-09-29",
+    "file": "rtxt/1763001-1764000/T1763892-00.txt",
+    "funds": 315,
+    "rows": 35269
+   },
+   "2026-08": {
+    "report_id": 1772830,
+    "published": "2026-10-30",
+    "file": "rtxt/1772001-1773000/T1772830-00.txt",
+    "funds": 317,
+    "rows": 35382
+   }
+  },
+  "10031": {
+   "2026-07": {
+    "report_id": 1763356,
+    "published": "2026-09-27",
+    "file": "rtxt/1763001-1764000/T1763356-00.txt",
+    "funds": 308,
+    "rows": 30436
+   },
+   "2026-08": {
+    "report_id": 1770949,
+    "published": "2026-10-31",
+    "file": "rtxt/1770001-1771000/T1770949-00.txt",
+    "funds": 310,
+    "rows": 30356
+   }
+  }
+ },
+ "months": {
+  "2026-07": {
+   "managers_reported": 2,
+   "managers_total": 18
+  },
+  "2026-08": {
+   "managers_reported": 2,
+   "managers_total": 18
+  }
+ }
+}
