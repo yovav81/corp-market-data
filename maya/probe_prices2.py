@@ -13,11 +13,11 @@ with sync_playwright() as p:
     m = Maya(p)
     m.page.goto("https://maya.tase.co.il/he/funds/mutual-funds/5123138/historical-data", wait_until="networkidle", timeout=90000)
     P = "/api/v1/funds/mutual/5123138/history"
-    tests = [{"pageSize": 20, "pageNumber": 1}, {"pageSize": 500, "pageNumber": 1}, {"pageSize": 100, "pageNumber": 2},
-             {"pageSize": 100, "pageNumber": 1, "fromDate": "2026-01-01", "toDate": "2026-03-31"},
-             {"pageSize": 100, "pageNumber": 1, "dateFrom": "2026-01-01", "dateTo": "2026-03-31"},
-             {"pageSize": 100, "pageNumber": 1, "period": 5}, {"pageSize": 100, "pageNumber": 1, "period": 1},
-             {"pageSize": 100, "pageNumber": 1, "fromDate": "2025-01-01", "toDate": "2025-01-31", "period": 0}]
+    tests = [{"pageSize": 30, "pageNumber": 1, "fromDate": "2026-01-01", "toDate": "2026-03-31"},
+             {"pageSize": 30, "pageNumber": 2, "fromDate": "2026-01-01", "toDate": "2026-03-31"},
+             {"pageSize": 30, "pageNumber": 1, "fromDate": "2025-01-01", "toDate": "2025-01-31"}]
+    tests += [{"pageSize": 30, "pageNumber": 1, "period": k} for k in (1, 2, 3, 4)]
+    tests += [{"pageSize": 30, "pageNumber": k} for k in (9, 20, 60, 200)]
     for b in tests:
         t0 = time.time(); r = raw(m, P, b)
         try: d = json.loads(r["text"]); n = len(d); first = d[0]["tradeDate"][:10] if n else None; last = d[-1]["tradeDate"][:10] if n else None
