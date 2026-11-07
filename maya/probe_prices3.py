@@ -20,15 +20,19 @@ with sync_playwright() as p:
     page.goto("https://maya.tase.co.il/he/funds/mutual-funds/5123138/historical-data", wait_until="networkidle", timeout=90000)
     page.wait_for_timeout(3000)
     note(kind="html_filter", html=page.evaluate("() => { const e=[...document.querySelectorAll('*')].find(x=>x.children.length<6 && /סינון/.test(x.textContent||'') && (x.textContent||'').length<400); return e? e.parentElement.outerHTML.slice(0,4000):'' }"))
-    for label in ("שנה", "חצי שנה", "רבעון", "חודש"):
+    note(kind="inputs", v=page.evaluate("() => [...document.querySelectorAll('.panel-filter input, .panel-filter label, .panel-filter select')].map(e=>[e.tagName,e.type||'',e.name||'',e.value||'',(e.textContent||'').trim().slice(0,30)])"))
+    labels = page.evaluate("() => [...document.querySelectorAll('.panel-filter .radio-group-type label')].map(e=>e.textContent.trim())")
+    note(kind="radio_labels", v=labels)
+    for label in labels:
         try:
-            page.get_by_text(label, exact=True).first.click(timeout=5000); page.wait_for_timeout(2500)
+            page.locator(".panel-filter .radio-group-type label", has_text=label).first.click(timeout=5000)
+            page.locator("button.panel-filter-bt").first.click(timeout=5000); page.wait_for_timeout(2500)
             note(kind="clicked", label=label)
         except Exception as e: note(kind="click_err", label=label, err=str(e)[:150])
-    # paging
     try:
-        note(kind="pager", html=page.evaluate("() => { const e=document.querySelector('[class*=pagin],[class*=Pagin],nav'); return e? e.outerHTML.slice(0,1500):'none' }"))
-    except Exception as e: note(kind="pager_err", err=str(e)[:100])
+        page.locator(".table_num", has_text="2").first.click(timeout=5000); page.wait_for_timeout(2500)
+        note(kind="page2")
+    except Exception as e: note(kind="page2_err", err=str(e)[:150])
     page.screenshot(path=str(OUT / "page.png"), full_page=True)
     b.close()
 (OUT / "log.json").write_text(json.dumps(log, ensure_ascii=False, indent=1), encoding="utf-8")
