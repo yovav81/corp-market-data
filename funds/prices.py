@@ -64,7 +64,7 @@ def main():
     ff = pd.read_csv(fdir / "latest_funds.csv", dtype=str, encoding="utf-8-sig")
     ff["מס_קרן"] = ff["מס_קרן"].str.zfill(8)
     uni = ff if a.all_classes else ff[~ff["סיווג"].fillna("").str.startswith("מניות")]
-    ids = set(uni["מס_קרן"])
+    ids = {x for x in uni["מס_קרן"] if x.startswith("05")}      # קרנות נאמנות; 01… = קרנות סל (לא במאגר הזה)
     extra = HERE / "extra_price_funds.txt"
     if extra.exists():
         ids |= {x.strip().zfill(8) for x in extra.read_text().split() if x.strip().isdigit()}
