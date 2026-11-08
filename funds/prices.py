@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """prices.py — מחירי קרנות נאמנות יומיים (מחיר פדיון/קנייה) ממאיה → data/funds/prices.csv.gz
 
-    python funds/prices.py data [--from 2025-12-20] [--funds 5123138,5128590] [--all-classes] [--limit N]
+    python funds/prices.py data [--from 2025-12-20] [--funds 5123138,5128590] [--all-classes] [--limit N] [--backfill]
 
 מקור: POST maya.tase.co.il/api/v1/funds/mutual/<מס' קרן>/history  (pageSize ≤ 30, period=4 = טווח תאריכים fromDate/toDate).
 יקום: כל הקרנות ב-data/funds/latest_funds.csv שאינן מניות (אג״ח/מעורב/כספית) + קרנות ב-funds/extra_price_funds.txt (+ --funds).
@@ -56,6 +56,7 @@ def main():
     ap.add_argument("--all-classes", action="store_true", help="כולל קרנות מניות")
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--batch", type=int, default=6)
+    ap.add_argument("--backfill", action="store_true", help="להוריד מ---from גם לקרנות שכבר יש להן מחירים (השלמת היסטוריה אחורה)")
     a = ap.parse_args()
     data = pathlib.Path(a.data); fdir = data / "funds"
     today = dt.date.today()
@@ -85,7 +86,7 @@ def main():
         m.page.goto("https://maya.tase.co.il/he/funds/mutual-funds/5123138/historical-data", wait_until="networkidle", timeout=90000)
         groups = {}
         for fid in ids:
-            lo = dt.date.fromisoformat(last[fid]) - dt.timedelta(days=7) if fid in last else start
+            lo = start if (a.backfill or fid not in last) else dt.date.fromisoformat(last[fid]) - dt.timedelta(days=7)
             groups.setdefault(lo, []).append(fid)       # קרנות עם אותו תאריך התחלה בקבוצה אחת
         todo = [(lo, fid) for lo, fs in sorted(groups.items()) for fid in fs]
         for i in range(0, len(todo), a.batch):

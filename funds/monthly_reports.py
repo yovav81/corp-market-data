@@ -13,6 +13,7 @@
     data/funds/<YYYY-MM>/sources.csv           — איזה דיווח/קובץ של איזה מנהל נכנס
     data/funds/latest_holdings.csv.gz, latest_funds.csv, latest.json  — החודש השלם האחרון (כל המנהלים שדיווחו)
     data/funds/index_members.csv               — חברות בת״א 35/90 מקרנות הסל העוקבות (מתעדכן כשיש)
+    data/funds/<YYYY-MM>/composition.csv, composition_all.csv — הרכב לכל קרן לפי אפיק (composition.py)
 הקבצים הגולמיים (TXT, ~16MB למנהל) לא נשמרים — ניתנים להורדה חוזרת ממאיה.
 חודש נחשב "שלם" כשכל המנהלים הפעילים דיווחו עליו, או כשעברו 75 יום מסוף החודש.
 """
@@ -159,6 +160,14 @@ def main():
         shutil.copy(fdir / complete / "funds.csv", fdir / "latest_funds.csv")
         (fdir / "latest.json").write_text(json.dumps({"month": complete, **state["months"][complete], "updated": today.isoformat()}, ensure_ascii=False), encoding="utf-8")
     state_p.write_text(json.dumps(state, ensure_ascii=False, indent=1), encoding="utf-8")
+    # הרכב חודשי לכל קרן (composition.csv לכל חודש שהשתנה + composition_all.csv)
+    try:
+        import composition
+        for mon in sorted({row[0] for row in new_rows}):
+            (fdir / mon / "composition.csv").unlink(missing_ok=True)
+        sys.argv = ["composition.py", str(data)]; composition.main()
+    except Exception as e:
+        print("אזהרה: composition נכשל —", e, flush=True)
     print("חדש:", len(new_rows), "| חודש שלם אחרון:", complete, flush=True)
     for row in new_rows:
         print("  ", row[:5], row[6], "קרנות", row[7], "שורות")

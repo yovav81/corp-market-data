@@ -15,6 +15,9 @@ on:
       limit:
         description: "מגבלת קרנות לבדיקה (0 = הכל)"
         default: "0"
+      backfill:
+        description: "השלמת היסטוריה אחורה מ-frm לכל הקרנות (true/false)"
+        default: "false"
 
 permissions:
   contents: write
@@ -42,8 +45,10 @@ jobs:
           FRM: ${{ inputs.frm }}
           FUNDS: ${{ inputs.funds }}
           LIMIT: ${{ inputs.limit || '0' }}
+          BACKFILL: ${{ inputs.backfill || 'false' }}
         run: |
           ARGS=(data --limit "$LIMIT")
+          [ "$BACKFILL" = "true" ] && ARGS+=(--backfill)
           [ -n "$FRM" ] && ARGS+=(--from "$FRM")
           [ -n "$FUNDS" ] && ARGS+=(--funds "$FUNDS")
           python funds/prices.py "${ARGS[@]}"
