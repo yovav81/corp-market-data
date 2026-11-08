@@ -1,10 +1,10 @@
 {
- "updated": "2026-11-07",
- "funds_with_prices": 1170,
- "rows": 239601,
- "last_date": "2026-11-05",
- "first_date": "2025-12-15",
+ "updated": "2026-11-08",
+ "funds_with_prices": 1182,
+ "rows": 530341,
+ "last_date": "2026-11-06",
+ "first_date": "2024-11-03",
  "requested": 1182,
- "errors": 12,
+ "errors": 0,
  "empty": 0
 }
