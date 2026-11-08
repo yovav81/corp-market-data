@@ -1,6 +1,6 @@
 name: funds-prices
 
-# מחירי פדיון יומיים של קרנות הנאמנות (אג״ח/מעורב/כספית) ממאיה → data/funds/prices.csv.gz. עדכון מצטבר.
+# מחירי פדיון יומיים של קרנות הנאמנות (אג״ח/מעורב/כספית) ממאיה → data/funds/prices.csv.gz (עדכון מצטבר) + רשימת כל הקרנות עם סיווג רשמי → maya_funds.csv.
 on:
   schedule:
     - cron: "40 5 * * 1-5"     # ימים ב-ה 07:40 שעון ישראל (חורף) — מחירי יום המסחר הקודם
@@ -40,6 +40,8 @@ jobs:
         run: |
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
+      - name: Fund list from Maya (classification, fees, Maya yields)
+        run: python funds/maya_funds.py data || echo "maya_funds failed"
       - name: Fund prices from Maya
         env:
           FRM: ${{ inputs.frm }}
@@ -57,7 +59,7 @@ jobs:
         run: |
           git config user.name "funds-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/funds/prices.csv.gz data/funds/prices_meta.json
+          git add data/funds/prices.csv.gz data/funds/prices_meta.json data/funds/maya_funds.csv data/funds/maya_funds_meta.json
           if ! git diff --cached --quiet; then
             git commit -m "fund prices $(TZ=Asia/Jerusalem date +%F)"
             for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
