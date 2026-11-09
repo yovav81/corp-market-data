@@ -31,6 +31,13 @@ git -C /home/claude/cd config user.name "CORP bot"; git -C /home/claude/cd confi
 git -C /home/claude/cd config core.quotepath false
 ```
 
+## 0. Before any ID-targeted download (lesson 9.11.2026)
+Local folder first — a deed / series terms may already be there. Before dispatching `mode=download` with `ids`:
+1. grep the report id in `cd/02_Issuers/<corp_folder>/_log/maya_manifest.csv`;
+2. list `_log/reports_index.csv` rows whose path has the same date (`YYYY-MM-DD_`) or `הצעת-מדף` / `שטר-נאמנות` + the series letter —
+   the FINAL deed is usually an annex inside the offering report (ת022) of the series, not a separate ת128 (ת128 exists only since ~2020);
+3. only then pull what is really absent. On 9.11.2026 four of the pulled documents (Mega Or ט׳, Summit יג׳, Ribua ט׳ ×2) were duplicates of local files.
+
 ## 1. Fetch new Maya reports
 1. Dispatch: `gh api -X POST repos/yovav81/corp-market-data/actions/workflows/maya-watch.yml/dispatches -f ref=main`
    Find the run (`.../workflows/maya-watch.yml/runs?per_page=1`, created after the dispatch) and poll
