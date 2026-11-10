@@ -114,8 +114,17 @@ jobs:
           git add data
           if ! git diff --cached --quiet; then
             git commit -m "market data $(TZ=Asia/Jerusalem date +%F)"
-            git pull --rebase --quiet || true
-            git push
+            # 2026-11-10: a rebase conflict on the data CSVs (another market-data run pushed meanwhile)
+            # used to leave the repo mid-rebase and fail the push. This job is the only writer of these
+            # files and regenerates them from source, so on conflict the newer run's output wins
+            # (-X theirs = the commit being replayed). Retry, then fail loudly.
+            pushed=0
+            for i in 1 2 3 4; do
+              if git pull --rebase -X theirs --quiet && git push --quiet; then pushed=1; break; fi
+              git rebase --abort 2>/dev/null || true
+              echo "push attempt $i failed, retrying"; sleep $((i * 5))
+            done
+            if [ "$pushed" != 1 ]; then echo "::error::could not push data after 4 attempts"; exit 1; fi
           fi
 
       - name: Upload debug files
