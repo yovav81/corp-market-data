@@ -62,6 +62,7 @@ jobs:
         if: always()
         run: |
           python gov/gov_cpi.py data || echo "::warning::gov_cpi failed"
+          python gov/gov_signals.py data || echo "::warning::gov_signals failed"
           python gov/gov_decide.py data || echo "::warning::gov_decide failed"
 
       - name: Historical spread stats + alerts
