@@ -16,7 +16,7 @@ TENORS = [1, 2, 3, 5, 7, 10, 15, 20, 30]
 COLS = ["market", "tenor", "yield", "rate_1y", "date", "source", "as_of", "stale"]
 US_SERIES = {1: "DGS1", 2: "DGS2", 3: "DGS3", 5: "DGS5", 7: "DGS7", 10: "DGS10", 20: "DGS20", 30: "DGS30"}
 ECB_URL = "https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.{keys}?lastNObservations=3&format=csvdata"   # בקשה אחת לכל הטווחים
-TREASURY_URL = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/all/{year}"
+TREASURY_URL = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/{year}/all"
                 "?type=daily_treasury_yield_curve&field_tdr_date_value={year}&page&_format=csv")                          # אוצר ארה"ב — עקום UST יומי רשמי
 BOE_URL = "https://www.bankofengland.co.uk/-/media/boe/files/statistics/yield-curves/latest-yield-curve-data.zip"
 SOURCES = {"US": "US Treasury — daily par yield curve (FRED fallback)", "EUR": "ECB Data Portal — AAA euro area spot", "GBP": "Bank of England — nominal spot"}
