@@ -1,13 +1,13 @@
 ﻿market,tenor,yield,rate_1y,date,source,as_of,stale
-US,1,4.38,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,2,4.56,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,3,4.58,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,5,4.67,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,7,4.76,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,10,4.88,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,15,5.085,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,20,5.29,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
-US,30,5.26,4.38,2026-11-09,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,1,4.56,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,2,4.73,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,3,4.74,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,5,4.81,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,7,4.89,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,10,4.98,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,15,5.185,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,20,5.39,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
+US,30,5.35,4.56,2026-11-10,US Treasury — daily par yield curve (FRED fallback),2026-11-10,0
 EUR,1,2.8533,2.8533,2026-11-09,ECB Data Portal — AAA euro area spot,2026-11-10,0
 EUR,2,2.9391,2.8533,2026-11-09,ECB Data Portal — AAA euro area spot,2026-11-10,0
 EUR,3,2.9582,2.8533,2026-11-09,ECB Data Portal — AAA euro area spot,2026-11-10,0
