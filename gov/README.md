@@ -28,3 +28,11 @@
 
 ## בדיקות
 `python -m pytest -q tests` (LibreOffice נדרש לבדיקות הבנייה; נדלגות בלעדיו). ב-CI: `.github/workflows/tests.yml`.
+
+## v2.1 — אופטימיזציה של התיק כולו (גיליון 13)
+
+- `gov_signals.py` (לילי): `curves_monthly.csv` (בנק ישראל ZCM חודשי מ-2008), `us_monthly.csv` (אוצר ארה״ב מ-2015), `economists.csv` (מ-`economists_manual.csv`), `signals_latest.csv` (אחוזוני רמה/תלילות בחלון 10 שנים, פער ישראל–ארה״ב, קונצנזוס ריבית ופיזור).
+- `gov_decide.py`: `scenario_probs` (הסתברויות בסיס + תיקוני אותות), `leg_returns` / `leg_options` (7 טווחים + 5 תערובות חצי-חצי), `optimize` (5 משקלים × 12 × 12 = 720 תיקים; רצפה בתרחיש הגרוע → תשואה צפויה מרבית → בתוך סף האדישות: התיק של אתמול, אחרת הבטוח ביותר), `eval_portfolio`.
+- כשהאופטימיזציה פעילה (`opt_on`) היא קובעת את `linked_weight`, `dur_nominal`, `dur_real`; כללי 04/05 נשמרים כ-`rule_*` (עוגן ולעיון). `decisions_history.csv` קיבל `rule_*`, `opt_leg_n/r`, `opt_exp`, `opt_worst`.
+- באקסל: `13_אופטימיזציה` (נוסחאות קלאסיות, מקביל לפייתון; `check_gov2.parity_optimizer`), שמות `o_*` (תוצאה), `r_*` (כללים), `m_*` (המודל הסופי), פרמטרים בקבוצות "אופטימיזציה" ו"תרחישי אופטימיזציה" ב-01.
+- ידני עם מקור, מתעדכן אחרי כל החלטת ריבית: `boi_policy_manual.csv` (תחזית חטיבת המחקר), `economists_manual.csv` (בתי ההשקעות).
