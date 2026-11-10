@@ -15,7 +15,9 @@ NOMINAL_KINDS = ("שקלי", "מק\"מ"); REAL_KINDS = ("מדד",)
 SOURCE_SERIES = {"ממוצע החזאים (ב״י)": "EXP_HAZ_MAD_AVG_01Y_MA", "ציפיות שוק ההון (ב״י)": "EXP_EXP_01Y_BI_MA", "חוזי אינפלציה (ב״י)": "EXP_EXP_ISSWIT1_01Y_MA"}
 NLIST = 30                                   # ניירות לאפיק בסריקת המבנים (כמו רשימת 06 באקסל) — הקצרים במח"מ
 STALE_DAYS = 7                               # נתון חו"ל ישן מ-7 ימים מיום הנתונים נחשב "ישן"
-DECISION_KEYS = ["linked_weight", "dur_nominal", "dur_real", "dur_weighted", "struct_nominal", "struct_real", "top5_nominal", "top5_real", "foreign_5y", "foreign_10y"]
+DECISION_KEYS = ["linked_weight", "dur_nominal", "dur_real", "dur_weighted", "struct_nominal", "struct_real", "top5_nominal", "top5_real", "foreign_5y", "foreign_10y",
+                 "opt_exp", "opt_worst", "opt_status"]
+HIST_EXTRA = ["dur_nominal_tenor", "dur_real_tenor", "rule_linked", "rule_dur_nominal_tenor", "rule_dur_real_tenor", "opt_leg_n", "opt_leg_r"]
 
 
 def load_settings(path: Path | str | None = None, overrides: dict | None = None) -> dict:
@@ -113,6 +115,130 @@ def duration_pick(tbl: pd.DataFrame, s: dict, prev_tenor: float | None, policy_g
         if not lower.empty:
             tenor = float(lower["tenor"].max()); why += f"; השוק מגלם הפחתות {-policy_gap_bp:.0f} נ״ב מעבר לתחזית ב״י → צעד למטה ל-{tenor:g}"
     return tenor, why
+
+
+# ---------- 5.6 תרחישים ואופטימיזציה (גיליון 13) ----------
+GRID = [1, 2, 3, 4, 5, 7, 10]; NSC = 9
+SC_NAMES = ["ללא שינוי", "ירידה מקבילה", "עלייה מקבילה", "עלייה חדה", "הורדות ריבית (הקצר יורד יותר)", "פרמיה פיסקלית (הארוך עולה)", "ירידת פרמיה בארוך",
+            "הפתעת אינפלציה למעלה", "הפתעת אינפלציה למטה"]
+PROB_FLOOR = 0.01
+
+
+def shock_at(t: float, s: float, b: float, l: float) -> float:
+    """זעזוע בטווח t מתוך שלוש נקודות עוגן: קצר (2 שנים), בינוני (5), ארוך (10); ליניארי ביניהן, קבוע מחוץ להן."""
+    if t <= 2: return float(s)
+    if t <= 5: return s + (b - s) * (t - 2) / 3
+    if t <= 10: return b + (l - b) * (t - 5) / 5
+    return float(l)
+
+
+def scenario_probs(s: dict, sig: dict | None, y1: float | None) -> tuple[list[float], list[str]]:
+    """הסתברויות התרחישים: בסיס (01) + תיקוני האותות (סכום התיקונים אפס), רצפה לכל תרחיש, נרמול ל-1."""
+    base = [float(_num(s.get(f"prob_{i}"), 0.0)) for i in range(1, NSC + 1)]; adj = [0.0] * NSC; notes = []
+    if int(_num(s.get("opt_signals_on"), 1)):
+        def g(k): return _num((sig or {}).get(k), np.nan)
+        v = g("real10_pct")
+        if not np.isnan(v):
+            d = (v - 50) / 50 * float(s["opt_k_val"]); adj[6] += d / 2; adj[1] += d / 2; adj[5] -= d / 2; adj[2] -= d / 2
+            notes.append(f"תמחור: ריאלי 10 שנים באחוזון {v:.0f} → {d:+.1%} לתרחישי ירידת תשואות")
+        u = g("ilus10_pct")
+        if not np.isnan(u):
+            d = (u - 50) / 50 * float(s["opt_k_us"]); adj[6] += d; adj[5] -= d
+            notes.append(f"ישראל–ארה״ב באחוזון {u:.0f} → {d:+.1%} לירידת פרמיה בארוך")
+        rate_now = g("rate_now"); fc = _num(s.get("user_rate_fc"), np.nan)
+        if np.isnan(fc): fc = g("rate_fc_mean")
+        if y1 is not None and not (np.isnan(rate_now) or np.isnan(fc)):
+            gap = (2 * float(y1) - rate_now - fc) * 100; d = max(-1.0, min(1.0, gap / 50)) * float(s["opt_k_policy"]); adj[4] += d; adj[2] -= d
+            notes.append(f"ריבית: השוק מגלם {2 * float(y1) - rate_now:.2f}% בעוד שנה מול תחזית {fc:.2f}% ({gap:+.0f} נ״ב) → {d:+.1%} להורדות ריבית")
+        fis = _num(s.get("fiscal_risk"), 2.0); d = (fis - 2) * float(s["opt_k_fiscal"]); adj[5] += d; adj[6] -= d
+        if d: notes.append(f"סיכון פיסקלי {fis:g} → {d:+.1%} לפרמיה פיסקלית")
+        mn, mx = g("rate_fc_min"), g("rate_fc_max")
+        if not (np.isnan(mn) or np.isnan(mx)):
+            d = min(1.0, (mx - mn) * 100 / 50) * float(s["opt_k_disp"]); adj[0] -= d; adj[2] += d / 2; adj[4] += d / 2
+            if d: notes.append(f"פיזור תחזיות {(mx - mn) * 100:.0f} נ״ב → {-d:+.1%} ל'ללא שינוי'")
+    raw = [max(PROB_FLOOR, b + a) for b, a in zip(base, adj)]; tot = sum(raw)
+    return [x / tot for x in raw], notes
+
+
+def leg_returns(curve: pd.DataFrame, kind: str, s: dict, infl_fc: float) -> pd.DataFrame:
+    """תשואת 12 חודשים (%) לרגל בפארי בכל טווח ב-GRID, לכל תרחיש: carry + roll − מח״מ בסוף האופק × שינוי התשואה + קמירות; צמוד: + אינפלציה בפועל."""
+    ycol, rcol = ("nominal", "roll_nominal_bp") if kind == "nominal" else ("real", "roll_real_bp")
+    c = curve.set_index("tenor"); rows = []
+    for t in GRID:
+        y = float(c.loc[t, ycol]); roll = float(c.loc[t, rcol]); d = par_duration(t, y); d1 = par_duration(t - 1, y) if t > 1 else 0.0
+        row = {"tenor": t, "y": y, "roll": roll, "dur": d, "d1": d1}
+        for i in range(1, NSC + 1):
+            dy = shock_at(t, float(s[f"sc{i}_rs"]), float(s[f"sc{i}_rb"]), float(s[f"sc{i}_rl"])) + (float(s[f"sc{i}_bei"]) if kind == "nominal" else 0.0)
+            r = y + d * roll / 100 - d1 * dy / 100 + 0.5 * d1 * (d1 + 1) * dy ** 2 / 1e6
+            if kind == "real": r += float(infl_fc) + float(s[f"sc{i}_infl"])
+            row[f"r{i}"] = r
+        rows.append(row)
+    return pd.DataFrame(rows).set_index("tenor")
+
+
+RCOLS = [f"r{i}" for i in range(1, NSC + 1)]
+MIXES = [(1, 3), (2, 4), (3, 5), (4, 7), (5, 10)]      # רגל סינתטית: חצי-חצי בין שני טווחים (חלופה לכל טווח ביניים — עוקפת פיתול מקומי בעקום)
+NLEG = len(GRID) + len(MIXES)                           # 12 אפשרויות רגל לכל אפיק
+
+
+def leg_options(curve: pd.DataFrame, kind: str, s: dict, infl_fc: float) -> pd.DataFrame:
+    """12 אפשרויות רגל לאפיק (אינדקס 1..12): 7 טווחים בודדים ואחריהם 5 תערובות חצי-חצי. עמודות: label, tenor (ריק לתערובת), dur, r1..r9."""
+    L = leg_returns(curve, kind, s, infl_fc); rows = []
+    for t in GRID: rows.append({"label": f"{t:g}", "tenor": float(t), "dur": float(L.loc[t, "dur"]), **{k: float(L.loc[t, k]) for k in RCOLS}})
+    for a, b in MIXES: rows.append({"label": f"{a:g}+{b:g}", "tenor": np.nan, "dur": (L.loc[a, "dur"] + L.loc[b, "dur"]) / 2, **{k: (L.loc[a, k] + L.loc[b, k]) / 2 for k in RCOLS}})
+    df = pd.DataFrame(rows); df.index = range(1, NLEG + 1)
+    return df
+
+
+def _infl_base(curve: pd.DataFrame, infl_fc) -> float:
+    if infl_fc is None or (isinstance(infl_fc, float) and np.isnan(infl_fc)): return float(curve.set_index("tenor").loc[1, "bei"])   # אין תחזית → הגלומה לשנה
+    return float(infl_fc)
+
+
+def optimize(curve: pd.DataFrame, s: dict, sig: dict | None, anchor_w: float, infl_fc, prev: tuple | None = None) -> dict:
+    """סריקת תיקים שלמים (משקל צמוד × רגל שקלית × רגל צמודה) על פני התרחישים; בחירה: עומד בתקציב הסיכון → תשואה צפויה מרבית →
+    בתוך סף האדישות: התיק של אתמול אם הוא שם, אחרת הבטוח ביותר (התשואה הגבוהה ביותר בתרחיש הגרוע). prev = (משקל צמוד, רגל שקלית, רגל צמודה)."""
+    infl = _infl_base(curve, infl_fc); ln = leg_options(curve, "nominal", s, infl); lr = leg_options(curve, "real", s, infl)
+    y1 = float(curve.set_index("tenor").loc[1, "nominal"]); probs, notes = scenario_probs(s, sig, y1); P = np.array(probs)
+    lo, hi, band = float(s["linked_min"]), float(s["linked_max"]), float(s["opt_w_band"]); dmin, dmax = float(s["dur_min"]), float(s["dur_max"])
+    RN = ln[RCOLS].to_numpy(float); RR = lr[RCOLS].to_numpy(float); rows = []
+    for k in (-2, -1, 0, 1, 2):
+        w = min(hi, max(lo, float(anchor_w) + k * band / 2))
+        for i in range(1, NLEG + 1):
+            for j in range(1, NLEG + 1):
+                r = w * RR[j - 1] + (1 - w) * RN[i - 1]; dn, dr = float(ln.loc[i, "dur"]), float(lr.loc[j, "dur"])
+                rows.append({"w": w, "leg_n": i, "leg_r": j, "dn": dn, "dr": dr, **dict(zip(RCOLS, r)), "exp": float(P @ r), "worst": float(r.min()),
+                             "dur_ok": dmin <= dn <= dmax and dmin <= dr <= dmax})
+    c = pd.DataFrame(rows); floor = float(s["risk_floor_pct"]); tol = float(s["opt_tol_bp"]) / 100
+    c["feasible"] = c["dur_ok"] & (c["worst"] >= floor); kept = False
+    base = {"probs": probs, "notes": notes, "cands": c, "legs_n": ln, "legs_r": lr}
+    if c["feasible"].any():
+        status = "תקין"; emax = c.loc[c["feasible"], "exp"].max(); c["near"] = c["feasible"] & (c["exp"] >= emax - tol)
+        idx = None
+        if prev is not None and not any(v is None or (isinstance(v, float) and np.isnan(v)) for v in prev):
+            m = c[((c["w"] - float(prev[0])).abs() < 5e-4) & (c["leg_n"] == int(prev[1])) & (c["leg_r"] == int(prev[2]))]
+            if len(m) and bool(c.loc[m.index[0], "near"]): idx = m.index[0]; kept = True
+        if idx is None: idx = c["worst"].where(c["near"], -999.0).idxmax()
+    elif c["dur_ok"].any():
+        status = "אין תיק שעומד בתקציב הסיכון — נבחר הבטוח ביותר"; c["near"] = False; idx = c["worst"].where(c["dur_ok"], -999.0).idxmax()
+    else:
+        return {"status": "אין תיק במגבלות המח״מ", "w": None, "leg_n": None, "leg_r": None, "tn": None, "tr": None, "dur_n": None, "dur_r": None, "exp": None, "worst": None,
+                "kept": False, "why": "אין תיק במגבלות המח״מ", **base}
+    b = c.loc[idx]; n_ok = int(c["feasible"].sum()); i, j = int(b["leg_n"]), int(b["leg_r"])
+    why = (f"{n_ok} מתוך {len(c)} תיקים עומדים ברצפה של {floor:g}% בתרחיש הגרוע; נבחר: תשואה צפויה {b['exp']:.2f}%, בתרחיש הגרוע {b['worst']:.2f}%"
+           + ("; נשאר התיק של אתמול (בתוך סף האדישות)" if kept else "") + ("" if status == "תקין" else f"; {status}"))
+    tn, tr = ln.loc[i, "tenor"], lr.loc[j, "tenor"]
+    return {"status": status, "w": float(b["w"]), "leg_n": i, "leg_r": j, "lab_n": ln.loc[i, "label"], "lab_r": lr.loc[j, "label"],
+            "tn": None if np.isnan(tn) else float(tn), "tr": None if np.isnan(tr) else float(tr), "dur_n": float(b["dn"]), "dur_r": float(b["dr"]),
+            "exp": float(b["exp"]), "worst": float(b["worst"]), "kept": kept, "why": why, **base}
+
+
+def eval_portfolio(curve: pd.DataFrame, s: dict, sig: dict | None, w: float, dn: float, dr: float, infl_fc) -> dict:
+    """תשואת תיק כלשהו (משקל צמוד, מח״מ שקלי, מח״מ צמוד) בכל תרחיש — אינטרפולציה לפי מח״מ על טבלאות הרגליים."""
+    infl = _infl_base(curve, infl_fc); ln = leg_returns(curve, "nominal", s, infl); lr = leg_returns(curve, "real", s, infl)
+    probs, _ = scenario_probs(s, sig, float(curve.set_index("tenor").loc[1, "nominal"]))
+    r = [float(w) * float(np.interp(dr, lr["dur"], lr[k])) + (1 - float(w)) * float(np.interp(dn, ln["dur"], ln[k])) for k in RCOLS]
+    return {"r": r, "exp": float(np.dot(probs, r)), "worst": float(min(r))}
 
 
 # ---------- 5.3 סינתטי מול בולט ----------
@@ -295,8 +421,14 @@ def decide(data: Path | str, s: dict | None = None) -> dict:
     s = s or load_settings(); d = Path(data); g = d / "gov"
     bonds, curve, vol = _read(g, "bonds_latest.csv"), _read(g, "curves_latest.csv"), _read(g, "vol.csv")
     hist, cpi, foreign, boi_exp, policy, bh = _read(g, "curves_history.csv"), _read(g, "cpi_path.csv"), _read(g, "foreign_latest.csv"), _read(g, "boi_expectations.csv"), _read(g, "boi_policy.csv"), _read(g, "bond_history.csv")
-    prev_hist = _read(g, "decisions_history.csv")
+    prev_hist = _read(g, "decisions_history.csv"); sigdf = _read(g, "signals_latest.csv")
+    sig = dict(zip(sigdf["key"], sigdf["val"])) if len(sigdf) and "val" in sigdf else {}
     date = str(curve["date"].iloc[0]) if len(curve) and "date" in curve else dt.date.today().isoformat()
+    if len(prev_hist) and "opt_leg_n" not in prev_hist.columns:      # הגירה חד-פעמית מ-v2.0: הרגל של אתמול = הטווח של הכלל (אם הוא על הרשת)
+        for src, dst in (("dur_nominal_tenor", "opt_leg_n"), ("dur_real_tenor", "opt_leg_r")):
+            prev_hist[dst] = [GRID.index(float(x)) + 1 if pd.notna(x) and float(x) in GRID else np.nan for x in prev_hist.get(src, pd.Series([np.nan] * len(prev_hist)))]
+        for src, dst in (("dur_nominal_tenor", "rule_dur_nominal_tenor"), ("dur_real_tenor", "rule_dur_real_tenor"), ("linked_weight", "rule_linked")):
+            if dst not in prev_hist.columns and src in prev_hist.columns: prev_hist[dst] = prev_hist[src]      # עד v2.1 ההחלטות היו החלטות הכללים
     prev = prev_hist[prev_hist["date"] < date].sort_values("date").tail(1) if len(prev_hist) else pd.DataFrame()
     if vol.empty: vol = pd.DataFrame([{"tenor": t, "nominal_vol_bp": s["vol_floor_nominal_bp"], "real_vol_bp": s["vol_floor_real_bp"], "bei_vol_bp": 30, "n_daily": 0, "method": "floor"} for t in TENORS])
     out = {}; why = {}
@@ -320,11 +452,30 @@ def decide(data: Path | str, s: dict | None = None) -> dict:
     policy_gap = (fwd1y1y - boi_fc) * 100 if not (np.isnan(fwd1y1y) or np.isnan(boi_fc)) else None
     for kind, key in (("nominal", "dur_nominal"), ("real", "dur_real")):
         tbl = duration_table(curve, vol, kind, s)
-        pt = _num(prev[key].iloc[0], np.nan) if len(prev) and key in prev else np.nan
-        prev_tenor = None if np.isnan(pt) else float(tbl.loc[(tbl["dur"] - pt).abs().idxmin(), "tenor"])
+        rcol = f"rule_{key}_tenor"
+        if len(prev) and rcol in prev:      # מ-v2.1: ההמלצה הקודמת של הכלל נשמרת בנפרד מהחלטת האופטימיזציה
+            pt = _num(prev[rcol].iloc[0], np.nan); prev_tenor = None if np.isnan(pt) else pt
+        else:
+            pt = _num(prev[key].iloc[0], np.nan) if len(prev) and key in prev else np.nan
+            prev_tenor = None if np.isnan(pt) else float(tbl.loc[(tbl["dur"] - pt).abs().idxmin(), "tenor"])
         tenor, dwhy = duration_pick(tbl, s, prev_tenor, policy_gap)
         dur = float(tbl.loc[tbl["tenor"] == tenor, "dur"].iloc[0]) if tenor is not None else np.nan
         out[key] = round(dur, 2) if not np.isnan(dur) else None; out[key + "_tenor"] = tenor; why[key] = dwhy + (f"; אות מדיניות {policy_gap:+.0f} נ״ב" if policy_gap is not None else "; אין תחזית ריבית ב״י")
+    out["rule_linked"] = w; out["rule_dur_nominal_tenor"] = out.get("dur_nominal_tenor"); out["rule_dur_real_tenor"] = out.get("dur_real_tenor")
+    out["opt_exp"] = out["opt_worst"] = None; out["opt_status"] = "כבוי"; why["opt_status"] = "האופטימיזציה כבויה (01) — ההחלטות לפי הכללים הנפרדים"
+    # 5.6 — אופטימיזציה של התיק כולו; כשהיא פעילה ומצאה תיק, היא קובעת את המשקל ואת המח״מים
+    if int(_num(s.get("opt_on"), 1)):
+        pv = None
+        if len(prev) and all(k in prev for k in ("linked_weight", "opt_leg_n", "opt_leg_r")):
+            pv = tuple(_num(prev[k].iloc[0], np.nan) for k in ("linked_weight", "opt_leg_n", "opt_leg_r"))
+        o = optimize(curve, s, sig, w, fc, pv); out["opt_status"] = o["status"]; why["opt_status"] = "; ".join(o["notes"]) or "אין אותות — הסתברויות הבסיס"
+        if o["w"] is not None:
+            rule_txt = f"כלל ה-BEI {w:.0%}, כלל המח״מ שקלי {out['dur_nominal']} / צמוד {out['dur_real']}"
+            w = round(o["w"], 4); out["linked_weight"] = w; out["dur_nominal"] = round(o["dur_n"], 2); out["dur_real"] = round(o["dur_r"], 2)
+            out["dur_nominal_tenor"] = o["tn"]; out["dur_real_tenor"] = o["tr"]; out["opt_leg_n"] = o["leg_n"]; out["opt_leg_r"] = o["leg_r"]; out["opt_exp"] = round(o["exp"], 3); out["opt_worst"] = round(o["worst"], 3)
+            why["linked_weight"] = f"אופטימיזציה: {o['why']} | לעיון — {rule_txt} | עוגן: {why['linked_weight']}"
+            why["dur_nominal"] = f"אופטימיזציה: רגל {o['lab_n']} שנים"; why["dur_real"] = f"אופטימיזציה: רגל {o['lab_r']} שנים"
+            why["opt_exp"] = "תשואה צפויה ל-12 חודשים, ממוצע משוקלל בהסתברויות התרחישים"; why["opt_worst"] = "התשואה בתרחיש הגרוע ביותר"
     out["dur_weighted"] = round(w * (out["dur_real"] or 0) + (1 - w) * (out["dur_nominal"] or 0), 2) if out["dur_nominal"] is not None and out["dur_real"] is not None else None
     why["dur_weighted"] = f"{w:.0%} × צמוד {out['dur_real']} + {1 - w:.0%} × שקלי {out['dur_nominal']}"
     # 5.3
@@ -349,7 +500,7 @@ def decide(data: Path | str, s: dict | None = None) -> dict:
     # כתיבה
     asof = dt.date.today().isoformat()
     pd.DataFrame([{"key": k, "value": out.get(k), "why": why.get(k, ""), "as_of": asof} for k in DECISION_KEYS]).to_csv(g / "decisions_latest.csv", index=False, encoding="utf-8-sig")
-    row = {"date": date, "as_of": asof, **{k: out.get(k) for k in DECISION_KEYS}, "dur_nominal_tenor": out.get("dur_nominal_tenor"), "dur_real_tenor": out.get("dur_real_tenor")}
+    row = {"date": date, "as_of": asof, **{k: out.get(k) for k in DECISION_KEYS}, **{k: out.get(k) for k in HIST_EXTRA}}
     hist_df = prev_hist[prev_hist["date"] != date] if len(prev_hist) else pd.DataFrame()
     hist_df = pd.concat([hist_df, pd.DataFrame([row])], ignore_index=True).sort_values("date")
     hist_df.to_csv(g / "decisions_history.csv", index=False, encoding="utf-8-sig")

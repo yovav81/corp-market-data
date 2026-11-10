@@ -4,7 +4,7 @@
   curves_monthly.csv   בנק ישראל (SDMX ZCM): עקומי אפס שקלי/ריאלי חודשיים מ-START — period, tenor, nominal, real, bei
   us_monthly.csv       אוצר ארה"ב: ממוצע חודשי של 5 ו-10 שנים — period, us_5y, us_10y
   economists.csv       gov/economists_manual.csv כפי שהוא (תחזיות בתי ההשקעות: ריבית ואינפלציה בעוד שנה)
-  signals_latest.csv   key, value, note, as_of — אחוזוני רמה/תלילות מול היסטוריה של WINDOW_YEARS, פער ישראל–ארה"ב, קונצנזוס ריבית ופיזור
+  signals_latest.csv   key, val, note, as_of — אחוזוני רמה/תלילות מול היסטוריה של WINDOW_YEARS, פער ישראל–ארה"ב, קונצנזוס ריבית ופיזור
 כשל במשיכה → הקובץ הקודם נשאר; אות שאין לו נתונים = ריק (האופטימיזציה מתעלמת ממנו).
 """
 from __future__ import annotations
@@ -17,7 +17,7 @@ import gov_data, gov_foreign  # noqa: E402
 
 START = "2008-01"; WINDOW_YEARS = 10; MIN_MONTHS = 12
 ZCM_URL = "https://edge.boi.org.il/FusionEdgeServer/sdmx/v2/data/dataflow/BOI.STATISTICS/ZCM/1.0?startperiod={start}&format=csv"
-COLS = ["key", "value", "note", "as_of"]
+COLS = ["key", "val", "note", "as_of"]
 
 
 # ---------- פרסרים ----------
@@ -90,7 +90,7 @@ def _num(v):
 def build_signals(cm: pd.DataFrame, us: pd.DataFrame, econ: pd.DataFrame, policy: pd.DataFrame, curve: pd.DataFrame, us10_now: float | None = None,
                   window_years: int = WINDOW_YEARS) -> pd.DataFrame:
     today = dt.date.today().isoformat(); rows = []
-    def add(key, value, note=""): rows.append({"key": key, "value": (np.nan if value is None else value), "note": note, "as_of": today})
+    def add(key, value, note=""): rows.append({"key": key, "val": (np.nan if value is None else value), "note": note, "as_of": today})
     c = curve.set_index("tenor")
     def cv(t, col): return float(c.loc[t, col]) if t in c.index and col in c else np.nan
     real10, nom10, real2 = cv(10, "real"), cv(10, "nominal"), cv(2, "real")
@@ -169,4 +169,4 @@ def main(data="data") -> pd.DataFrame:
 
 if __name__ == "__main__":
     s = main(sys.argv[1] if len(sys.argv) > 1 else "data")
-    print(s[["key", "value"]].to_string(index=False))
+    print(s[["key", "val"]].to_string(index=False))

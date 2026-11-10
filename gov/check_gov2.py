@@ -65,6 +65,35 @@ def parity_decisions(xlsx_recalced: Path | str, data: Path | str, s: dict | None
     return out
 
 
+def parity_optimizer(xlsx_recalced: Path | str, data: Path | str, s: dict | None = None) -> dict:
+    """אקסל (13) מול gov_decide.optimize: הסתברויות (±1e-4 — העקום באקסל מחושב מהניירות, בפייתון מה-CSV), משקל (±0.001), מח״מים, תשואה צפויה ובתרחיש הגרוע (±0.005), סטטוס."""
+    import gov_decide
+    s = s or gov_decide.load_settings(); g = Path(data) / "gov"
+    curve = pd.read_csv(g / "curves_latest.csv", encoding="utf-8-sig")
+    sg = pd.read_csv(g / "signals_latest.csv", encoding="utf-8-sig") if (g / "signals_latest.csv").exists() else pd.DataFrame()
+    sig = dict(zip(sg["key"], sg["val"])) if len(sg) else {}
+    wb = openpyxl.load_workbook(xlsx_recalced, data_only=True); out = {}
+    h = pd.read_csv(g / "decisions_history.csv", encoding="utf-8-sig") if (g / "decisions_history.csv").exists() else pd.DataFrame()
+    date = str(curve["date"].iloc[0]); prev = None
+    if len(h) and all(c in h.columns for c in ("linked_weight", "opt_leg_n", "opt_leg_r")):
+        y = h[h["date"] < date].sort_values("date").tail(1)
+        if len(y): prev = tuple(float(y[c].iloc[0]) if pd.notna(y[c].iloc[0]) else float("nan") for c in ("linked_weight", "opt_leg_n", "opt_leg_r"))
+    fc = named_value(wb, "infl_fc"); fc = None if fc in (None, "") else float(fc)
+    o = gov_decide.optimize(curve, s, sig, float(named_value(wb, "r_linked")), fc, prev)
+    ref = wb.defined_names["o_probs"].attr_text; sh, rng = ref.rsplit("!", 1)
+    xp = [float(c[0].value) for c in wb[sh.strip("'")][rng.replace("$", "")]]
+    out["probs"] = ([round(x, 4) for x in xp], [round(x, 4) for x in o["probs"]], max(abs(a - b) for a, b in zip(xp, o["probs"])) <= 1e-4)
+    def near(a, b, tol):
+        try: return abs(float(a) - float(b)) <= tol
+        except (TypeError, ValueError): return (a in (None, "")) and (b in (None, ""))
+    for nm, key, tol in (("o_linked", "w", 0.001), ("o_dur_nominal", "dur_n", 0.005), ("o_dur_real", "dur_r", 0.005), ("o_exp", "exp", 0.005), ("o_worst", "worst", 0.005)):
+        xl = named_value(wb, nm); out[nm] = (xl, o.get(key), near(xl, o.get(key), tol))
+    out["o_status"] = (named_value(wb, "o_status"), o["status"], named_value(wb, "o_status") == o["status"])
+    out["o_legs"] = ((named_value(wb, "o_lab_nominal"), named_value(wb, "o_lab_real")), (o.get("lab_n"), o.get("lab_r")),
+                     str(named_value(wb, "o_lab_nominal")) == str(o.get("lab_n")) and str(named_value(wb, "o_lab_real")) == str(o.get("lab_r")))
+    return out
+
+
 def parity_structures(xlsx_recalced: Path | str, data: Path | str, s: dict | None = None) -> dict:
     """אקסל מול פייתון: סוג המבנה, המפתחות והמשקלים (±0.005) לשני האפיקים, ביעד המח״מ שבאקסל."""
     import gov_decide
@@ -125,7 +154,7 @@ def main(xlsx: str, data: str) -> int:
     rc = recalc(xlsx); errs = count_errors(rc); worst = parity_curves(rc, data)
     print("שגיאות נוסחה:", errs or "0"); print("זהות עקומים (מקס' נ״ב):", worst)
     ok = not errs and worst <= 0.5
-    for fn in ("parity_decisions", "parity_structures", "parity_top5", "parity_foreign"):
+    for fn in ("parity_decisions", "parity_optimizer", "parity_structures", "parity_top5", "parity_foreign"):
         f = globals().get(fn)
         if f:
             res = f(rc, data); print(fn + ":", res); ok = ok and all(v[2] for v in res.values())

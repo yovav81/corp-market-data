@@ -31,15 +31,16 @@ NB = 120; R0 = 6; R1 = R0 + NB - 1                       # שורות הנייר
 GREEN = Font(name="Arial", size=10, color="008000"); GREY = Font(name="Arial", size=9, color="808080"); GFILL = PatternFill("solid", fgColor="F2F2F2")
 DATA_FILL = PatternFill("solid", fgColor="EDEDED")
 SOURCES = ["תחזית מנהל השקעות", "ממוצע החזאים (ב״י)", "ציפיות שוק ההון (ב״י)", "חוזי אינפלציה (ב״י)", "שקול 12 ח׳ (תוואי מדדים)"]
-GROUP_ORDER = ["כללי", "שקלי/צמוד", "מח״מ", "סינתטי/בולט", "סדרות", "חו״ל", "תיק ותרחישים", "סימולציה"]
+GROUP_ORDER = ["כללי", "שקלי/צמוד", "מח״מ", "סינתטי/בולט", "סדרות", "חו״ל", "תיק ותרחישים", "אופטימיזציה", "סימולציה", "תרחישי אופטימיזציה"]
 # גיליוני נתונים: שם גיליון → (שאילתה, קובץ data/gov, מקס' שורות לטווחי הנוסחאות)
 DATA_SHEETS = [("נתוני_אגח", "GovBonds", "bonds_latest.csv", 500), ("נתוני_עקומים", "GovCurves", "curves_latest.csv", 20),
                ("נתוני_היסטוריה", "GovHist", "curves_history.csv", 3000), ("נתוני_סדרות_היסט", "GovBondHist", "bond_history.csv", 20000),
                ("נתוני_מדדים", "GovCpi", "cpi_path.csv", 60), ("נתוני_תנודתיות", "GovVol", "vol.csv", 20), ("נתוני_חול", "GovForeign", "foreign_latest.csv", 60),
                ("נתוני_ארהב", "GovUS", "us_latest.csv", 20), ("נתוני_בי_עקומים", "GovBoiCurves", "boi_curves.csv", 60),
                ("נתוני_בי_ציפיות", "GovBoiExp", "boi_expectations.csv", 60), ("נתוני_בי_ריבית", "GovPolicy", "boi_policy.csv", 20),
-               ("נתוני_החלטות", "GovDecisions", "decisions_history.csv", 2000)]
-ORDER = ["00_דשבורד", "01_הגדרות", "02_קלט_אגח", "03_עקומים", "04_שקלי_צמוד", "05_מחמ", "06_סינטטי_בולט", "07_סדרות", "08_חול", "09_תיק_ותרחישים",
+               ("נתוני_החלטות", "GovDecisions", "decisions_history.csv", 2000), ("נתוני_אותות", "GovSignals", "signals_latest.csv", 60),
+               ("נתוני_כלכלנים", "GovEcon", "economists.csv", 40)]
+ORDER = ["00_דשבורד", "13_אופטימיזציה", "01_הגדרות", "02_קלט_אגח", "03_עקומים", "04_שקלי_צמוד", "05_מחמ", "06_סינטטי_בולט", "07_סדרות", "08_חול", "09_תיק_ותרחישים",
          "10_היסטוריה", "11_בנק_ישראל", "12_מדריך"] + [d[0] for d in DATA_SHEETS]
 BOND_COLS = ["date", "security_id", "key", "name", "kind", "source", "maturity", "coupon", "last_price", "adjusted_value", "ytm_gross", "ytm_net", "duration_globes",
              "volume_k_nis", "ttm", "accrued", "clean_price", "macaulay_calc", "modified", "convexity", "L", "pv_check", "in_curve"]
@@ -85,7 +86,7 @@ class Ctx:
 
 # ---------------------------------------------------------------- נתוני_* (Power Query)
 DATE_COLS = {"date", "maturity", "pub_date", "as_of"}
-TEXT_COLS = {"key", "name", "kind", "source", "market", "method", "item", "value", "series", "period", "ym", "src", "in_curve"}
+TEXT_COLS = {"key", "name", "kind", "source", "market", "method", "item", "value", "series", "period", "ym", "src", "in_curve", "note", "house"}
 
 
 def pq_schema(ctx: "Ctx") -> dict[str, list[tuple[str, str]]]:
@@ -364,15 +365,15 @@ def sheet_split(ctx: Ctx):
     hdr(ws, 47, ["רכיב", "ערך", "הסבר"])
     items = [("הטיה גולמית", '=IF(gap_bp="",0,IF(ABS(gap_bp)<=p_decision_margin_bp,0,MAX(-1,MIN(1,gap_bp/p_tilt_scale_bp))*p_tilt_max))', "חסום(פער/סולם) × הטיה מקסימלית; בתוך מרווח ההחלטה — 0", "0.0%"),
              ("תיקון אחוזון", '=IF(OR(p_pct_adj_on<>1,bei_pct2=""),0,IF(bei_pct2>p_pct_hi,-p_pct_adj,IF(bei_pct2<p_pct_lo,p_pct_adj,0)))', "BEI באחוזון גבוה → לשקלי; נמוך → לצמוד", "0.0%"),
-             ("משקל צמוד — המודל", "=MAX(p_linked_min,MIN(p_linked_max,p_linked_neutral+B48+B49))", "נייטרלי + הטיה + תיקון, בתוך המינימום/מקסימום", "0%"),
+             ("משקל צמוד — כלל ה-BEI (עוגן)", "=MAX(p_linked_min,MIN(p_linked_max,p_linked_neutral+B48+B49))", "נייטרלי + הטיה + תיקון, בתוך המינימום/מקסימום; האופטימיזציה (13) בוחנת סביבו", "0%"),
              ("משקל צמוד — סימולציה", '=IF(p_sim_linked="","",p_sim_linked)', "ריק = לפי המודל (01 → סימולציה)", "0%"),
-             ("משקל צמוד בשימוש", '=IF(p_sim_linked="",B50,p_sim_linked)', "מזין את המח״מ המשוקלל ואת תיק המודל", "0%")]
+             ("משקל צמוד בשימוש", '=IF(p_sim_linked="",m_linked,p_sim_linked)', "סימולציה אם מולאה; אחרת המודל הסופי (אופטימיזציה, 13)", "0%")]
     for i, (a, b, c, f) in enumerate(items):
         r = 48 + i; put(ws, f"A{r}", a, BOLD if i in (2, 4) else BASE, None, None, BOX); put(ws, f"B{r}", b, BOLD if i in (2, 4) else BASE, GRN if i == 2 else None, f, BOX); put(ws, f"C{r}", c, NOTE)
-    ctx.name("m_linked", "'04_שקלי_צמוד'!$B$50"); ctx.name("u_linked", "'04_שקלי_צמוד'!$B$52")
+    ctx.name("r_linked", "'04_שקלי_צמוד'!$B$50"); ctx.name("u_linked", "'04_שקלי_צמוד'!$B$52")
     put(ws, "A53", "למה", BOLD)
     put(ws, "B53", '=IF(gap_bp="","אין תחזית אינפלציה — נייטרלי","מקור "&p_infl_source&" "&TEXT(infl_fc,"0.00")&"%; פער תחזית−BEI "&TEXT(gap_bp,"+0;-0")&" נ״ב"&IF(ABS(gap_bp)<=p_decision_margin_bp," (בתוך מרווח ההחלטה → נייטרלי)"," → הטיה "&TEXT(B48,"+0%;-0%"))&IF(B49<>0,"; אחוזון BEI "&TEXT(bei_pct2,"0")&" → "&TEXT(B49,"+0%;-0%"),"")&" → משקל צמוד "&TEXT(B50,"0%"))', BASE)
-    ctx.name("m_linked_why", "'04_שקלי_צמוד'!$B$53")
+    ctx.name("r_linked_why", "'04_שקלי_צמוד'!$B$53")
     # 12 חודשים: צמוד מול שקלי
     put(ws, "A55", "12 חודשים קדימה — צמוד (ריאלי + תוואי המדדים + roll) מול שקלי באותו טווח", BOLD)
     hdr(ws, 56, ["טווח", "שקלי: תשואה 12 ח׳ %", "צמוד: שקול נומינלי 12 ח׳ %", "יתרון צמוד (נ״ב)"])
@@ -415,6 +416,7 @@ def _dur_pick(ctx: Ctx, ws, r: int, T: dict, kind: str):
     """בלוק ההחלטה לאפיק בשורות r..r+9. מגדיר שמות m_dur_<kind>_tenor, m_dur_<kind>, u_dur_<kind>, m_dur_<kind>_why."""
     heb = "שקלי" if kind == "nominal" else "צמוד"; sim = f"p_sim_dur_{kind}"
     hcol = "dur_nominal_tenor" if kind == "nominal" else "dur_real_tenor"
+    if "rule_" + hcol in ctx.frames["נתוני_החלטות"].columns: hcol = "rule_" + hcol     # מ-v2.1 ההמלצה הקודמת של הכלל נשמרת בנפרד
     hist_ok = len(ctx.frames["נתוני_החלטות"].columns) and hcol in ctx.frames["נתוני_החלטות"].columns
     prev_f = f'IFERROR(INDEX({dcol(ctx, "נתוני_החלטות", hcol)},MATCH(d_asof-1,{dcol(ctx, "נתוני_החלטות", "date")},1)),"")' if hist_ok else '""'
     hdr(ws, r, ["רכיב", "ערך", "הסבר"])
@@ -424,23 +426,23 @@ def _dur_pick(ctx: Ctx, ws, r: int, T: dict, kind: str):
              "ההמלצה מתחלפת רק אם הציון החדש גבוה בסף היציבות מציון ההמלצה הקודמת", "0.00"),
             ("אות מדיניות (נ״ב)", "=policy_gap_bp", "פורוורד שנה-בעוד-שנה מול תחזית ריבית ב״י; שלילי = השוק מגלם הפחתות מעבר לב״י", "0"),
             ("טווח מומלץ — המודל", f'=IF(B{r + 3}="","",IF(AND(p_policy_adj_on=1,B{r + 4}<>"",N(B{r + 4})<=-p_policy_gap_bp),IF(COUNTIFS({T["tenor"]},"<"&B{r + 3},{T["ok"]},"כן")>0,MAX(IF(({T["tenor"]}<B{r + 3})*({T["ok"]}="כן"),{T["tenor"]})),B{r + 3}),B{r + 3}))', "צעד טווח אחד למטה כשהאות המדיניות פעיל", "0.00"),
-            (f"מח״מ מומלץ {heb} — המודל", f'=IF(B{r + 5}="","",INDEX({T["dur"]},MATCH(B{r + 5},{T["tenor"]},0)))', "מח״מ (פארי) של הטווח המומלץ", "0.00"),
+            (f"מח״מ מומלץ {heb} — כלל הציון", f'=IF(B{r + 5}="","",INDEX({T["dur"]},MATCH(B{r + 5},{T["tenor"]},0)))', "מח״מ (פארי) של הטווח המומלץ לפי הכלל; ההחלטה הסופית באופטימיזציה (13)", "0.00"),
             (f"מח״מ {heb} — סימולציה", f'=IF({sim}="","",{sim})', "ריק = לפי המודל", "0.00"),
-            (f"מח״מ {heb} בשימוש", f'=IF({sim}="",B{r + 6},{sim})', "מזין את סינתטי/בולט ואת תיק המודל", "0.00")]
+            (f"מח״מ {heb} בשימוש", f'=IF({sim}="",m_dur_{kind},{sim})', "סימולציה אם מולאה; אחרת המודל הסופי (אופטימיזציה, 13)", "0.00")]
     for i, (a, b, c, f) in enumerate(rows):
         rr = r + 1 + i
         if i == 4: arr(ws, f"B{rr}", b)
         else: put(ws, f"B{rr}", b, BOLD if i in (5, 7) else BASE, GRN if i == 5 else None, f, BOX)
         ws[f"B{rr}"].number_format = f; ws[f"B{rr}"].border = BOX
         put(ws, f"A{rr}", a, BOLD if i in (5, 7) else BASE, None, None, BOX); put(ws, f"C{rr}", c, NOTE)
-    ctx.name(f"m_dur_{kind}_tenor", f"'05_מחמ'!$B${r + 5}"); ctx.name(f"m_dur_{kind}", f"'05_מחמ'!$B${r + 6}"); ctx.name(f"u_dur_{kind}", f"'05_מחמ'!$B${r + 8}")
+    ctx.name(f"r_dur_{kind}_tenor", f"'05_מחמ'!$B${r + 5}"); ctx.name(f"r_dur_{kind}", f"'05_מחמ'!$B${r + 6}"); ctx.name(f"u_dur_{kind}", f"'05_מחמ'!$B${r + 8}")
     put(ws, f"A{r + 9}", "למה", BOLD)
     put(ws, f"B{r + 9}", f'=IF(B{r + 1}="","אין טווח שעומד במגבלות","ציון מקסימלי "&TEXT(INDEX({T["score"]},MATCH(B{r + 1},{T["tenor"]},0)),"0.00")&" בטווח "&TEXT(B{r + 1},"0.##")&IF(B{r + 3}<>B{r + 1},"; נשאר ב-"&TEXT(B{r + 3},"0.##")&" (סף יציבות)","")&IF(B{r + 5}<>B{r + 3},"; אות מדיניות → צעד למטה ל-"&TEXT(B{r + 5},"0.##"),"")&IF(B{r + 4}="","; אין תחזית ריבית ב״י",""))', BASE)
-    ctx.name(f"m_dur_{kind}_why", f"'05_מחמ'!$B${r + 9}")
+    ctx.name(f"r_dur_{kind}_why", f"'05_מחמ'!$B${r + 9}")
     # סימולציה: מדדים במח״מ הידני (אינטרפולציה על עמודת המח״מ)
     put(ws, f"E{r}", "סימולציה — מדדים במח״מ שבשימוש", BOLD)
     hdr(ws, r + 1, ["", "מח״מ", "תשואה 12 ח׳ %", "Breakeven (נ״ב)", "P&L +תרחיש %", "P&L −תרחיש %"], 5)
-    for j, (lab, ref) in enumerate((("המודל", f"B{r + 6}"), ("בשימוש", f"B{r + 8}"))):
+    for j, (lab, ref) in enumerate((("כלל הציון", f"B{r + 6}"), ("בשימוש", f"B{r + 8}"))):
         rr = r + 2 + j
         put(ws, f"E{rr}", lab, BOLD, None, None, BOX); put(ws, f"F{rr}", f'=IF({ref}="","",{ref})', BASE, None, "0.00", BOX)
         put(ws, f"K{rr}", f'=IF(F{rr}="","",MAX(1,MIN(11,IFERROR(MATCH(F{rr},{T["dur"]},1),1))))', GREY, None, "0")
@@ -958,6 +960,210 @@ def sheet_boi(ctx: Ctx):
     for col, w in zip("ABCDEFGHIJ", (34, 12, 12, 40, 10, 12, 12, 12, 12, 12)): ws.column_dimensions[col].width = w
 
 
+# ---------------------------------------------------------------- 13_אופטימיזציה
+OPT = {"res": 5, "cmp": 27, "front": 48, "sc": 60, "ln": 75, "lr": 90, "cand": 105}     # שורות הכותרת של הבלוקים בגיליון 13
+FLOORS = [0, 0.5, 1, 1.5, 2, 2.5, 3]
+
+
+def sheet_optimize(ctx: Ctx):
+    """הפוזיציה המומלצת: סריקת תיקים שלמים (משקל צמוד × רגל שקלית × רגל צמודה) על פני 9 תרחישים עם הסתברויות. מקביל ל-gov_decide.optimize."""
+    G = gov_decide; NS, NL, GRID, MIX = G.NSC, G.NLEG, G.GRID, G.MIXES; NC = 5 * NL * NL
+    ws = ctx.sheet("13_אופטימיזציה"); ws.sheet_properties.tabColor = "00B050"
+    put(ws, "A1", "אופטימיזציה — הפוזיציה הטובה ביותר לתיק ממשלתי טהור, בהתחשב בכל הנתונים", TITLE)
+    put(ws, "A2", "כל תיק = משקל צמוד × רגל שקלית × רגל צמודה (טווח בודד או חצי-חצי בין שני טווחים). לכל תיק מחושבת תשואת 12 חודשים בכל תרחיש. נבחר: עומד בתקציב הסיכון → תשואה צפויה מרבית → בין הקרובים (סף אדישות) הבטוח ביותר; התיק של אתמול נשאר אם הוא בתוך הסף.", NOTE)
+    put(ws, "A3", "ההסתברויות = הסתברויות הבסיס שלך (01) + תיקוני האותות: תמחור (אחוזון הריאלי הארוך), ישראל–ארה״ב, ריבית (שוק מול בנק ישראל וכלכלנים), סיכון פיסקלי, פיזור התחזיות. כל העוצמות והתרחישים ב-01.", NOTE)
+    rS, rN, rR, rC = OPT["sc"], OPT["ln"], OPT["lr"], OPT["cand"]
+    c0, c1 = rC + 1, rC + NC                                                        # שורות המועמדים
+    scol = [L(7 + i) for i in range(NS)]                                            # G..O — עמודות התרחישים בטבלאות הרגליים והמועמדים
+    def crng(col): return f"${col}${c0}:${col}${c1}"
+    # ---------- אותות (מימין לטבלת התרחישים)
+    sg = ctx.frames["נתוני_אותות"]; has_sig = len(sg.columns) and "val" in sg.columns
+    def sig(key):
+        if not has_sig: return '""'
+        k, v = dcol(ctx, "נתוני_אותות", "key"), dcol(ctx, "נתוני_אותות", "val"); ix = f'INDEX({v},MATCH("{key}",{k},0))'
+        return f'IFERROR(IF({ix}="","",{ix}),"")'
+    y1 = "INDEX(cur_nom,MATCH(1,tenors,0))"
+    hdr(ws, rS, ["אות", "ערך", "עוצמה (−1..1)", "תיקון (נק׳ אחוז)", "פירוש"], 12)
+    sig_rows = [("אחוזון הריאלי ל-10 שנים מול ההיסטוריה", "=" + sig("real10_pct"), '=IF(M{r}="","",(M{r}-50)/50)', '=IF(N{r}="",0,N{r}*p_opt_k_val)', "גבוה = תשואה ריאלית גבוהה היסטורית → יותר הסתברות לירידת תשואות (תרחישים 2, 7) על חשבון עלייה (3, 6)"),
+                ("אחוזון פער ישראל–ארה״ב 10 שנים", "=" + sig("ilus10_pct"), '=IF(M{r}="","",(M{r}-50)/50)', '=IF(N{r}="",0,N{r}*p_opt_k_us)', "נמוך = ישראל יקרה מול ארה״ב → יותר הסתברות לפרמיה פיסקלית (6) על חשבון ירידת פרמיה (7)"),
+                ("ריבית: מגולמת בשוק פחות התחזית (נ״ב)", '=IF(OR(M{a}="",M{b}=""),"",(M{c}-M{b})*100)', '=IF(M{r}="","",MAX(-1,MIN(1,M{r}/50)))', '=IF(N{r}="",0,N{r}*p_opt_k_policy)', "חיובי = השוק מגלם ריבית גבוהה מהתחזית → יותר הסתברות להורדות ריבית (5) על חשבון עלייה מקבילה (3)"),
+                ("סיכון פיסקלי/פוליטי (01)", '=IF(p_fiscal_risk="","",p_fiscal_risk)', '=IF(M{r}="","",M{r}-2)', '=IF(N{r}="",0,N{r}*p_opt_k_fiscal)', "3 = גבוה → יותר הסתברות לפרמיה פיסקלית (6) על חשבון ירידת פרמיה (7); 1 = להפך"),
+                ("פיזור תחזיות הריבית (נ״ב)", '=IF(OR({mn}="",{mx}=""),"",({mx}-{mn})*100)', '=IF(M{r}="","",MIN(1,M{r}/50))', '=IF(N{r}="",0,N{r}*p_opt_k_disp)', "פיזור רחב → פחות 'ללא שינוי' (1), יותר לשני הכיוונים (3, 5)")]
+    ra, rb, rc, ri = rS + 7, rS + 8, rS + 9, rS + 10                               # ריבית נוכחית, תחזית בשימוש, מגולמת, אינפלציית בסיס
+    for i, (lab, val, strength, adj, note) in enumerate(sig_rows):
+        r = rS + 1 + i; f = dict(r=r, a=ra, b=rb, c=rc, mn=sig("rate_fc_min"), mx=sig("rate_fc_max"))
+        put(ws, f"L{r}", lab, BOLD, None, None, BOX); put(ws, f"M{r}", val.format(**f) if "{" in val else val, GREEN, None, "0.0", BOX)
+        put(ws, f"N{r}", strength.format(**f), BASE, None, "0.00", BOX); put(ws, f"O{r}", adj.format(**f), BASE, None, "+0.0%;-0.0%;0.0%", BOX); put(ws, f"P{r}", note, NOTE)
+    dV, dU, dP, dF, dD = (f"$O${rS + k}" for k in range(1, 6))                      # תיקוני: תמחור, ארה"ב, ריבית, פיסקלי, פיזור
+    for r, lab, f, fmt in ((ra, "ריבית בנק ישראל הנוכחית %", "=" + sig("rate_now"), "0.00"), (rb, "תחזית ריבית בעוד שנה — בשימוש %", f'=IF(p_user_rate_fc="",{sig("rate_fc_mean")},p_user_rate_fc)', "0.00"),
+                           (rc, "ריבית מגולמת בשוק בעוד שנה %", f'=IF(M{ra}="","",2*{y1}-M{ra})', "0.00"), (ri, "אינפלציית הבסיס לתרחישים %", f'=IF(infl_fc="",INDEX(cur_bei,MATCH(1,tenors,0)),infl_fc)', "0.00")):
+        put(ws, f"L{r}", lab, BASE, None, None, BOX); put(ws, f"M{r}", f, GREEN if r != rc else BASE, None, fmt, BOX)
+    put(ws, f"P{rb}", "ריק ב-01 = ממוצע חטיבת המחקר ובתי ההשקעות (נתוני_אותות, נתוני_כלכלנים)", NOTE); put(ws, f"P{rc}", "2 × תשואת שנה − הריבית הנוכחית (מסלול ליניארי)", NOTE)
+    put(ws, f"P{ri}", "מקור התחזית שנבחר ב-01 (04); אין תחזית → הגלומה לשנה", NOTE)
+    for k, (lab, key, fmt) in enumerate((("ריאלי 10 שנים: היום %", "real10_now", "0.00"), ("חציון היסטורי %", "real10_med", "0.00"), ("טווח היסטורי: מינימום %", "real10_min", "0.00"), ("מקסימום %", "real10_max", "0.00"),
+                                         ("חודשי היסטוריה בחלון", "hist_months", "0"), ("פער ישראל–ארה״ב 10 שנים (נ״ב)", "ilus10_now", "0"), ("חציון היסטורי של הפער (נ״ב)", "ilus10_med", "0"), ("מספר תחזיות הריבית", "rate_fc_n", "0"))):
+        r = rS + 1 + k; put(ws, f"Q{r}", lab, GREY, None, None, BOX); put(ws, f"R{r}", "=" + sig(key), GREY, None, fmt, BOX)
+    put(ws, f"Q{rS}", "רקע לאותות (נתוני_אותות)", BOLD)
+    infl0 = f"$M${ri}"
+    # ---------- תרחישים והסתברויות
+    put(ws, f"A{rS - 1}", "תרחישים והסתברויות (הגדרות התרחישים והסתברויות הבסיס — 01, קבוצת 'תרחישי אופטימיזציה')", BOLD)
+    hdr(ws, rS, ["תרחיש", "ריאלי קצר — 2 שנים (נ״ב)", "ריאלי בינוני — 5 שנים", "ריאלי ארוך — 10 שנים", "ציפיות אינפלציה (נ״ב)", "אינפלציה בפועל מול התחזית (נק׳)", "הסתברות בסיס", "תיקון האותות", "אחרי רצפה 1%", "הסתברות סופית"])
+    adj = {1: f"-{dD}", 2: f"{dV}/2", 3: f"-{dV}/2-{dP}+{dD}/2", 4: "0", 5: f"{dP}+{dD}/2", 6: f"-{dV}/2-{dU}+{dF}", 7: f"{dV}/2+{dU}-{dF}", 8: "0", 9: "0"}
+    for i in range(1, NS + 1):
+        r = rS + i; put(ws, f"A{r}", f"{i}. {G.SC_NAMES[i - 1]}", BOLD, None, None, BOX)
+        for col, key, fmt in (("B", "rs", "0"), ("C", "rb", "0"), ("D", "rl", "0"), ("E", "bei", "0"), ("F", "infl", "0.0"), ("G", None, "0.0%")):
+            put(ws, f"{col}{r}", f"=p_sc{i}_{key}" if key else f"=p_prob_{i}", GREEN, None, fmt, BOX)
+        put(ws, f"H{r}", f"=IF(p_opt_signals_on=1,{adj[i]},0)", BASE, None, "+0.0%;-0.0%;0.0%", BOX)
+        put(ws, f"I{r}", f"=MAX({G.PROB_FLOOR},G{r}+H{r})", BASE, None, "0.0%", BOX); put(ws, f"J{r}", f"=I{r}/SUM($I${rS + 1}:$I${rS + NS})", BOLD, GRN, "0.0%", BOX)
+    rT = rS + NS + 1
+    put(ws, f"A{rT}", "סה״כ", BOLD); put(ws, f"G{rT}", f"=SUM(G{rS + 1}:G{rS + NS})", BOLD, None, "0.0%"); put(ws, f"J{rT}", f"=SUM(J{rS + 1}:J{rS + NS})", BOLD, None, "0.0%")
+    ctx.name("o_probs", f"'13_אופטימיזציה'!$J${rS + 1}:$J${rS + NS}")
+    rP = rN - 2                                                                     # ההסתברויות בשורה (לסכימה מול עמודות התרחישים)
+    put(ws, f"A{rP}", "הסתברות סופית לפי תרחיש", GREY)
+    for i in range(NS): put(ws, f"{scol[i]}{rP}", f"=$J${rS + 1 + i}", GREY, None, "0.0%")
+    prow = f"${scol[0]}${rP}:${scol[-1]}${rP}"
+    # ---------- טבלאות הרגליים
+    def legs(r0: int, kind: str):
+        ycol, rcol = ("cur_nom", "cur_roll_n") if kind == "nominal" else ("cur_real", "cur_roll_r")
+        put(ws, f"A{r0 - 1}", ("רגליים שקליות" if kind == "nominal" else "רגליים צמודות (כולל אינפלציה בפועל)") + " — תשואת 12 חודשים % לפי תרחיש: תשואה + roll − מח״מ בסוף האופק × שינוי התשואה + קמירות", BOLD)
+        hdr(ws, r0, ["רגל (טווח בשנים)", "טווח", "תשואה %", "Roll (נ״ב)", "מח״מ", "מח״מ בסוף האופק"] + [f"תרחיש {i}" for i in range(1, NS + 1)])
+        for k, tn in enumerate(GRID):
+            r = r0 + 1 + k
+            put(ws, f"A{r}", f"{tn:g}", BOLD, None, None, BOX); put(ws, f"B{r}", tn, BASE, None, "0", BOX)
+            put(ws, f"C{r}", f"=INDEX({ycol},MATCH(B{r},tenors,0))", GREEN, None, "0.00", BOX); put(ws, f"D{r}", f"=INDEX({rcol},MATCH(B{r},tenors,0))", GREEN, None, "0.0", BOX)
+            put(ws, f"E{r}", f"=IF(ABS(C{r})<0.000001,B{r},(1-(1+C{r}/100)^-B{r})/(C{r}/100))", BASE, None, "0.00", BOX)
+            put(ws, f"F{r}", f"=IF(B{r}<=1,0,IF(ABS(C{r})<0.000001,B{r}-1,(1-(1+C{r}/100)^-(B{r}-1))/(C{r}/100)))", BASE, None, "0.00", BOX)
+            for i in range(1, NS + 1):
+                q = rS + i; S_, B_, L_ = f"$B${q}", f"$C${q}", f"$D${q}"
+                dy = f"IF($B{r}<=2,{S_},IF($B{r}<=5,{S_}+({B_}-{S_})*($B{r}-2)/3,IF($B{r}<=10,{B_}+({L_}-{B_})*($B{r}-5)/5,{L_})))" + (f"+$E${q}" if kind == "nominal" else "")
+                f = f"=$C{r}+$E{r}*$D{r}/100-$F{r}*({dy})/100+0.5*$F{r}*($F{r}+1)*({dy})^2/1000000" + (f"+{infl0}+$F${q}" if kind == "real" else "")
+                put(ws, f"{scol[i - 1]}{r}", f, BASE, None, "0.00", BOX)
+        for k, (a, b) in enumerate(MIX):
+            r = r0 + 1 + len(GRID) + k; ra_, rb_ = r0 + 1 + GRID.index(a), r0 + 1 + GRID.index(b)
+            put(ws, f"A{r}", f"{a:g}+{b:g}", BOLD, None, None, BOX); put(ws, f"B{r}", "", BASE, None, None, BOX)
+            for col in ["E"] + scol: put(ws, f"{col}{r}", f"=({col}{ra_}+{col}{rb_})/2", BASE, None, "0.00", BOX)
+    legs(rN, "nominal"); legs(rR, "real")
+    labN, labR = f"$A${rN + 1}:$A${rN + NL}", f"$A${rR + 1}:$A${rR + NL}"
+    # ---------- משבצות משקל הצמוד + אתמול
+    put(ws, f"Q{rN - 1}", "משקלי הצמוד הנבחנים (עוגן כלל ה-BEI ± הטווח)", BOLD)
+    for k in range(5):
+        put(ws, f"Q{rN + 1 + k}", f"משבצת {k + 1}", BASE, None, None, BOX); put(ws, f"R{rN + 1 + k}", f"=MAX(p_linked_min,MIN(p_linked_max,r_linked+({k - 2})*p_opt_w_band/2))", BASE, None, "0.0%", BOX)
+    dh = ctx.frames["נתוני_החלטות"]; hist_ok = len(dh.columns) and all(c in dh.columns for c in ("linked_weight", "opt_leg_n", "opt_leg_r"))
+    def yest(col): return f'=IFERROR(INDEX({dcol(ctx, "נתוני_החלטות", col)},MATCH(d_asof-1,{dcol(ctx, "נתוני_החלטות", "date")},1)),"")' if hist_ok else '=""'
+    rY = rN + 8
+    put(ws, f"Q{rY}", "התיק של אתמול (נתוני_החלטות)", BOLD)
+    for k, (lab, col, fmt) in enumerate((("משקל צמוד", "linked_weight", "0.0%"), ("רגל שקלית (מס׳)", "opt_leg_n", "0"), ("רגל צמודה (מס׳)", "opt_leg_r", "0"))):
+        put(ws, f"Q{rY + 1 + k}", lab, BASE, None, None, BOX); put(ws, f"R{rY + 1 + k}", yest(col), GREEN, None, fmt, BOX)
+    pw, pn, pr = f"$R${rY + 1}", f"$R${rY + 2}", f"$R${rY + 3}"
+    # ---------- המועמדים
+    put(ws, f"A{rC - 1}", f"כל התיקים הנבחנים ({NC}): 5 משקלים × {NL} רגליים שקליות × {NL} רגליים צמודות", BOLD)
+    hdr(ws, rC, ["#", "משקל צמוד", "רגל שקלית", "רגל צמודה", "מח״מ שקלי", "מח״מ צמוד"] + [f"תרחיש {i}" for i in range(1, NS + 1)] +
+        ["תשואה צפויה %", "בתרחיש הגרוע %", "מח״מ מותר", "עומד ברצפה", "צפויה אם עומד", "בתוך הסף", "ציון בחירה", "אתמול"] + [f"רצפה {f:g}%" for f in FLOORS])
+    cP, cQ, cR, cS, cT, cU, cV, cW = "P", "Q", "R", "S", "T", "U", "V", "W"; cF = [L(24 + k) for k in range(len(FLOORS))]      # X..AD
+    hE, hN, hD, hPrev, hPick = "$T$6", "$T$7", "$T$8", "$T$9", "$T$10"              # עזר: emax, מספר העומדים, מספר במח״מ מותר, אינדקס אתמול, האינדקס הנבחר
+    n = 0
+    for k in range(5):
+        for i in range(1, NL + 1):
+            for j in range(1, NL + 1):
+                r = c0 + n; n += 1; rn, rr = rN + i, rR + j
+                ws.cell(r, 1, n); put(ws, f"B{r}", f"=$R${rN + 1 + k}", BASE, None, "0.0%"); ws.cell(r, 3, i); ws.cell(r, 4, j)
+                put(ws, f"E{r}", f"=$E${rn}", BASE, None, "0.00"); put(ws, f"F{r}", f"=$E${rr}", BASE, None, "0.00")
+                for col in scol: put(ws, f"{col}{r}", f"=$B{r}*{col}${rr}+(1-$B{r})*{col}${rn}", BASE, None, "0.00")
+                put(ws, f"{cP}{r}", f"=SUMPRODUCT({prow},{scol[0]}{r}:{scol[-1]}{r})", BASE, None, "0.00"); put(ws, f"{cQ}{r}", f"=MIN({scol[0]}{r}:{scol[-1]}{r})", BASE, None, "0.00")
+                put(ws, f"{cR}{r}", f"=IF(AND(E{r}>=p_dur_min,E{r}<=p_dur_max,F{r}>=p_dur_min,F{r}<=p_dur_max),1,0)", GREY)
+                put(ws, f"{cS}{r}", f"=IF(AND({cR}{r}=1,{cQ}{r}>=p_risk_floor_pct),1,0)", GREY); put(ws, f"{cT}{r}", f"=IF({cS}{r}=1,{cP}{r},-999)", GREY, None, "0.00")
+                put(ws, f"{cU}{r}", f"=IF(AND({cS}{r}=1,{cP}{r}>={hE}-p_opt_tol_bp/100),1,0)", GREY)
+                put(ws, f"{cV}{r}", f"=IF({hN}>0,IF({cU}{r}=1,{cQ}{r},-999),IF({cR}{r}=1,{cQ}{r},-999))", GREY, None, "0.00")
+                put(ws, f"{cW}{r}", f'=IF({pw}="",0,IF(AND(ABS(B{r}-{pw})<0.0005,C{r}={pn},D{r}={pr}),1,0))', GREY)
+                for kf, col in enumerate(cF): put(ws, f"{col}{r}", f"=IF(AND({cR}{r}=1,{cQ}{r}>={FLOORS[kf]}),{cP}{r},-999)", GREY, None, "0.00")
+    # ---------- עזר לבחירה
+    put(ws, "S5", "עזר לבחירה", GREY)
+    for cell, lab, f in (("6", "תשואה צפויה מרבית בין העומדים ברצפה", f"=MAX({crng(cT)})"), ("7", "מספר התיקים שעומדים ברצפה", f"=SUM({crng(cS)})"), ("8", "מספר התיקים במח״מ מותר", f"=SUM({crng(cR)})"),
+                         ("9", "אינדקס התיק של אתמול", f'=IFERROR(MATCH(1,{crng(cW)},0),"")'),
+                         ("10", "האינדקס הנבחר", f'=IF({hD}=0,"",IF(AND({hPrev}<>"",{hN}>0,IFERROR(INDEX({crng(cU)},{hPrev}),0)=1),{hPrev},MATCH(MAX({crng(cV)}),{crng(cV)},0)))')):
+        put(ws, f"S{cell}", lab, GREY); put(ws, f"T{cell}", f, GREY, None, "0.00")
+    pick = hPick
+    def at(col): return f'IF({pick}="","",INDEX({crng(col)},{pick}))'
+    # ---------- התוצאה
+    rr0 = OPT["res"]; hdr(ws, rr0, ["הפוזיציה המומלצת", "ערך", "הסבר"])
+    res = [("משקל צמוד", "=" + at("B"), "מתוך המשבצות סביב עוגן כלל ה-BEI (04)", "0%"),
+           ("רגל שקלית — טווח בשנים", f'=IF({pick}="","",INDEX({labN},INDEX({crng("C")},{pick})))', "טווח בודד, או חצי-חצי בין שני טווחים (למשל 4+7)", None),
+           ("מח״מ שקלי", "=" + at("E"), "מזין את 06 (סינתטי/בולט) לבחירת הסדרות", "0.00"),
+           ("רגל צמודה — טווח בשנים", f'=IF({pick}="","",INDEX({labR},INDEX({crng("D")},{pick})))', "", None),
+           ("מח״מ צמוד", "=" + at("F"), "", "0.00"),
+           ("מח״מ משוקלל", f'=IF(B{rr0 + 1}="","",B{rr0 + 1}*B{rr0 + 5}+(1-B{rr0 + 1})*B{rr0 + 3})', "משקל צמוד × מח״מ צמוד + משקל שקלי × מח״מ שקלי", "0.00"),
+           ("תשואה צפויה ל-12 חודשים %", "=" + at(cP), "ממוצע התרחישים, משוקלל בהסתברויות הסופיות", "0.00"),
+           ("תשואה בתרחיש הגרוע %", "=" + at(cQ), "מול תקציב הסיכון (01): רצפה של התשואה בתרחיש הגרוע", "0.00"),
+           ("סטטוס", f'=IF({hN}>0,"תקין",IF({hD}>0,"אין תיק שעומד בתקציב הסיכון — נבחר הבטוח ביותר","אין תיק במגבלות המח״מ"))', "", None),
+           ("נשאר התיק של אתמול?", f'=IF(AND({pick}<>"",{hPrev}<>"",{pick}={hPrev},{hN}>0),"כן","לא")', "התיק של אתמול נשאר כל עוד הוא בתוך סף האדישות מהטוב ביותר", None)]
+    for i, (a, b, c, f) in enumerate(res):
+        r = rr0 + 1 + i; put(ws, f"A{r}", a, BOLD, None, None, BOX); put(ws, f"B{r}", b, BOLD, GRN if i in (0, 2, 4, 5) else None, f, BOX); put(ws, f"C{r}", c, NOTE)
+    rw = rr0 + 11
+    put(ws, f"A{rw}", "למה", BOLD)
+    put(ws, f"B{rw}", f'=IF({pick}="","אין תיק במגבלות המח״מ",{hN}&" מתוך {NC} תיקים עומדים ברצפה של "&TEXT(p_risk_floor_pct,"0.0#")&"% בתרחיש הגרוע; נבחר: תשואה צפויה "&TEXT(B{rr0 + 7},"0.00")&"%, בתרחיש הגרוע "&TEXT(B{rr0 + 8},"0.00")&"%"&IF(B{rr0 + 10}="כן","; נשאר התיק של אתמול (בתוך סף האדישות)","")&IF(B{rr0 + 9}="תקין","","; "&B{rr0 + 9}))', BASE)
+    put(ws, f"A{rw + 1}", "האותות", BOLD)
+    put(ws, f"B{rw + 1}", f'=IF(p_opt_signals_on<>1,"האותות כבויים — הסתברויות הבסיס בלבד","תמחור "&TEXT({dV},"+0.0%;-0.0%;0%")&" | ישראל–ארה״ב "&TEXT({dU},"+0.0%;-0.0%;0%")&" | ריבית "&TEXT({dP},"+0.0%;-0.0%;0%")&" | פיסקלי "&TEXT({dF},"+0.0%;-0.0%;0%")&" | פיזור "&TEXT({dD},"+0.0%;-0.0%;0%"))', BASE)
+    for nm, row in (("o_linked", 1), ("o_lab_nominal", 2), ("o_dur_nominal", 3), ("o_lab_real", 4), ("o_dur_real", 5), ("o_dur_weighted", 6), ("o_exp", 7), ("o_worst", 8), ("o_status", 9), ("o_kept", 10), ("o_why", 11), ("o_signals", 12)):
+        ctx.name(nm, f"'13_אופטימיזציה'!$B${rr0 + row}")
+    ctx.name("o_pick", f"'13_אופטימיזציה'!{hPick}")
+    # ---------- המודל הסופי (מזין את כל שאר הקובץ)
+    rm = rr0 + 14; hdr(ws, rm, ["המודל הסופי — מזין את 05, 06, 09 והדשבורד", "ערך", "הסבר"])
+    on = f'AND(p_opt_on=1,B{rr0 + 1}<>"")'
+    fin = [("משקל צמוד — המודל", f"=IF({on},B{rr0 + 1},r_linked)", "אופטימיזציה פעילה (01) → התוצאה למעלה; אחרת כלל ה-BEI (04)", "0%", "m_linked"),
+           ("מח״מ שקלי — המודל", f"=IF({on},B{rr0 + 3},r_dur_nominal)", "אחרת כלל הציון (05)", "0.00", "m_dur_nominal"),
+           ("מח״מ צמוד — המודל", f"=IF({on},B{rr0 + 5},r_dur_real)", "אחרת כלל הציון (05)", "0.00", "m_dur_real"),
+           ("למה — משקל", f'=IF({on},"אופטימיזציה: "&B{rw}&" | עוגן: "&r_linked_why,r_linked_why)', "", None, "m_linked_why"),
+           ("למה — מח״מ שקלי", f'=IF({on},"אופטימיזציה: רגל "&B{rr0 + 2}&" שנים (כלל הציון: "&IF(r_dur_nominal="","—",TEXT(r_dur_nominal,"0.0"))&")",r_dur_nominal_why)', "", None, "m_dur_nominal_why"),
+           ("למה — מח״מ צמוד", f'=IF({on},"אופטימיזציה: רגל "&B{rr0 + 4}&" שנים (כלל הציון: "&IF(r_dur_real="","—",TEXT(r_dur_real,"0.0"))&")",r_dur_real_why)', "", None, "m_dur_real_why")]
+    for i, (a, b, c, f, nm) in enumerate(fin):
+        r = rm + 1 + i; put(ws, f"A{r}", a, BOLD if i < 3 else BASE, None, None, BOX); put(ws, f"B{r}", b, BOLD if i < 3 else BASE, GRN if i < 3 else None, f, BOX); put(ws, f"C{r}", c, NOTE)
+        ctx.name(nm, f"'13_אופטימיזציה'!$B${r}")
+    # ---------- השוואת תיקים לפי תרחיש
+    rc0 = OPT["cmp"]; put(ws, f"A{rc0 - 1}", "תשואת 12 חודשים לפי תרחיש: התיק המומלץ, תיק הכללים הנפרדים, והתיק בשימוש (הסימולציה שלך ב-01 אם מולאה)", BOLD)
+    hdr(ws, rc0, ["תרחיש", "הסתברות", "התיק המומלץ %", "תיק הכללים %", "התיק בשימוש %"])
+    durN, durR = f"$E${rN + 1}:$E${rN + len(GRID)}", f"$E${rR + 1}:$E${rR + len(GRID)}"            # רגליים בודדות בלבד — אינטרפולציה לפי מח״מ
+    rp = rc0 + NS + 3                                                                # שורות הפרמטרים של התיקים
+    ports = {"D": ("r_linked", "r_dur_nominal", "r_dur_real"), "E": ("u_linked", "u_dur_nominal", "u_dur_real")}
+    for col, (w_, dn_, dr_) in ports.items():
+        put(ws, f"{col}{rp}", f'=IF({w_}="","",{w_})', GREEN, None, "0%", BOX); put(ws, f"{col}{rp + 1}", f'=IF({dn_}="","",{dn_})', GREEN, None, "0.00", BOX); put(ws, f"{col}{rp + 2}", f'=IF({dr_}="","",{dr_})', GREEN, None, "0.00", BOX)
+        for k, (drow, rng) in enumerate(((rp + 1, durN), (rp + 2, durR))):           # k=0 שקלי, k=1 צמוד: אינדקס תחתון ושבר
+            put(ws, f"{col}{rp + 3 + 2 * k}", f'=IF({col}{drow}="","",MAX(1,MIN({len(GRID) - 1},IFERROR(MATCH({col}{drow},{rng},1),1))))', GREY, None, "0")
+            put(ws, f"{col}{rp + 4 + 2 * k}", f'=IF({col}{drow}="","",MAX(0,MIN(1,({col}{drow}-INDEX({rng},{col}{rp + 3 + 2 * k}))/(INDEX({rng},{col}{rp + 3 + 2 * k}+1)-INDEX({rng},{col}{rp + 3 + 2 * k})))))', GREY, None, "0.000")
+    put(ws, f"C{rp}", "=o_linked", GREEN, None, "0%", BOX); put(ws, f"C{rp + 1}", "=o_dur_nominal", GREEN, None, "0.00", BOX); put(ws, f"C{rp + 2}", "=o_dur_real", GREEN, None, "0.00", BOX)
+    for k, lab in enumerate(("משקל צמוד", "מח״מ שקלי", "מח״מ צמוד", "עזר: אינדקס שקלי", "עזר: שבר שקלי", "עזר: אינדקס צמוד", "עזר: שבר צמוד")):
+        put(ws, f"A{rp + k}", lab, BOLD if k < 3 else GREY, None, None, BOX if k < 3 else None)
+    for i in range(1, NS + 1):
+        r = rc0 + i; sc = scol[i - 1]
+        put(ws, f"A{r}", f"=A{rS + i}", GREEN, None, None, BOX); put(ws, f"B{r}", f"=J{rS + i}", GREEN, None, "0.0%", BOX)
+        put(ws, f"C{r}", f'=IF({pick}="","",INDEX({crng(sc)},{pick}))', BASE, None, "0.00", BOX)
+        for col in ports:
+            def ip(r0, kx):   # ערך הרגל בתרחיש באינטרפולציה: kx=0 שקלי, 1 צמוד
+                rng = f"${sc}${r0 + 1}:${sc}${r0 + len(GRID)}"; ix, fr = f"{col}${rp + 3 + 2 * kx}", f"{col}${rp + 4 + 2 * kx}"
+                return f"(INDEX({rng},{ix})+(INDEX({rng},{ix}+1)-INDEX({rng},{ix}))*{fr})"
+            put(ws, f"{col}{r}", f'=IF(OR({col}${rp}="",{col}${rp + 1}="",{col}${rp + 2}=""),"",{col}${rp}*{ip(rR, 1)}+(1-{col}${rp})*{ip(rN, 0)})', BASE, None, "0.00", BOX)
+    r = rc0 + NS + 1; put(ws, f"A{r}", "תשואה צפויה (משוקלל הסתברויות)", BOLD, SUB, None, BOX); put(ws, f"A{r + 1}", "בתרחיש הגרוע", BOLD, SUB, None, BOX)
+    for col in "CDE":
+        rng = f"{col}{rc0 + 1}:{col}{rc0 + NS}"
+        put(ws, f"{col}{r}", f'=IF({col}{rc0 + 1}="","",SUMPRODUCT($B${rc0 + 1}:$B${rc0 + NS},{rng}))', BOLD, SUB, "0.00", BOX); put(ws, f"{col}{r + 1}", f'=IF({col}{rc0 + 1}="","",MIN({rng}))', BOLD, SUB, "0.00", BOX)
+    put(ws, f"F{rc0 + 1}", "תיק הכללים והתיק בשימוש מוערכים באינטרפולציה לפי מח״מ על הרגליים הבודדות (העקום); מבנה סינתטי בפועל (06) עשוי לסטות מעט.", NOTE)
+    for nm, col in (("o_cmp_exp_rule", "D"), ("o_cmp_exp_use", "E"), ("o_cmp_exp_opt", "C")): ctx.name(nm, f"'13_אופטימיזציה'!${col}${r}")
+    ctx.name("o_cmp_worst_use", f"'13_אופטימיזציה'!$E${r + 1}")
+    # ---------- חזית: הטוב ביותר לכל רצפה
+    rf = OPT["front"]; put(ws, f"A{rf - 1}", "מחיר תקציב הסיכון — התיק עם התשואה הצפויה הגבוהה ביותר לכל רצפה (בלי סף האדישות)", BOLD)
+    hdr(ws, rf, ["רצפה: תשואה מינימלית בתרחיש הגרוע %", "משקל צמוד", "רגל שקלית", "רגל צמודה", "מח״מ משוקלל", "תשואה צפויה %", "בתרחיש הגרוע %"])
+    for k, fl in enumerate(FLOORS):
+        r = rf + 1 + k; ix = f"$I{r}"; col = cF[k]
+        put(ws, f"I{r}", f'=IF(MAX({crng(col)})=-999,"",MATCH(MAX({crng(col)}),{crng(col)},0))', GREY)
+        def g(c): return f'=IF({ix}="","—",INDEX({crng(c)},{ix}))'
+        put(ws, f"A{r}", fl, BOLD, None, "0.0", BOX); put(ws, f"B{r}", g("B"), BASE, None, "0%", BOX)
+        put(ws, f"C{r}", f'=IF({ix}="","—",INDEX({labN},INDEX({crng("C")},{ix})))', BASE, None, None, BOX); put(ws, f"D{r}", f'=IF({ix}="","—",INDEX({labR},INDEX({crng("D")},{ix})))', BASE, None, None, BOX)
+        put(ws, f"E{r}", f'=IF({ix}="","—",INDEX({crng("B")},{ix})*INDEX({crng("F")},{ix})+(1-INDEX({crng("B")},{ix}))*INDEX({crng("E")},{ix}))', BASE, None, "0.00", BOX)
+        put(ws, f"F{r}", g(cP), BASE, None, "0.00", BOX); put(ws, f"G{r}", g(cQ), BASE, None, "0.00", BOX)
+    for col, w in zip("ABCDEFGHIJKLMNOP", (40, 14, 16, 16, 16, 16, 12, 12, 12, 12, 4, 40, 12, 12, 12, 60)): ws.column_dimensions[col].width = w
+    ws.column_dimensions["Q"].width = 30; ws.column_dimensions["S"].width = 34
+    ws.freeze_panes = "A5"
+
+
 # ---------------------------------------------------------------- 00_דשבורד, 12_מדריך
 def sheet_dashboard(ctx: Ctx):
     ws = ctx.sheet("00_דשבורד")
@@ -969,7 +1175,11 @@ def sheet_dashboard(ctx: Ctx):
     def y(col):
         if not hist_ok or col not in ctx.frames["נתוני_החלטות"].columns: return '""'
         return f'IFERROR(INDEX({dcol(ctx, "נתוני_החלטות", col)},MATCH(d_asof-1,{dcol(ctx, "נתוני_החלטות", "date")},1)),"")'
-    rows = [("שקלי / צמוד", '=IF(m_linked="","",TEXT(m_linked,"0%")&" צמוד / "&TEXT(1-m_linked,"0%")&" שקלי")', "=m_linked_why", f'=IF({y("linked_weight")}="","",TEXT({y("linked_weight")},"0%")&" צמוד")',
+    rows = [("הפוזיציה המומלצת", '=IF(m_dur_weighted="","",TEXT(m_linked,"0%")&" צמוד במח״מ "&TEXT(m_dur_real,"0.0")&" + "&TEXT(1-m_linked,"0%")&" שקלי במח״מ "&TEXT(m_dur_nominal,"0.0")&" | משוקלל "&TEXT(m_dur_weighted,"0.0")&IF(o_exp="",""," | צפוי "&TEXT(o_exp,"0.0")&"% לשנה, בתרחיש הגרוע "&TEXT(o_worst,"0.0")&"%"))',
+             '=IF(p_opt_on=1,"אופטימיזציה (13): "&o_why&" | אותות: "&o_signals,"האופטימיזציה כבויה (01) — לפי הכללים הנפרדים")',
+             f'=IF({y("opt_exp")}="","","צפוי "&TEXT({y("opt_exp")},"0.0")&"% | גרוע "&TEXT({y("opt_worst")},"0.0")&"%")',
+             '=IF(cur_mv=0,"אין תיק","התיק הנוכחי: "&TEXT(cur_w_linked,"0%")&" צמוד, מח״מ "&TEXT(cur_dur,"0.0"))'),
+            ("שקלי / צמוד", '=IF(m_linked="","",TEXT(m_linked,"0%")&" צמוד / "&TEXT(1-m_linked,"0%")&" שקלי")', "=m_linked_why", f'=IF({y("linked_weight")}="","",TEXT({y("linked_weight")},"0%")&" צמוד")',
              '=IF(cur_mv=0,"אין תיק",TEXT(cur_w_linked,"0%")&" צמוד בתיק → "&IF(cur_w_linked<m_linked-0.05,"להגדיל צמוד",IF(cur_w_linked>m_linked+0.05,"להקטין צמוד","קרוב למודל")))'),
             ("מח״מ", '=IF(m_dur_weighted="","",,"שקלי "&TEXT(m_dur_nominal,"0.0")&" | צמוד "&TEXT(m_dur_real,"0.0")&" | משוקלל "&TEXT(m_dur_weighted,"0.0"))', '=m_dur_nominal_why&" | צמוד: "&m_dur_real_why',
              f'=IF({y("dur_weighted")}="","","משוקלל "&TEXT({y("dur_weighted")},"0.0"))', '=IF(cur_mv=0,"אין תיק","מח״מ תיק "&TEXT(cur_dur,"0.0")&" → "&IF(cur_dur<m_dur_weighted-0.25,"להאריך",IF(cur_dur>m_dur_weighted+0.25,"לקצר","קרוב למודל")))'),
@@ -988,20 +1198,21 @@ def sheet_dashboard(ctx: Ctx):
         put(ws, f"A{r}", a, BOLD, SUB, None, BOX); put(ws, f"B{r}", b, BOLD, GRN, None, BOX); put(ws, f"C{r}", c, BASE, None, None, BOX); put(ws, f"D{r}", d, BASE, None, None, BOX); put(ws, f"E{r}", e, BASE, None, None, BOX)
         for col in "BCDE": ws[f"{col}{r}"].alignment = Alignment(wrap_text=True, vertical="top")
         ws.row_dimensions[r].height = 48
-    put(ws, "A14", "התיק — נוכחי / המודל / סימולציה", BOLD); hdr(ws, 15, ["מדד", "נוכחי", "המודל", "סימולציה"])
+    put(ws, "A15", "התיק — נוכחי / המודל / סימולציה", BOLD); hdr(ws, 16, ["מדד", "נוכחי", "המודל", "סימולציה"])
     for i, (lab, src_r, fmt) in enumerate((("מח״מ", 95, "0.00"), ("% צמוד", 96, "0%"), ("תשואה %", 97, "0.00"), ("שקול נומינלי 12 ח׳ %", 98, "0.00"), ("קמירות", 99, "0.0"), ("P&L מקבילי +", 108, "0.00"), ("P&L מקבילי −", 109, "0.00"))):
-        r = 16 + i
+        r = 17 + i
         put(ws, f"A{r}", lab if i < 5 else lab + " (תרחיש ב׳) %", BOLD, None, None, BOX)
         for j, col in enumerate("BCD"):
             put(ws, f"{col}{r}", f"='09_תיק_ותרחישים'!{col if i < 5 else L(3 + j)}{src_r}", GREEN, None, fmt, BOX)
-    put(ws, "A25", "צ׳ק ליסט לוועדה", BOLD); hdr(ws, 26, ["שאלה", "איפה במודל", "כלל"])
-    for i, (a, b, c) in enumerate([("שקלי מול צמוד", "04: פער תחזית−BEI לפי טווח, אחוזון BEI, 12 חודשים לפי תוואי המדדים", "צמוד כשהתחזית גבוהה מה-BEI מעבר למרווח ההחלטה; הטיה פרופורציונית, בתוך גבולות"),
+    put(ws, "A26", "צ׳ק ליסט לוועדה", BOLD); hdr(ws, 27, ["שאלה", "איפה במודל", "כלל"])
+    for i, (a, b, c) in enumerate([("הפוזיציה כולה", "13: תיקים שלמים על פני 9 תרחישים עם הסתברויות; תקציב סיכון; אותות תמחור, ריבית, פיסקלי וכלכלנים", "התיק עם התשואה הצפויה הגבוהה ביותר שעומד בתקציב הסיכון; בין קרובים — הבטוח ביותר"),
+                                    ("שקלי מול צמוד", "04: פער תחזית−BEI לפי טווח, אחוזון BEI, 12 חודשים לפי תוואי המדדים", "צמוד כשהתחזית גבוהה מה-BEI מעבר למרווח ההחלטה; הטיה פרופורציונית, בתוך גבולות"),
                                     ("מח״מ", "05: תשואה 12 ח׳, breakeven, סיכון, אות מדיניות", "להאריך רק כשהעודף מול שנה מצדיק את הסיכון (ציון), ולא נגד תחזית ב״י"),
                                     ("סינתטי מול בולט", "06: סריקת כל הזוגות ב-5 תרחישים", "סינתטי רק אם היתרון גדול מהחיכוך ונזיל"),
                                     ("סדרות", "07: Z מול היסטוריה, roll-down, נזילות, החלפות", "לקנות זול מול ההיסטוריה שלו באותו מח״מ"),
                                     ("חו״ל", "08: פיקאפ מגודר לפי טווח", "חו״ל מגודר רק כשהפיקאפ עובר סף בכמה שווקים"),
                                     ("סיכון", "09: תרחישים על 3 תיקים; מול מדד ייחוס", "לא לאשר החלטת תשואה בלי לראות את ההפסד בתרחיש עליית תשואות")]):
-        r = 27 + i; put(ws, f"A{r}", a, BOLD, None, None, BOX); put(ws, f"B{r}", b, BASE, None, None, BOX); put(ws, f"C{r}", c, BASE, None, None, BOX)
+        r = 28 + i; put(ws, f"A{r}", a, BOLD, None, None, BOX); put(ws, f"B{r}", b, BASE, None, None, BOX); put(ws, f"C{r}", c, BASE, None, None, BOX)
     for col, w in zip("ABCDE", (18, 44, 60, 26, 40)): ws.column_dimensions[col].width = w
     ws.freeze_panes = "A6"
 
@@ -1103,7 +1314,7 @@ def build(data: Path | str, out: Path | str, prev: Path | str | None = None, bas
     ctx = Ctx(Path(data), carry_over(prev), base_dir)
     for sheet, q, f, nmax in DATA_SHEETS: sheet_data(ctx, sheet, q, ctx.frames[sheet], nmax)
     sheet_settings(ctx); sheet_input(ctx); sheet_curves(ctx); sheet_portfolio(ctx); sheet_split(ctx); sheet_duration(ctx); sheet_structure(ctx); sheet_series(ctx)
-    sheet_foreign(ctx); sheet_history(ctx); sheet_boi(ctx); sheet_dashboard(ctx); sheet_guide(ctx); names_stub(ctx)
+    sheet_foreign(ctx); sheet_history(ctx); sheet_boi(ctx); sheet_optimize(ctx); sheet_dashboard(ctx); sheet_guide(ctx); names_stub(ctx)
     ctx.wb._sheets = [ctx.wb[t] for t in ORDER]
     ctx.wb.active = 0
     out = Path(out); tmp = out.with_suffix(".tmp.xlsx") if pq else out
