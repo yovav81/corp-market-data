@@ -1,19 +1,19 @@
 ﻿market,tenor,yield,rate_1y,date,source,as_of,stale
-EUR,1,2.8683,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,2,2.9584,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,3,2.9763,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,5,3.0315,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,7,3.1316,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,10,3.2938,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,15,3.4931,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,20,3.5894,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-EUR,30,3.5767,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-09,1
-GBP,1,4.3058,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,2,4.5661,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,3,4.6565,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,5,4.7652,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,7,4.9025,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,10,5.1419,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,15,5.4739,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,20,5.6434,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
-GBP,30,5.6243,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-09,0
+EUR,1,2.8683,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,2,2.9584,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,3,2.9763,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,5,3.0315,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,7,3.1316,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,10,3.2938,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,15,3.4931,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,20,3.5894,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+EUR,30,3.5767,2.8683,2026-11-05,ECB Data Portal — AAA euro area spot,2026-11-10,1
+GBP,1,4.3058,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,2,4.5661,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,3,4.6565,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,5,4.7652,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,7,4.9025,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,10,5.1419,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,15,5.4739,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,20,5.6434,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
+GBP,30,5.6243,4.3058,2026-11-06,Bank of England — nominal spot,2026-11-10,0
