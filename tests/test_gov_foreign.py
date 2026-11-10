@@ -56,3 +56,42 @@ def test_foreign_market_dropped_without_prev(monkeypatch, tmp_data):
     monkeypatch.setattr(gov_foreign, "fetch_boe", lambda: (_ for _ in ()).throw(RuntimeError("BoE down")))
     df = gov_foreign.build_foreign(tmp_data, None)
     assert set(df["market"]) == {"US"}
+
+
+# --- מקורות חסינים יותר (10.11): אוצר ארה״ב כמקור ראשי ל-UST, ECB בבקשה אחת ---
+TREASURY_CSV = """Date,"1 Mo","1.5 Month","2 Mo","3 Mo","4 Mo","6 Mo","1 Yr","2 Yr","3 Yr","5 Yr","7 Yr","10 Yr","20 Yr","30 Yr"
+11/07/2026,3.95,3.94,3.93,3.90,3.88,3.80,3.62,3.55,3.58,3.70,3.85,4.08,4.62,4.68
+11/09/2026,3.96,3.95,3.94,3.91,3.89,3.81,3.63,3.57,3.60,3.72,3.87,4.10,4.64,4.70
+"""
+ECB_MULTI = """KEY,FREQ,REF_AREA,CURRENCY,PROVIDER_FM,INSTRUMENT_FM,PROVIDER_FM_ID,DATA_TYPE_FM,TIME_PERIOD,OBS_VALUE,OBS_STATUS
+YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_1Y,B,U2,EUR,4F,G_N_A,SV_C_YM,SR_1Y,2026-11-06,1.95,A
+YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_1Y,B,U2,EUR,4F,G_N_A,SV_C_YM,SR_1Y,2026-11-09,1.97,A
+YC.B.U2.EUR.4F.G_N_A.SV_C_YM.SR_10Y,B,U2,EUR,4F,G_N_A,SV_C_YM,SR_10Y,2026-11-09,2.71,A
+"""
+
+
+def test_parse_treasury_csv():
+    date, curve = gov_foreign.parse_treasury_csv(TREASURY_CSV)
+    assert date == "2026-11-09" and curve[1] == 3.63 and curve[10] == 4.10 and curve[30] == 4.70 and 3 in curve and 7 in curve and 20 in curve
+
+
+def test_parse_ecb_multi_csv():
+    date, curve = gov_foreign.parse_ecb_multi_csv(ECB_MULTI)
+    assert date == "2026-11-09" and curve == {1: 1.97, 10: 2.71}
+
+
+def test_get_retries(monkeypatch):
+    import gov_data, urllib.error
+    calls = {"n": 0}
+    class R:
+        def __init__(self): self.b = b"ok"
+        def read(self): return self.b
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+    def fake_open(req, timeout):
+        calls["n"] += 1
+        if calls["n"] < 3: raise urllib.error.HTTPError(req.full_url, 504, "Gateway Time-out", None, None)
+        return R()
+    monkeypatch.setattr(gov_data.urllib.request, "urlopen", fake_open)
+    monkeypatch.setattr(gov_data.time, "sleep", lambda s: None)
+    assert gov_data.get("https://x/y", timeout=5, retries=3) == "ok" and calls["n"] == 3

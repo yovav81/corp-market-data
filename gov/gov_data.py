@@ -13,7 +13,7 @@ gov_data.py — נתוני אג"ח ממשלת ישראל מתוך מאגר המ�
 הרצה: python gov/gov_data.py data
 """
 from __future__ import annotations
-import csv, datetime as dt, io, json, os, re, sys, urllib.request
+import csv, datetime as dt, io, json, os, re, sys, time, urllib.request
 from pathlib import Path
 import numpy as np, pandas as pd
 
@@ -28,10 +28,18 @@ FRED = [("DFF", "ריבית הפד (אפקטיבית)"), ("DGS3MO", "UST 3 חו�
         ("T5YIE", "Breakeven 5 שנים"), ("T10YIE", "Breakeven 10 שנים")]
 
 
-def get(url, timeout=60):
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read().decode("utf-8-sig", errors="replace")
+def get(url, timeout=60, retries=3):
+    """GET עם ניסיונות חוזרים (504/timeout מ-ECB ו-FRED קורים מתוך GitHub); המתנה 3s, 9s בין ניסיונות."""
+    last = None
+    for i in range(max(1, retries)):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read().decode("utf-8-sig", errors="replace")
+        except Exception as e:
+            last = e
+            if i < retries - 1: time.sleep(3 * (3 ** i))
+    raise last
 
 
 # ---------- זיהוי מועד פדיון משם הנייר (לממשלתיות אין מס' ני"ע בגלובס; ההיסטוריה הרבעונית בלי פדיון) ----------
@@ -167,7 +175,7 @@ def fetch_fred():
     rows = []
     for sid, name in FRED:
         try:
-            txt = get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={(dt.date.today() - dt.timedelta(days=130)).isoformat()}")
+            txt = get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={(dt.date.today() - dt.timedelta(days=130)).isoformat()}", timeout=25, retries=2)
             s = pd.read_csv(io.StringIO(txt)); s.columns = ["date", "v"]; s["v"] = pd.to_numeric(s["v"], errors="coerce"); s = s.dropna()
             if s.empty: continue
             last = s.iloc[-1]; d0 = pd.to_datetime(last["date"])

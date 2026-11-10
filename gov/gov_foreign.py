@@ -5,7 +5,7 @@
 כשל במשיכה → שורות השוק מהקובץ הקודם עם stale=1; אין קודם → השוק מושמט (אזהרה).
 """
 from __future__ import annotations
-import csv, datetime as dt, io, os, sys, zipfile
+import csv, datetime as dt, io, os, re, sys, zipfile
 from pathlib import Path
 import numpy as np, pandas as pd
 
@@ -15,9 +15,11 @@ import gov_data  # noqa: E402
 TENORS = [1, 2, 3, 5, 7, 10, 15, 20, 30]
 COLS = ["market", "tenor", "yield", "rate_1y", "date", "source", "as_of", "stale"]
 US_SERIES = {1: "DGS1", 2: "DGS2", 3: "DGS3", 5: "DGS5", 7: "DGS7", 10: "DGS10", 20: "DGS20", 30: "DGS30"}
-ECB_URL = "https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.SR_{n}Y?lastNObservations=3&format=csvdata"
+ECB_URL = "https://data-api.ecb.europa.eu/service/data/YC/B.U2.EUR.4F.G_N_A.SV_C_YM.{keys}?lastNObservations=3&format=csvdata"   # בקשה אחת לכל הטווחים
+TREASURY_URL = ("https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/all/{year}"
+                "?type=daily_treasury_yield_curve&field_tdr_date_value={year}&page&_format=csv")                          # אוצר ארה"ב — עקום UST יומי רשמי
 BOE_URL = "https://www.bankofengland.co.uk/-/media/boe/files/statistics/yield-curves/latest-yield-curve-data.zip"
-SOURCES = {"US": "FRED (St. Louis Fed)", "EUR": "ECB Data Portal — AAA euro area spot", "GBP": "Bank of England — nominal spot"}
+SOURCES = {"US": "US Treasury — daily par yield curve (FRED fallback)", "EUR": "ECB Data Portal — AAA euro area spot", "GBP": "Bank of England — nominal spot"}
 
 
 # ---------- פרסרים (נבדקים בלי רשת) ----------
@@ -26,6 +28,34 @@ def parse_ecb_csv(text: str) -> tuple[str, float]:
     if not rows: raise ValueError("ECB: אין תצפיות")
     last = max(rows, key=lambda r: r["TIME_PERIOD"])
     return last["TIME_PERIOD"], float(last["OBS_VALUE"])
+
+
+def parse_ecb_multi_csv(text: str) -> tuple[str, dict[int, float]]:
+    """CSV של ECB עם כמה מפתחות (SR_1Y+SR_2Y+...): לכל טווח — התצפית האחרונה. מחזיר (התאריך המאוחר, {טווח: תשואה})."""
+    rows = [r for r in csv.DictReader(io.StringIO(text)) if r.get("OBS_VALUE") not in (None, "")]
+    if not rows: raise ValueError("ECB: אין תצפיות")
+    out: dict[int, tuple[str, float]] = {}
+    for r in rows:
+        m = re.search(r"SR_(\d+)Y", r.get("KEY", "") + r.get("DATA_TYPE_FM", ""))
+        if not m: continue
+        t = int(m.group(1))
+        if t not in out or r["TIME_PERIOD"] > out[t][0]: out[t] = (r["TIME_PERIOD"], float(r["OBS_VALUE"]))
+    return max(v[0] for v in out.values()), {t: v[1] for t, v in sorted(out.items())}
+
+
+def parse_treasury_csv(text: str) -> tuple[str, dict[int, float]]:
+    """CSV של האוצר האמריקאי (daily_treasury_yield_curve): עמודות '1 Yr'...'30 Yr', תאריך mm/dd/yyyy. מחזיר (התאריך האחרון, {שנים: תשואה})."""
+    rows = list(csv.DictReader(io.StringIO(text)))
+    if not rows: raise ValueError("Treasury: אין שורות")
+    def d(r): return dt.datetime.strptime(r["Date"].strip(), "%m/%d/%Y").date()
+    last = max(rows, key=d); out = {}
+    for k, v in last.items():
+        m = re.match(r"\s*(\d+)\s*Yr", k or "")
+        if m and v not in (None, "", "N/A"):
+            try: out[int(m.group(1))] = float(v)
+            except ValueError: pass
+    if not out: raise ValueError("Treasury: אין תשואות")
+    return d(last).isoformat(), out
 
 
 def parse_boe_spot(zip_bytes: bytes) -> tuple[str, dict[float, float]]:
@@ -48,18 +78,26 @@ def parse_boe_spot(zip_bytes: bytes) -> tuple[str, dict[float, float]]:
 
 # ---------- משיכות ----------
 def fetch_us() -> tuple[str, dict[float, float]]:
-    fred = gov_data.fetch_fred()
-    ok = fred[fred["value"].notna()]
-    vals = {t: float(ok.loc[ok["series"] == s, "value"].iloc[0]) for t, s in US_SERIES.items() if (ok["series"] == s).any()}
-    if not vals: raise RuntimeError("FRED: אין נתונים")
-    return str(ok["date"].max()), vals
+    """UST: קודם האוצר האמריקאי (עקום פארי יומי, כולל 3/7/20 שנים); אם נכשל — FRED."""
+    try:
+        y = dt.date.today().year
+        try: return parse_treasury_csv(gov_data.get(TREASURY_URL.format(year=y), timeout=60, retries=2))
+        except Exception:
+            return parse_treasury_csv(gov_data.get(TREASURY_URL.format(year=y - 1), timeout=60, retries=1))   # תחילת שנה — הקובץ של השנה עדיין ריק
+    except Exception as e_tr:
+        fred = gov_data.fetch_fred()
+        ok = fred[fred["value"].notna()]
+        vals = {t: float(ok.loc[ok["series"] == s, "value"].iloc[0]) for t, s in US_SERIES.items() if (ok["series"] == s).any()}
+        if not vals: raise RuntimeError(f"Treasury: {str(e_tr)[:50]}; FRED: אין נתונים")
+        return str(ok["date"].max()), vals
 
 
 def fetch_ecb(tenors=TENORS) -> tuple[str, dict[float, float]]:
-    vals = {}; dates = []
-    for t in tenors:
-        d, v = parse_ecb_csv(gov_data.get(ECB_URL.format(n=t))); vals[t] = v; dates.append(d)
-    return max(dates), vals
+    keys = "+".join(f"SR_{t}Y" for t in tenors)
+    d, vals = parse_ecb_multi_csv(gov_data.get(ECB_URL.format(keys=keys), timeout=90, retries=3))
+    missing = [t for t in tenors if t not in vals]
+    if missing: raise RuntimeError(f"ECB: חסרים טווחים {missing}")
+    return d, {float(t): v for t, v in vals.items()}
 
 
 def fetch_boe() -> tuple[str, dict[float, float]]:
