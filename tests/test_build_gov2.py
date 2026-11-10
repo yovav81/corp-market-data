@@ -33,7 +33,7 @@ def test_build_sheets_and_names(tmp_data, monkeypatch):
     from test_gov_data_outputs import _patch_network
     _patch_network(monkeypatch); gov_data.main(str(tmp_data))
     out = tmp_data / "g.xlsx"; res = build_gov2.build(tmp_data, out, None, pq=False)
-    assert res["sheets"] == build_gov2.ORDER and len(res["sheets"]) == 25
+    assert res["sheets"] == build_gov2.ORDER and len(res["sheets"]) == 28
     wb = openpyxl.load_workbook(out)
     dn = wb.defined_names["p_linked_neutral"].attr_text
     sh, cell = dn.split("!"); assert wb[sh.strip("'")][cell.replace("$", "")].value == 0.5
@@ -237,4 +237,59 @@ def test_pq_injected_zero_errors(real_build, tmp_path):
     names = zipfile.ZipFile(out).namelist()
     assert "xl/connections.xml" in names and sum(n.startswith("xl/queryTables/queryTable") for n in names) >= 11
     rc = check_gov2.recalc(out)
+    assert sum(check_gov2.count_errors(rc).values()) == 0
+
+
+# ---------- v2.1: גיליון 13 — אופטימיזציה ----------
+def _set(wb, **kv):
+    for nm, v in kv.items():
+        sh, cell = wb.defined_names[nm].attr_text.split("!"); wb[sh.strip("'")][cell.replace("$", "")].value = v
+
+
+def test_optimizer_sheet_names(real_build):
+    wb = openpyxl.load_workbook(real_build["out"])
+    assert "13_אופטימיזציה" in wb.sheetnames and wb.sheetnames[1] == "13_אופטימיזציה"
+    for nm in ("o_linked", "o_dur_nominal", "o_dur_real", "o_exp", "o_worst", "o_status", "o_probs", "m_linked", "m_dur_nominal", "m_dur_real", "r_linked", "r_dur_nominal",
+               "r_dur_real", "p_risk_floor_pct", "p_opt_on", "p_prob_1", "p_sc9_infl", "p_fiscal_risk", "p_user_rate_fc"):
+        assert nm in wb.defined_names, nm
+
+
+@needs_soffice
+def test_optimizer_parity_default(real_build):
+    res = check_gov2.parity_optimizer(real_build["recalc"], real_build["data"])
+    assert all(v[2] for v in res.values()), res
+    wb = openpyxl.load_workbook(real_build["recalc"], data_only=True)
+    assert check_gov2.named_value(wb, "m_linked") == pytest.approx(check_gov2.named_value(wb, "o_linked"))
+    assert check_gov2.named_value(wb, "m_dur_real") == pytest.approx(check_gov2.named_value(wb, "o_dur_real"))
+    assert check_gov2.named_value(wb, "o_worst") >= 1.0 and "אופטימיזציה" in check_gov2.named_value(wb, "m_linked_why")
+
+
+@needs_soffice
+def test_optimizer_parity_with_user_settings_and_signals(real_build, tmp_path):
+    """הגדרות אחרות (רצפה גבוהה, סיכון פיסקלי, תחזית ריבית ידנית, טווח משקל רחב) + אותות — האקסל והפייתון עדיין זהים."""
+    import gov_decide
+    data = tmp_path / "data"; shutil.copytree(real_build["data"], data)
+    pd.DataFrame([{"key": k, "val": v, "note": "", "as_of": "2026-11-10"} for k, v in (("real10_pct", 92.0), ("ilus10_pct", 12.0), ("rate_now", 3.25), ("rate_fc_mean", 3.1),
+                  ("rate_fc_min", 3.0), ("rate_fc_max", 3.25), ("real10_now", 2.24), ("hist_months", 120))]).to_csv(data / "gov" / "signals_latest.csv", index=False, encoding="utf-8-sig")
+    ov = {"risk_floor_pct": 2.3, "fiscal_risk": 3, "user_rate_fc": 2.75, "opt_w_band": 0.3, "opt_tol_bp": 3, "prob_2": 0.2, "sc7_rl": -80}
+    s = gov_decide.load_settings(overrides=ov); gov_decide.decide(data, s)
+    out = tmp_path / "g.xlsx"; build_gov2.build(data, out, None, pq=False)
+    wb = openpyxl.load_workbook(out); _set(wb, **{"p_" + k: v for k, v in ov.items()}); wb.save(out); rc = check_gov2.recalc(out)
+    res = check_gov2.parity_optimizer(rc, data, s); assert all(v[2] for v in res.values()), res
+    wb2 = openpyxl.load_workbook(rc, data_only=True)
+    assert check_gov2.named_value(wb2, "o_worst") >= 2.3 - 1e-6 and sum(check_gov2.count_errors(rc).values()) == 0
+    assert "תמחור" in check_gov2.named_value(wb2, "o_signals")
+
+
+@needs_soffice
+def test_optimizer_off_and_simulation(real_build, tmp_path):
+    wb = openpyxl.load_workbook(real_build["out"]); _set(wb, p_opt_on=0, p_sim_linked=0.5, p_sim_dur_nominal=2.0, p_sim_dur_real=7.0)
+    p = tmp_path / "off.xlsx"; wb.save(p); rc = check_gov2.recalc(p); w = openpyxl.load_workbook(rc, data_only=True); nv = lambda n: check_gov2.named_value(w, n)
+    assert nv("m_linked") == pytest.approx(nv("r_linked")) and nv("m_dur_nominal") == pytest.approx(nv("r_dur_nominal"))      # כבוי → הכללים
+    assert nv("u_dur_real") == pytest.approx(7.0) and nv("u_dur_nominal") == pytest.approx(2.0)
+    import gov_decide
+    curve = pd.read_csv(real_build["data"] / "gov" / "curves_latest.csv", encoding="utf-8-sig")
+    sg = pd.read_csv(real_build["data"] / "gov" / "signals_latest.csv", encoding="utf-8-sig") if (real_build["data"] / "gov" / "signals_latest.csv").exists() else pd.DataFrame()
+    e = gov_decide.eval_portfolio(curve, gov_decide.load_settings(), dict(zip(sg["key"], sg["val"])) if len(sg) else {}, 0.5, 2.0, 7.0, nv("infl_fc"))
+    assert nv("o_cmp_exp_use") == pytest.approx(e["exp"], abs=0.005) and nv("o_cmp_worst_use") == pytest.approx(e["worst"], abs=0.005)   # התיק בשימוש = הסימולציה
     assert sum(check_gov2.count_errors(rc).values()) == 0

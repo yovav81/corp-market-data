@@ -63,7 +63,7 @@ if [ -f data/gov/bonds_latest.csv ]; then
     [ -f "$GOV" ] && [ "$NEWVER" = 1 ] && cp "$GOV" "$WORK/00_Gov/_archive/ממשלתי_לפני_v$(cat gov/VERSION)_$(TZ=Asia/Jerusalem date +%F).xlsx"
     if python3 gov/build_gov2.py data "$GOV.new" --settings "$GOV"; then
       mv -f "$GOV.new" "$GOV"
-      cp gov/VERSION gov/build_gov2.py gov/build_gov.py gov/pq_gov.py gov/check_gov2.py gov/settings_default.json gov/gov_data.py gov/gov_decide.py gov/gov_history.py gov/gov_cpi.py gov/gov_foreign.py gov/README.md "$BUILD/"
+      cp gov/VERSION gov/build_gov2.py gov/build_gov.py gov/pq_gov.py gov/check_gov2.py gov/settings_default.json gov/gov_data.py gov/gov_decide.py gov/gov_history.py gov/gov_cpi.py gov/gov_foreign.py gov/gov_signals.py gov/README.md "$BUILD/"
     else echo "אזהרה: בניית קובץ הממשלתי v2 נכשלה — הקובץ הקודם נשאר"; rm -f "$GOV.new"; fi
   else echo "קובץ הממשלתי: גרסה $(cat gov/VERSION) מותקנת ו-PQ_OK קיים — הנתונים מתעדכנים דרך Power Query"; fi
 fi
