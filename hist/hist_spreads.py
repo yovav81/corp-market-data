@@ -84,6 +84,8 @@ def main(data="data"):
     if not g.empty:
         for c in ("spread", "duration", "ytm_gross"):
             g[c] = pd.to_numeric(g[c], errors="coerce")
+        if "calc" in g.columns:   # שורות חישוב (calc=1) אינן נתון גלובס — לא נכנסות להיסטוריה, לחציונים ולהתראות
+            g = g[pd.to_numeric(g["calc"], errors="coerce").fillna(0) == 0]
         g = g[g["spread"].between(MIN_SPREAD, MAX_SPREAD)].copy()
         g["linkage_g"] = g["source"].map(linkage)
         g["rating_g"] = [lower_of(a, b) for a, b in zip(g["rating_maalot"], g["rating_midroog"])]

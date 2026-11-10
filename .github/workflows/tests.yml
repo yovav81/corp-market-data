@@ -2,7 +2,7 @@ name: tests
 
 on:
   push:
-    paths: ["gov/**", "corp/**", "short/**", "hist/**", "tests/**", "*.py", "requirements.txt", ".github/workflows/tests.yml"]
+    paths: ["gov/**", "corp/**", "short/**", "hist/**", "calc/**", "tests/**", "*.py", "requirements.txt", ".github/workflows/tests.yml"]
   pull_request:
   workflow_dispatch: {}
 
