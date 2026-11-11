@@ -447,5 +447,13 @@
   "maya_id": 1867,
   "corp_folder": "510400740_דיפלומט",
   "maya_long_name": "דיפלומט אחזקות בע\"מ"
+ },
+ {
+  "key": "extell",
+  "name": "אקסטל",
+  "maya_name": "אקסטל לימיטד",
+  "maya_id": 1622,
+  "corp_folder": "1811308_אקסטל-לימיטד",
+  "maya_long_name": "אקסטל לימיטד"
  }
 ]
