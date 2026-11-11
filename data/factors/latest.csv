@@ -13,7 +13,7 @@ USDILS,דולר / שקל (שער יציג),2026-11-10,3.161,בנק ישראל �
 EURILS,אירו / שקל (שער יציג),2026-11-10,3.5464,בנק ישראל — שער יציג (SDMX),
 GBPILS,ליש״ט / שקל (שער יציג),2026-11-10,4.2441,בנק ישראל — שער יציג (SDMX),
 CHFILS,פרנק שוויצרי / שקל (שער יציג),2026-11-10,3.8512,בנק ישראל — שער יציג (SDMX),
-PLNILS,זלוטי / שקל (שער צולב ECB),2026-11-10,0.809369,ECB — שער צולב מול השקל,
+PLNILS,זלוטי / שקל (שער צולב ECB),2026-11-10,0.809369,ECB — שער צולב מול השקל,HTTPError: HTTP Error 504: Gateway Time-out
 BRLILS,ריאל ברזילאי / שקל (שער צולב ECB),2026-11-10,0.570329,ECB — שער צולב מול השקל,
 BRENT,נפט ברנט,2026-11-03,107.03,FRED (St. Louis Fed),TimeoutError: The read operation timed out
 WTI,נפט WTI,2026-11-03,99.64,FRED (St. Louis Fed),TimeoutError: The read operation timed out
