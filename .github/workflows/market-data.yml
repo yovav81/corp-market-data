@@ -31,7 +31,7 @@ jobs:
       - name: Install
         run: |
           pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
+          bash .github/install_browser.sh
 
       - name: Fetch market data
         # הרצה ידנית תמיד מושכת מחדש; הרצה מתוזמנת מדלגת אם היום כבר נשמר במלואו

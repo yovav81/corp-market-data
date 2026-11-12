@@ -23,7 +23,7 @@ jobs:
       - name: Install
         run: |
           pip install -r requirements.txt requests
-          python -m playwright install --with-deps chromium
+          bash .github/install_browser.sh
       - name: Probe Maya
         run: python maya/${{ inputs.script }} probe_out
         continue-on-error: true

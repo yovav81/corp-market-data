@@ -37,7 +37,7 @@ jobs:
       - name: Install
         run: |
           pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
+          bash .github/install_browser.sh
       - name: Monthly fund reports from Maya
         env:
           DAYS: ${{ inputs.days || '45' }}

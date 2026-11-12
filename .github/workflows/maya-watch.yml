@@ -39,7 +39,7 @@ jobs:
       - name: Install
         run: |
           pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
+          bash .github/install_browser.sh
       - name: Watch Maya
         env:
           SINCE: ${{ inputs.since }}
