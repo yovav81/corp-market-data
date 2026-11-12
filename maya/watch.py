@@ -9,7 +9,7 @@ and is committed back by the workflow. Every report found in the window and not 
 recorded as seen (kept or skipped); kept ones are downloaded to <out>/<cid>_<name>/ with a
 catalog.csv, and <out>/summary.json lists everything new per issuer.
 """
-import argparse, csv, datetime as dt, json, pathlib, sys, time
+import argparse, csv, datetime as dt, json, os, pathlib, sys, time
 from urllib.parse import quote
 from playwright.sync_api import sync_playwright
 
@@ -38,6 +38,11 @@ def list_reports(m, cid, frm, to):
             return out
         off += 30
 
+def unknown_keys(issuers, only):
+    """Keys asked for with --only that are not in issuers.json (an empty --only means every issuer)."""
+    known = {i["key"] for i in issuers}
+    return [k for k in only.split(",") if k and k not in known]
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="maya_out")
@@ -48,6 +53,13 @@ def main():
     a = ap.parse_args()
     today = dt.date.today()
     issuers = load(ISSUERS, [])
+    bad = unknown_keys(issuers, a.only)
+    if bad:   # 11.11.2026: an --init for an issuer not yet in issuers.json skipped everything and still "succeeded"
+        msg = (f"--only: {', '.join(bad)} not in maya/issuers.json - nothing was checked. "
+               "Add the issuer, make sure that commit is on the branch this run uses, and run again.")
+        if os.environ.get("GITHUB_ACTIONS"):
+            print(f"::error::{msg}", flush=True)
+        sys.exit(msg)
     state = load(STATE, {})
     out = pathlib.Path(a.out); out.mkdir(parents=True, exist_ok=True)
     summary = {"run_date": today.isoformat(), "mode": "init" if a.init else "watch", "issuers": []}
