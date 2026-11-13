@@ -87,13 +87,21 @@ Take the newest `<corp_folder>_*.xlsx` (not `_מקומי`), archive a copy first
 | ת126 מצבת התחייבויות | `סדרות` J (ע.נ. במחזור) per ISIN, notes; `חוב ונזילות` schedule if the model reads it | parse the htm table (cp1255) |
 | ת077 מצבת בעלי עניין | `פרופיל` holdings block (row 55+) and B11 controller % | parse htm/pdf; exact % with report ref |
 | ת020/ת022/ת128/ת026, הרחבת סדרה | `סדרות` nominal/terms notes (AG), `קובננטים` if new covenants | quote the document; mark drafts as drafts |
-| ת930 דוח רבעוני/שנתי | full quarter: P&L, CF, BS, debt, covenants (`רבעונים`, `מאזן`, `רווח והפסד`, `תזרים`, `קובננטים`, `סדרות`) | follow the issuer's `_build` scripts as the pattern (fin.json → fill → finish); G City / AFI also have MAGNA iXBRL (see invest-automation `components/magna_ixbrl.py`) |
+| ת930 דוח רבעוני/שנתי — **and any full periodic financial report in another form** (C001 10-Q / 10-K / 20-F, results release with full statements: `freshness.is_periodic(form, title)` in `cd/00_Master/_build/freshness.py`) | **Do NOT update the model in this run** (since 13.11.2026). Queue it for the roll task instead — see 4a. Still write the key figures to `פרופיל` B44 and log in `updates.csv` as today. | 4a below |
 | מצגת / אחר / משפטי / מימון | `פרופיל` B44 events + `מקורות` | one line + source |
 
 After any change: `python /mnt/skills/public/xlsx/scripts/recalc.py <model> 180` must report 0 errors, and
 the `בקרות` sheet must have no critical failures. **If either fails, or a quarterly report cannot be
 completed with confidence, do not overwrite the model** — keep the files filed and report
 "נדרשת בדיקה" with the reason. Register every document in `מקורות` and log in `יומן`.
+
+### 4a. Periodic report → roll queue (since 13.11.2026)
+For each issuer with a periodic report in this run (period = `freshness.period_of(form, title)`):
+1. `python cmd/maya/rollq_push.py <dir with that report's files: the report + its attachments, and ת126 / presentation of the same day if any> <issuer_id> <period> https://github.com/yovav81/corp-data` → prints `rollq/<issuer_id>-<period>`.
+2. `python cd/00_Master/_build/roll_queue.py add cd/00_Master/roll_queue.csv '<json>'` with
+   `{"issuer_dir": "<corp_folder>", "issuer_id": ..., "period": ..., "kind": "Q" or "FY", "report_date": "YYYY-MM-DD", "form": ..., "maya_ids": "id1;id2", "rollq_branch": ..., "priority": 1 if the issuer has a series in cd/00_Master/recommended.csv with a non-zero weight or in the master Watchlist, else 2}`.
+3. Commit `00_Master/roll_queue.csv` with the run's commit. The hourly roll task (`cd/00_Master/_build/ROLL_RUNBOOK.md`) updates the model.
+Never delete `rollq/*` branches here.
 
 ## 5. Master
 If any model changed, rebuild the single live master **in place** (never create `00_Master_vNN.xlsx`):
@@ -125,6 +133,7 @@ Dispatch `corp-notify` with input `text` (HTML). Link the updated model in GitHu
 • 18.10 מעלות: אישור דירוג ilAA- יציב
 ✅ <a href="https://github.com/yovav81/corp-data/blob/main/...">האקסל</a> עודכן (טיוטה): רבעון 3/2026, דירוג; בקרות תקינות
 — או — ⚠️ נדרשת בדיקה: <סיבה>
+📥 לדוח תקופתי: דוח <תקופה> נכנס לתור העדכון (העדכון והטבלה לפני/אחרי יגיעו בהודעה נפרדת)
 
 🔀 מוזגו השינויים הידניים שלך ב-<קובץ>: N תאים; בהתנגשות (נשאר ערך הענן): A1, B7
 📊 המאסטר עודכן: v20
