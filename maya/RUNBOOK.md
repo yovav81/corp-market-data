@@ -97,9 +97,11 @@ completed with confidence, do not overwrite the model** — keep the files filed
 
 ### 4a. Periodic report → roll queue (since 13.11.2026)
 For each issuer with a periodic report in this run (period = `freshness.period_of(form, title)`):
-1. `python cmd/maya/rollq_push.py <dir with that report's files: the report + its attachments, and ת126 / presentation of the same day if any> <issuer_id> <period> https://github.com/yovav81/corp-data` → prints `rollq/<issuer_id>-<period>`.
-2. `python cd/00_Master/_build/roll_queue.py add cd/00_Master/roll_queue.csv '<json>'` with
-   `{"issuer_dir": "<corp_folder>", "issuer_id": ..., "period": ..., "kind": "Q" or "FY", "report_date": "YYYY-MM-DD", "form": ..., "maya_ids": "id1;id2", "rollq_branch": ..., "priority": 1 if the issuer has a series in cd/00_Master/recommended.csv with a non-zero weight or in the master Watchlist, else 2}`.
+0. If `freshness.looks_periodic_unparsed(form, title)` is True for any row (looks like a 10-Q/10-K/20-F/6-K/results/periodic report but no period could be parsed): do NOT skip silently — put "⚠️ דוח תקופתי לא זוהה: <issuer> — <title> (מאיה <id>)" in the Telegram and leave it for Yovav.
+1. `python cd/00_Master/_build/roll_queue.py add cd/00_Master/roll_queue.csv '<json>'` FIRST, with
+   `{"issuer_dir": "<corp_folder>", "issuer_id": ..., "period": ..., "kind": "Q" or "FY", "report_date": "YYYY-MM-DD", "form": ..., "maya_ids": "id1;id2", "rollq_branch": "rollq/<issuer_id>-<period>", "priority": 1 if the issuer has a series with a non-zero "משקל בתיק המודל" in cd/00_Master/recommended.csv (match column "מנפיק" to the model's issuer_name), else 2}`.
+   (Do not read the master xlsx for the Watchlist — never open 00_Master_LIVE.xlsx with openpyxl.)
+2. Then `python cmd/maya/rollq_push.py <dir with that report's files: the report + its attachments, and ת126 / presentation of the same day if any> <issuer_id> <period> https://github.com/yovav81/corp-data`. If the branch already exists (a correction for the same period, or `add` returned False), the script adds the new files on top — it never overwrites.
 3. Commit `00_Master/roll_queue.csv` with the run's commit. The hourly roll task (`cd/00_Master/_build/ROLL_RUNBOOK.md`) updates the model.
 Never delete `rollq/*` branches here.
 

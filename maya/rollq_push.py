@@ -6,7 +6,7 @@ The PC deletes deliver/* branches after copying them, so the roll task needs its
 rollq/<issuer_id>-<period> holding the files flat. The roll task deletes the branch after a successful update.
 Cover pages (*_שער-מגנא.htm) and text dumps (*_טקסט.txt) are skipped, as in the daily run. Prints the branch name.
 """
-import argparse, pathlib, shutil, sys, tempfile
+import argparse, pathlib, shutil, subprocess, sys, tempfile
 from push_deliver import git
 
 SKIP = ("_שער-מגנא.htm", "_טקסט.txt")
@@ -24,9 +24,16 @@ def main():
     if a.dry or not files: return 0
     with tempfile.TemporaryDirectory() as tmp:
         git(tmp, "init", "-q", "-b", "rollq")
+        # ענף קיים (תיקון לאותה תקופה, הרצה חוזרת) — מוסיפים מעליו, לא דורסים
+        if subprocess.run(["git", "fetch", "-q", a.remote, f"refs/heads/{branch}:refs/remotes/q/rollq"], cwd=tmp,
+                          capture_output=True).returncode == 0:
+            git(tmp, "checkout", "-q", "-B", "rollq", "refs/remotes/q/rollq")
         for p in files: shutil.copy2(p, pathlib.Path(tmp) / p.name)
-        git(tmp, "add", "-A"); git(tmp, "commit", "-q", "-m", f"rollq {a.issuer_id} {a.period}: {len(files)} files")
-        git(tmp, "push", "-q", "-f", a.remote, f"HEAD:refs/heads/{branch}")
+        git(tmp, "add", "-A")
+        if subprocess.run(["git", "diff", "--cached", "--quiet"], cwd=tmp).returncode == 0:
+            print("no change"); return 0
+        git(tmp, "commit", "-q", "-m", f"rollq {a.issuer_id} {a.period}: {len(files)} files")
+        git(tmp, "push", "-q", a.remote, f"HEAD:refs/heads/{branch}")
     return 0
 
 
