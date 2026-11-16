@@ -7,6 +7,10 @@ on:
       text:
         description: "טקסט ההודעה (HTML מותר: <b>, <i>, <a href>)"
         required: true
+      photo_b64:
+        description: "תמונה (PNG ב-base64, אופציונלי) — נשלחת עם הטקסט ככיתוב; מעל 1,024 תווים הטקסט נשלח בהודעה נפרדת"
+        required: false
+        default: ""
 
 jobs:
   notify:
@@ -17,12 +21,32 @@ jobs:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           TEXT: ${{ inputs.text }}
+          PHOTO_B64: ${{ inputs.photo_b64 }}
         run: |
           python3 - <<'PY'
           import json, os, sys, urllib.request
           tok, chat, text = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID"), os.environ["TEXT"]
           if not tok or not chat:
               print("::error::TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID secrets are not set in this repository"); sys.exit(1)
+          def call(method, body, ctype):
+              req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/{method}", body, {"Content-Type": ctype})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as r:
+                      print("sent", method, r.status)
+              except urllib.error.HTTPError as e:
+                  print("::error::telegram", e.code, e.read()[:300]); sys.exit(1)
+          photo = os.environ.get("PHOTO_B64", "").strip()
+          if photo:
+              import base64, uuid
+              img = base64.b64decode(photo)
+              cap = text if len(text) <= 1024 else ""
+              bd = uuid.uuid4().hex
+              fields = {"chat_id": chat, "parse_mode": "HTML"}
+              if cap: fields["caption"] = cap
+              body = b"".join(f"--{bd}\r\nContent-Disposition: form-data; name=\"{k}\"\r\n\r\n{v}\r\n".encode() for k, v in fields.items())
+              body += f"--{bd}\r\nContent-Disposition: form-data; name=\"photo\"; filename=\"t.png\"\r\nContent-Type: image/png\r\n\r\n".encode() + img + f"\r\n--{bd}--\r\n".encode()
+              call("sendPhoto", body, f"multipart/form-data; boundary={bd}")
+              if cap: sys.exit(0)
           parts, cur = [], ""
           for line in text.split("\n"):
               if len(cur) + len(line) + 1 > 3800:
