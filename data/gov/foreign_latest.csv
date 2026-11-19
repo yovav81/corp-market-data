@@ -1,28 +1,28 @@
 ﻿market,tenor,yield,rate_1y,date,source,as_of,stale
-US,1,4.62,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,2,4.8,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,3,4.84,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,5,4.89,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,7,4.96,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,10,5.07,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,15,5.255,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,20,5.44,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-US,30,5.41,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-18,0
-EUR,1,2.9776,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,2,3.0926,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,3,3.1125,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,5,3.1613,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,7,3.2596,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,10,3.4246,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,15,3.6266,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,20,3.7184,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-EUR,30,3.6833,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-18,0
-GBP,1,4.5086,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,2,4.7857,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,3,4.8924,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,5,5.0093,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,7,5.1436,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,10,5.3747,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,15,5.6978,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,20,5.8645,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
-GBP,30,5.853,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-18,0
+US,1,4.62,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,2,4.8,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,3,4.84,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,5,4.89,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,7,4.96,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,10,5.07,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,15,5.255,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,20,5.44,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+US,30,5.41,4.62,2026-11-18,US Treasury — daily par yield curve (FRED fallback),2026-11-19,0
+EUR,1,2.9776,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,2,3.0926,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,3,3.1125,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,5,3.1613,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,7,3.2596,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,10,3.4246,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,15,3.6266,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,20,3.7184,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+EUR,30,3.6833,2.9776,2026-11-17,ECB Data Portal — AAA euro area spot,2026-11-19,0
+GBP,1,4.5086,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,2,4.7857,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,3,4.8924,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,5,5.0093,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,7,5.1436,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,10,5.3747,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,15,5.6978,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,20,5.8645,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
+GBP,30,5.853,4.5086,2026-11-17,Bank of England — nominal spot,2026-11-19,0
