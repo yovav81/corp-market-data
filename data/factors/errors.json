@@ -1,13 +1,9 @@
 {
- "run": "2026-11-22T12:56",
+ "run": "2026-11-23T15:25",
  "errors": {
   "SOFR": "TimeoutError: The read operation timed out",
   "SONIA": "TimeoutError: The read operation timed out",
   "UST10": "TimeoutError: The read operation timed out",
-  "USDILS": "RemoteDisconnected: Remote end closed connection without response",
-  "EURILS": "RemoteDisconnected: Remote end closed connection without response",
-  "GBPILS": "RemoteDisconnected: Remote end closed connection without response",
-  "CHFILS": "RemoteDisconnected: Remote end closed connection without response",
   "BRENT": "TimeoutError: The read operation timed out",
   "WTI": "TimeoutError: The read operation timed out",
   "TTF": "TimeoutError: The read operation timed out",
