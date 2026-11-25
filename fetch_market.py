@@ -262,6 +262,29 @@ def save_outputs(allf, out, day, problems, xlsx=False):
     return daily
 
 
+MARKET_OPEN = (9, 0)     # עד פתיחת המסחר האתרים עדיין מציגים את שערי הסגירה של יום המסחר הקודם
+MARKET_CLOSE = (17, 30)  # אחרי השעה הזו השערים הם שערי סגירה של היום
+
+
+def trade_day(now):
+    """יום המסחר שאליו שייך צילום שנלקח ב-now (שעון ישראל).
+
+    לפני פתיחת המסחר (09:00) הדפים מציגים את סגירת יום המסחר הקודם, ולכן ריצה שהתעכבה
+    אחרי חצות — גם ב-12 שעות, כפי שקורה בתור של GitHub — מתוארכת ליום המסחר הקודם (ב'–ו').
+    """
+    d = now.date()
+    if (now.hour, now.minute) < MARKET_OPEN:
+        d -= timedelta(days=1)
+        while d.weekday() >= 5:  # שבת/ראשון → יום שישי
+            d -= timedelta(days=1)
+    return d.strftime("%Y-%m-%d")
+
+
+def market_open_now(now):
+    """True בזמן המסחר (09:00–17:30 שעון ישראל, ב'–ו') — הצילום יהיה תוך-יומי ולא סגירה."""
+    return now.weekday() < 5 and MARKET_OPEN <= (now.hour, now.minute) < MARKET_CLOSE
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="data")
@@ -269,6 +292,7 @@ def main():
     ap.add_argument("--show", action="store_true")
     ap.add_argument("--url", help="כתובת מלאה לבדיקה בודדת")
     ap.add_argument("--skip-if-exists", action="store_true")
+    ap.add_argument("--day", help="תאריך יום המסחר לתיוג הצילום (YYYY-MM-DD) במקום החישוב האוטומטי — למשל שחזור סגירה של אתמול לפני פתיחת המסחר")
     ap.add_argument("--xlsx", action="store_true")
     ap.add_argument("--wait", type=int, default=75)
     ap.add_argument("--debug-dir", default="debug")
@@ -276,12 +300,19 @@ def main():
     test_mode = bool(args.only or args.url)
 
     now = datetime.now(TZ)
-    day = (now - timedelta(hours=6)).strftime("%Y-%m-%d")  # הרצה שהתעכבה אחרי חצות שייכת ליום המסחר הקודם
+    if args.day:
+        day = datetime.strptime(args.day, "%Y-%m-%d").strftime("%Y-%m-%d")
+    else:
+        day = trade_day(now)
     out = Path(args.out)
     daily = out / "daily" / day[:4] / f"{day}.csv"
-    if args.skip_if_exists and not test_mode and daily.exists() and not daily.with_suffix(".partial").exists():
-        print(f"כבר נשמר היום: {daily}")
-        return 0
+    if args.skip_if_exists and not test_mode:
+        if market_open_now(now):
+            print(f"המסחר טרם נסגר ({now:%H:%M} שעון ישראל) — הצילום היה תוך-יומי; מדלג. הריצה הבאה תקלוט את הסגירה.")
+            return 0
+        if daily.exists() and not daily.with_suffix(".partial").exists():
+            print(f"כבר נשמר היום: {daily}")
+            return 0
 
     latest = out / "latest.csv"
     old = None
