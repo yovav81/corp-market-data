@@ -1,6 +1,6 @@
 ﻿item,value,as_of,source
-rate_current,3.25,2026-10-21,החלטת הוועדה המוניטרית 21.10.2026 — הריבית ללא שינוי (https://www.boi.org.il/publications/pressreleases/21-10-26a/)
-next_decision,2026-11-23,2026-10-21,מועד ההחלטה הבאה (ביזפורטל 21.10.2026)
+rate_current,3.25,2026-11-23,החלטת הוועדה המוניטרית 23.11.2026 — הריבית ללא שינוי ברמה של 3.25% (https://www.boi.org.il/publications/pressreleases/23-11-26/ ; רשימת ההודעות: https://www.boi.org.il/publications/pressreleases/?TaxonomiesIds=16981)
+next_decision,2027-01-04,2026-11-23,מועד ההחלטה הבאה 04/01/2027 כולל תחזית חטיבת המחקר (https://boi.org.il/bank-of-israel/2027-2028-interest-rate-dates/)
 forecast_end_next_year,3.0,2026-10-21,תחזית חטיבת המחקר אוקטובר 2026 — ריבית ממוצעת ברבעון השלישי של 2027 (בעוד כשנה)
 forecast_end_year_after,,,תחזית חטיבת המחקר — ריבית בסוף השנה שאחריה (לא פורסם)
 researcher_date,2026-10-21,2026-10-21,מועד פרסום התחזית
