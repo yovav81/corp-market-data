@@ -1,5 +1,5 @@
 {
- "run": "2026-11-27T14:24",
+ "run": "2026-11-27T23:50",
  "errors": {
   "SOFR": "TimeoutError: The read operation timed out",
   "SONIA": "TimeoutError: The read operation timed out",
